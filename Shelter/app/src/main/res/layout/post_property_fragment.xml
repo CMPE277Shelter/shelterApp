@@ -1,0 +1,241 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+    <android.support.v7.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        card_view:cardCornerRadius="2dp"
+        card_view:cardElevation="5dp">
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="20dp">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Address"
+                />
+            <EditText android:id="@+id/street_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ems="13"
+                android:hint="Street"
+                android:inputType="textPostalAddress|textCapWords"
+                android:layout_alignParentTop="true"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="25dp"
+                android:imeOptions="actionNext"/>
+            <EditText android:id="@+id/city_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ems="13"
+                android:hint="City"
+                android:inputType="textPostalAddress|textCapWords"
+                android:layout_below="@+id/street_name"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="25dp"
+                android:imeOptions="actionNext"/>
+            <LinearLayout android:id="@+id/state_and_zip"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_below="@+id/city_name"
+                android:layout_centerHorizontal="true">
+                <EditText android:id="@+id/state_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:ems="4"
+                    android:hint="State"
+                    android:inputType="textPostalAddress|textCapWords"
+                    android:layout_marginTop="25dp"
+                    android:imeOptions="actionNext"/>
+                <EditText android:id="@+id/zip"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:ems="9"
+                    android:hint="Zip code"
+                    android:inputType="textPostalAddress|textCapWords"
+                    android:layout_marginTop="25dp"
+                    android:imeOptions="actionNext"/>
+            </LinearLayout>
+        </RelativeLayout>
+    </android.support.v7.widget.CardView>
+
+    <android.support.v7.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        card_view:cardCornerRadius="2dp"
+        card_view:cardElevation="5dp">
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="20dp">
+            <TextView android:id="@+id/property_details"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Property details"/>
+            <LinearLayout android:id="@+id/property_type_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_centerHorizontal="true"
+                android:layout_below="@+id/property_details"
+                android:layout_marginTop="25dp">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Property type"
+                    android:layout_gravity="center"
+                    android:paddingRight="30dp"/>
+                <Spinner android:id="@+id/property_type"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:entries="@array/property_types"
+                    android:spinnerMode="dropdown">
+                </Spinner>
+            </LinearLayout>
+
+            <LinearLayout android:id="@+id/number_of_rooms"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_centerHorizontal="true"
+                android:layout_below="@+id/property_type_layout"
+                android:layout_marginTop="25dp">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Number of rooms"
+                    android:layout_gravity="center"
+                    android:paddingRight="30dp"/>
+                <NumberPicker android:id="@+id/total_rooms"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    />
+            </LinearLayout>
+
+            <EditText android:id="@+id/monthly_rent"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ems="13"
+                android:hint="Monthly rent in $"
+                android:inputType="numberDecimal"
+                android:layout_below="@+id/number_of_rooms"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="25dp"
+                android:imeOptions="actionNext"/>
+        </RelativeLayout>
+    </android.support.v7.widget.CardView>
+
+
+    <android.support.v7.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        card_view:cardCornerRadius="2dp"
+        card_view:cardElevation="5dp">
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="20dp">
+
+            <TextView android:id="@+id/contact_info_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Contact information"/>
+            <EditText android:id="@+id/person_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ems="13"
+                android:hint="Name"
+                android:inputType="textPersonName|textCapWords"
+                android:layout_below="@+id/contact_info_label"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="25dp"
+                android:imeOptions="actionNext"/>
+
+            <EditText android:id="@+id/email"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ems="13"
+                android:hint="Email"
+                android:inputType="textEmailAddress"
+                android:layout_below="@+id/person_name"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="25dp"
+                android:imeOptions="actionNext"/>
+
+            <EditText android:id="@+id/phone_number"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ems="13"
+                android:hint="Phone number"
+                android:inputType="phone"
+                android:layout_below="@+id/email"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="25dp"
+                android:imeOptions="actionNext"/>
+        </RelativeLayout>
+    </android.support.v7.widget.CardView>
+
+    <android.support.v7.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        card_view:cardCornerRadius="2dp"
+        card_view:cardElevation="5dp">
+        <RelativeLayout android:id="@+id/pictures_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@android:color/darker_gray">
+            <ImageView android:id="@+id/camera_icon"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:background="@android:drawable/ic_menu_camera"
+                android:layout_centerInParent="true"/>
+            <Button android:id="@+id/select_picture"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Add photo"
+                android:background="@color/colorPrimary"
+                android:layout_alignParentBottom="true"/>
+        </RelativeLayout>
+    </android.support.v7.widget.CardView>
+
+    <android.support.v7.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        card_view:cardCornerRadius="2dp"
+        card_view:cardElevation="5dp">
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="20dp">
+            <TextView android:id="@+id/description_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Add description for property"/>
+            <EditText android:id="@+id/description"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ems="13"
+                android:hint="Description"
+                android:inputType="text|textAutoCorrect|textMultiLine"
+                android:layout_below="@+id/description_label"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="25dp"
+                android:imeOptions="actionDone"
+                android:imeActionLabel="Finish and Submit"/>
+        </RelativeLayout>
+    </android.support.v7.widget.CardView>
+</LinearLayout>
+
+
+
+
