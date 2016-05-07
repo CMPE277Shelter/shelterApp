@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/search_bar"
+        android:title="@string/search_menu_action_search"
+        android:icon="@android:drawable/ic_menu_search"
+        app:showAsAction="ifRoom|collapseActionView"
+        app:actionViewClass="android.support.v7.widget.SearchView">
+    </item>
+    <item android:id="@+id/action_loc_picker"
+          android:icon="@android:drawable/ic_dialog_map"
+          android:title="@string/search_menu_action_loc_picker"
+          android:showAsAction="ifRoom|withText"/>
+</menu>
