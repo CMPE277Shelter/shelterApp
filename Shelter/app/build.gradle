@@ -33,4 +33,6 @@ dependencies {
     compile 'com.android.support:support-v4:23.3.0'
     compile 'com.facebook.android:facebook-android-sdk:3.23.1'
     compile 'com.google.android.gms:play-services-auth:8.4.0'
+    compile group: 'cz.msebera.android' , name: 'httpclient', version: '4.4.1.1'
+
 }

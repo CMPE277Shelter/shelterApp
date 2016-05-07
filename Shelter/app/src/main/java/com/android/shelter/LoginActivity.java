@@ -15,6 +15,7 @@ import android.view.View;
 import android.view.Menu;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.facebook.AccessToken;
 import com.facebook.HttpMethod;
@@ -109,38 +110,6 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
             Log.i(TAG, "Logged in...");
             // make request to the /me API to get Graph user
 
-            Request.newMeRequest(session, new Request.GraphUserCallback() {
-
-                // callback after Graph API response with user
-                // object
-                @Override
-                public void onCompleted(GraphUser user, Response response) {
-                    if (user != null) {
-                        // Set view visibility to true
-                        URL img_value = null;
-                        String id = user.getId();
-                        Bundle bundle = new Bundle();
-                        bundle.putString("fields", "picture.type(large),quotes,email,first_name,last_name,username");  final Request request = new Request(ParseFacebookUtils.getSession(),
-                                "me", bundle, HttpMethod.GET, new Request.Callback() {
-
-                            @Override
-                            public void onCompleted(Response response) {
-                                GraphObject graphObject = response.getGraphObject();
-                                if (graphObject != null) {
-
-                                    //Parse graphObject to User
-                                    JSONObject jsonUser = graphUser.getInnerJSONObject();
-                                    try {
-                                        Uri uri = Uri.parse(jsonUser.getJSONObject("picture").getJSONObject("data").getString("url"));
-                                        img.setImageURI(uri);
-                                                                            } catch (JSONException e) {
-                                        Log.e(TAG, e.toString());
-                                        e.printStackTrace();
-                                    }
-                                }
-                            }
-                        });
-                        Request.executeBatchAsync(request);
                         otherView.setVisibility(View.VISIBLE);
                         // Set User name
 //                        name.setText("Hello " + user.getName());
@@ -152,9 +121,9 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
 //                                .toString());
 
 
-                    }
-                }
-            }).executeAsync();
+//                    }
+//                }
+//            }).executeAsync();
         } else if (state.isClosed()) {
             Log.i(TAG, "Logged out...");
             img.setImageDrawable(getResources().getDrawable(R.drawable.propic));
@@ -183,13 +152,13 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
             // Signed in successfully, show authenticated UI.
             GoogleSignInAccount acct = result.getSignInAccount();
             if (acct != null) {
-                otherView.setVisibility(View.VISIBLE);
-//                name.setText("Hello " + acct.getDisplayName());
-//                // Set Gender
-//                gender.setText("ID "
-//                        + acct.getId());
+
+//
+                Log.d(acct.getPhotoUrl().toString(),"URL");
+                Toast.makeText(LoginActivity.this, acct.getPhotoUrl().toString(), Toast.LENGTH_SHORT).show();
                 img.setImageURI(acct.getPhotoUrl());
-                mStatusTextView.setText(getString(R.string.signed_in_fmt, acct.getEmail()));
+                otherView.setVisibility(View.VISIBLE);
+//                mStatusTextView.setText(getString(R.string.signed_in_fmt, acct.getEmail()));
             }
             updateUI(true);
         } else {
