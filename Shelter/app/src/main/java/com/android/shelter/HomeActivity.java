@@ -1,5 +1,6 @@
 package com.android.shelter;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
@@ -15,6 +16,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.manuelpeinado.fadingactionbar.view.ObservableScrollable;
 import com.manuelpeinado.fadingactionbar.view.OnScrollChangedCallback;
@@ -37,6 +39,8 @@ public class HomeActivity extends AbstractFragmentActivity
         super.onCreate(savedInstanceState);
         Log.d(TAG, "Now creating the fragment");
         setContentView(R.layout.activity_home);
+
+        int id = getResources().getIdentifier("com.android.shelter:drawable/" , null, null);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -66,7 +70,10 @@ public class HomeActivity extends AbstractFragmentActivity
     public boolean onNavigationItemSelected(MenuItem item) {
         int id = item.getItemId();
 
-        if (id == R.id.nav_camera) {
+        if (id == R.id.login) {
+            Toast.makeText(HomeActivity.this, "Login code", Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(HomeActivity.this, LoginActivity.class);
+            startActivity(intent);
         } else if (id == R.id.nav_gallery) {
 
         } else if (id == R.id.nav_slideshow) {
