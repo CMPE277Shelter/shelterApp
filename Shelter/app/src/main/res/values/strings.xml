@@ -16,4 +16,8 @@
     <string name="title_activity_post_property">PostPropertyActivity</string>
 
     <string name="pick_image_intent_text">Choose from options</string>
+    <string name="search_hint_text">Location</string>
+    <string name="search_menu_bar_filter">Filter</string>
+    <string name="search_menu_action_search">Search</string>
+    <string name="search_menu_action_loc_picker">Pick Location</string>
 </resources>
