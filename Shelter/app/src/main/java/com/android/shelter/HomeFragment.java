@@ -78,24 +78,6 @@ public class HomeFragment extends Fragment implements OnScrollChangedCallback {
     }
 
     @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater menuInflater) {
-        super.onCreateOptionsMenu(menu, menuInflater);
-        Log.d(TAG, "Menu inflated");
-        menuInflater.inflate(R.menu.activity_home_menu, menu);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.post_new_property:
-                Intent postProperty = new Intent(getActivity(), PostPropertyActivity.class);
-                startActivity(postProperty);
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-    }
-
-    @Override
     public void onScroll(int l, int scrollPosition) {
         int headerHeight = mHeader.getHeight() - mToolbar.getHeight();
         float ratio = 0;

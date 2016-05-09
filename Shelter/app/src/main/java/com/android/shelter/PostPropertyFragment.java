@@ -1,5 +1,6 @@
 package com.android.shelter;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -104,7 +105,9 @@ public class PostPropertyFragment extends Fragment {
                 //TODO Add code to send data to DB and move to next activity My Postings
                 String [] address = {"randive.rishiraj@gmail.com"};
                 String subject = "Hello from shelter";
-                composeEmail();
+                //composeEmail();
+
+                showMyPostings();
             }
         });
 
@@ -200,5 +203,13 @@ public class PostPropertyFragment extends Fragment {
                     break;
         }
 
+    }
+
+    private void showMyPostings(){
+        Log.d(TAG, "Finishing the activity");
+        Intent intent = new Intent();
+        intent.putExtra(HomeActivity.EXTRA_FRAGMENT_ID, HomeActivity.MY_POSTING_FRAGMENT_ID);
+        getActivity().setResult(Activity.RESULT_OK, intent);
+        getActivity().finish();
     }
 }

@@ -26,4 +26,11 @@ public abstract class AbstractFragmentActivity extends AppCompatActivity {
                     .commit();
         }
     }
+    public void updateFragment(Fragment fragment, String fragmentTag){
+        if (fragment != null) {
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            fragmentManager.beginTransaction()
+                    .replace(R.id.fragment_container, fragment, fragmentTag).addToBackStack(fragmentTag).commit();
+        }
+    }
 }
