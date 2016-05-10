@@ -1,83 +1,53 @@
 package com.android.shelter;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.net.Uri;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
-import android.view.Menu;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.facebook.AccessToken;
-import com.facebook.HttpMethod;
-import com.facebook.Request;
-import com.facebook.Response;
 import com.facebook.Session;
 import com.facebook.SessionState;
 import com.facebook.UiLifecycleHelper;
-import com.facebook.model.GraphObject;
-import com.facebook.model.GraphUser;
-import com.google.android.gms.auth.api.Auth;
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
-import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.Scopes;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.OptionalPendingResult;
 import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.common.api.Scope;
 import com.google.android.gms.common.api.Status;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
 
 public class LoginActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener,
         View.OnClickListener{
 
     private UiLifecycleHelper uiHelper;
-    private View otherView;
     private static final String TAG = "MainActivity";
     private static final int RC_SIGN_IN = 9001;
     private GoogleApiClient mGoogleApiClient;
     private TextView mStatusTextView;
     private ProgressDialog mProgressDialog;
-    private ImageView img;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.content_login);
-        // Set View that should be visible after log-in invisible initially
-        otherView = (View) findViewById(R.id.before_login);
-        findViewById(R.id.sign_in_button).setOnClickListener(this);
-        findViewById(R.id.sign_out_button).setOnClickListener(this);
-        img = (ImageView)findViewById(R.id.pic);
-//        mStatusTextView = (TextView) findViewById(R.id.location);
-        img.setImageDrawable(getResources().getDrawable(R.drawable.propic));
-        otherView.setVisibility(View.VISIBLE);
-        // To maintain FB Login session
+
+
         uiHelper = new UiLifecycleHelper(this, callback);
         uiHelper.onCreate(savedInstanceState);
 
+        // Google login
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestScopes(new Scope(Scopes.PLUS_LOGIN))
                 .requestEmail()
                 .build();
 
@@ -85,9 +55,16 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
                 .enableAutoManage(this /* FragmentActivity */, (GoogleApiClient.OnConnectionFailedListener) this /* OnConnectionFailedListener */)
                 .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
                 .build();
+
+        SignInButton signInButton = (SignInButton) findViewById(R.id.sign_in_button);
+        signInButton.setSize(SignInButton.SIZE_WIDE);
+        signInButton.setScopes(gso.getScopeArray());
+        signInButton.setOnClickListener(this);
+
+        signInButton.setOnClickListener(this);
     }
 
-    // Called when session changes
+    // Called when facebook session changes
     private Session.StatusCallback callback = new Session.StatusCallback() {
 
         @Override
@@ -110,7 +87,6 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
             Log.i(TAG, "Logged in...");
             // make request to the /me API to get Graph user
 
-                        otherView.setVisibility(View.VISIBLE);
                         // Set User name
 //                        name.setText("Hello " + user.getName());
 //                        // Set Gender
@@ -126,7 +102,6 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
 //            }).executeAsync();
         } else if (state.isClosed()) {
             Log.i(TAG, "Logged out...");
-            img.setImageDrawable(getResources().getDrawable(R.drawable.propic));
 
         }
     }
@@ -156,15 +131,12 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
 //
                 Log.d(acct.getPhotoUrl().toString(),"URL");
                 Toast.makeText(LoginActivity.this, acct.getPhotoUrl().toString(), Toast.LENGTH_SHORT).show();
-                img.setImageURI(acct.getPhotoUrl());
-                otherView.setVisibility(View.VISIBLE);
 //                mStatusTextView.setText(getString(R.string.signed_in_fmt, acct.getEmail()));
             }
             updateUI(true);
         } else {
             // Signed out, show unauthenticated UI.
             updateUI(false);
-            img.setImageDrawable(getResources().getDrawable(R.drawable.propic));
         }
     }
     @Override
@@ -239,10 +211,6 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
             case R.id.sign_in_button:
                 signIn();
                 break;
-            case R.id.sign_out_button:
-                signOut();
-                break;
-
         }
     }
     private void signIn() {
@@ -257,7 +225,6 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
                     public void onResult(Status status) {
                         // [START_EXCLUDE]
                         updateUI(false);
-                        img.setImageDrawable(getResources().getDrawable(R.drawable.propic));
                         // [END_EXCLUDE]
                     }
                 });
@@ -271,16 +238,23 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
     private void updateUI(boolean signedIn) {
         if (signedIn) {
             findViewById(R.id.sign_in_button).setVisibility(View.GONE);
-            findViewById(R.id.sign_out_and_disconnect).setVisibility(View.VISIBLE);
         } else {
 //            mStatusTextView.setText(R.string.signed_out);
           //
           //  otherView.setVisibility(View.GONE);
             findViewById(R.id.sign_in_button).setVisibility(View.VISIBLE);
-            findViewById(R.id.sign_out_and_disconnect).setVisibility(View.GONE);
         }
 
 
+    }
+
+    /**
+     * Function defined in {@link com.android.shelter.R.layout#content_login}
+     * @param view
+     */
+    public void closeLogin(View view){
+        Log.d(TAG, "Finishing the activity");
+        finish();
     }
 
 }

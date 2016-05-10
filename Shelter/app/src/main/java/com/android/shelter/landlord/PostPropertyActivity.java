@@ -1,9 +1,10 @@
-package com.android.shelter;
+package com.android.shelter.landlord;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v7.app.AppCompatActivity;
+
+import com.android.shelter.AbstractFragmentActivity;
+import com.android.shelter.R;
 
 /**
  * Activity to add new property.
@@ -19,5 +20,14 @@ public class PostPropertyActivity extends AbstractFragmentActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_post_property);
+    }
+
+    @Override
+    public void onBackPressed() {
+        if(getFragmentManager().getBackStackEntryCount() > 0){
+            getFragmentManager().popBackStack();
+        }else {
+            super.onBackPressed();
+        }
     }
 }
