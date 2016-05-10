@@ -1,33 +1,24 @@
-package com.android.shelter;
+package com.android.shelter.landlord;
 
-import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.RadioButton;
-import android.widget.RelativeLayout;
+import android.widget.ToggleButton;
 
-import com.android.shelter.helper.PropertyImage;
-import com.android.shelter.helper.PropertyImageAdapter;
-import com.android.shelter.util.ImagePicker;
-import com.android.shelter.util.SendEmail;
-
-import java.util.ArrayList;
-import java.util.List;
+import com.android.shelter.Property;
+import com.android.shelter.PropertyLab;
+import com.android.shelter.R;
+import com.android.shelter.helper.MyPostingAdapter;
 
 /**
+ * Shows list of posted properties
  * Created by rishi on 5/7/16.
  */
 public class MyPostingFragment extends Fragment {
@@ -39,7 +30,17 @@ public class MyPostingFragment extends Fragment {
 
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
-        setHasOptionsMenu(true);
+        setHasOptionsMenu(false);
+        for (int i = 0; i < 5; i++) {
+            Property property=new Property();
+            property.setName("101 San Fernando");
+            property.setType("Townhouse");
+            property.setPhotoId(R.color.colorAccent);
+            property.setIsFavorite(false);
+            property.setAddress("4th Street, San Jose, 95112");
+            property.setRent("$ 3400");
+            PropertyLab.get(getContext()).addProperty(property);
+        }
     }
 
     @Override
@@ -49,7 +50,6 @@ public class MyPostingFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_my_postings, container, false);
 
         ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle("My Postings");
-
 
         mPostingRecyclerView = (RecyclerView) view.findViewById(R.id.my_postings_recycler_view);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
@@ -78,7 +78,7 @@ public class MyPostingFragment extends Fragment {
     private void setupAdapter() {
         if (isAdded()) {
             Log.d(TAG, "Setting adapter for view");
-            mPostingRecyclerView.setAdapter(new PropertyAdapter(PropertyLab.get(getContext()).getProperties()));
+            mPostingRecyclerView.setAdapter(new MyPostingAdapter(PropertyLab.get(getContext()).getProperties(), getActivity(), getActivity().getSupportFragmentManager()));
         }
     }
 }

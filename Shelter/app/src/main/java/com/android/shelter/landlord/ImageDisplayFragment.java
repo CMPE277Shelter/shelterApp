@@ -1,10 +1,9 @@
-package com.android.shelter;
+package com.android.shelter.landlord;
 
 import android.graphics.Point;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Display;
 import android.view.LayoutInflater;
@@ -13,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import com.android.shelter.R;
 import com.android.shelter.helper.PropertyImage;
 import com.android.shelter.util.ImagePicker;
 import com.android.shelter.util.ImageResizer;

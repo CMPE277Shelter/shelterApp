@@ -1,4 +1,4 @@
-package com.android.shelter;
+package com.android.shelter.landlord;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -9,6 +9,7 @@ import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -17,9 +18,11 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
 
-import com.android.shelter.R.layout;
+import com.android.shelter.HomeActivity;
+import com.android.shelter.R;
 import com.android.shelter.helper.PropertyImage;
 import com.android.shelter.helper.PropertyImageAdapter;
 import com.android.shelter.util.ImagePicker;
@@ -41,6 +44,24 @@ public class PostPropertyFragment extends Fragment {
     private RecyclerView mImageRecyclerView;
     private List<PropertyImage> mImageList = new ArrayList<>();
     private Uri mCapturedImageURI;
+    private EditText mPropertyName;
+    private EditText mStreet;
+    private EditText mCity;
+    private EditText mState;
+    private EditText mZipcode;
+
+    private EditText mTotalRooms;
+    private EditText mMonthlyRent;
+
+    private RadioButton mHouseType;
+    private RadioButton mTownhouseType;
+    private RadioButton mApartmentType;
+
+    private EditText mContactName;
+    private EditText mContactEmail;
+    private EditText mContactPhone;
+
+    private EditText mPropertyDescription;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -64,21 +85,32 @@ public class PostPropertyFragment extends Fragment {
 
 
         // TODO Populate complete data in model and send it to DB
-        EditText propertyName = (EditText) view.findViewById(R.id.property_name);
+        mPropertyName = (EditText) view.findViewById(R.id.property_name);
 
-        EditText street = (EditText) view.findViewById(R.id.street_name);
-        EditText city = (EditText) view.findViewById(R.id.city_name);
-        EditText state = (EditText) view.findViewById(R.id.state_name);
-        EditText zipcode = (EditText) view.findViewById(R.id.zip);
+        mStreet = (EditText) view.findViewById(R.id.street_name);
+        mCity = (EditText) view.findViewById(R.id.city_name);
+        mState = (EditText) view.findViewById(R.id.state_name);
+        mZipcode = (EditText) view.findViewById(R.id.zip);
 
-        EditText totalRooms = (EditText) view.findViewById(R.id.number_of_rooms);
-        EditText monthlyRent = (EditText) view.findViewById(R.id.monthly_rent);
+        mTotalRooms = (EditText) view.findViewById(R.id.number_of_rooms);
+        mMonthlyRent = (EditText) view.findViewById(R.id.monthly_rent);
 
-        EditText contactName = (EditText) view.findViewById(R.id.person_name);
-        EditText contactEmail = (EditText) view.findViewById(R.id.email);
-        EditText contactPhone = (EditText) view.findViewById(R.id.phone_number);
+        mHouseType = (RadioButton) view.findViewById(R.id.house_type);
+        mTownhouseType = (RadioButton) view.findViewById(R.id.townhouse_type);
+        mApartmentType = (RadioButton) view.findViewById(R.id.apartment_type);
+        RadioGroup propertyTypes = (RadioGroup) view.findViewById(R.id.property_type);
+        propertyTypes.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                onPropertyTypeClicked(checkedId);
+            }
+        });
 
-        EditText propertyDescription = (EditText) view.findViewById(R.id.description);
+        mContactName = (EditText) view.findViewById(R.id.person_name);
+        mContactEmail = (EditText) view.findViewById(R.id.email);
+        mContactPhone = (EditText) view.findViewById(R.id.phone_number);
+
+        mPropertyDescription = (EditText) view.findViewById(R.id.description);
 
         mImageRecyclerView = (RecyclerView) view.findViewById(R.id.property_images_recycler_view);
         StaggeredGridLayoutManager gridLayoutManager =
@@ -103,11 +135,10 @@ public class PostPropertyFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 //TODO Add code to send data to DB and move to next activity My Postings
-                String [] address = {"randive.rishiraj@gmail.com"};
-                String subject = "Hello from shelter";
                 //composeEmail();
-
-                showMyPostings();
+                //if(isFormValid()){
+                    showMyPostings();
+                //}
             }
         });
 
@@ -180,25 +211,16 @@ public class PostPropertyFragment extends Fragment {
         sm.execute();
     }
 
-    /**
-     * onClick added for radio buttons in {@link layout#post_property_fragment}
-     * @param view
-     */
-    public void onPropertyTypeClicked(View view){
-        boolean checked = ((RadioButton) view).isChecked();
-
+    public void onPropertyTypeClicked(int id){
         // Check which radio button was clicked
-        switch(view.getId()) {
+        switch(id) {
             case R.id.house_type:
-                if (checked)
                     Log.d(TAG, "Its house type");
                     break;
             case R.id.townhouse_type:
-                if (checked)
                     Log.d(TAG, "Its townhouse type");
                     break;
             case R.id.apartment_type:
-                if (checked)
                     Log.d(TAG, "Its apartment type");
                     break;
         }
@@ -211,5 +233,54 @@ public class PostPropertyFragment extends Fragment {
         intent.putExtra(HomeActivity.EXTRA_FRAGMENT_ID, HomeActivity.MY_POSTING_FRAGMENT_ID);
         getActivity().setResult(Activity.RESULT_OK, intent);
         getActivity().finish();
+    }
+
+    private boolean isFormValid(){
+        boolean isValid = true;
+        if(TextUtils.isEmpty(mPropertyName.getText())){
+            mPropertyName.setError(getString(R.string.blank_error_msg));
+            isValid = false;
+        }
+        if(TextUtils.isEmpty(mStreet.getText())){
+            mStreet.setError(getString(R.string.blank_error_msg));
+            isValid = false;
+        }
+        if(TextUtils.isEmpty(mCity.getText())){
+            mCity.setError(getString(R.string.blank_error_msg));
+            isValid = false;
+        }
+        if(TextUtils.isEmpty(mState.getText())){
+            mState.setError(getString(R.string.blank_error_msg));
+            isValid = false;
+        }
+        if(TextUtils.isEmpty(mZipcode.getText())){
+            mZipcode.setError(getString(R.string.blank_error_msg));
+            isValid = false;
+        }
+        if(TextUtils.isEmpty(mTotalRooms.getText())){
+            mTotalRooms.setError(getString(R.string.blank_error_msg));
+            isValid = false;
+        }
+        if(TextUtils.isEmpty(mMonthlyRent.getText())){
+            mMonthlyRent.setError(getString(R.string.blank_error_msg));
+            isValid = false;
+        }
+        if(!mHouseType.isChecked() && !mTownhouseType.isChecked() && !mApartmentType.isChecked()){
+            mApartmentType.setError(getString(R.string.type_not_selected_error_msg));
+            isValid = false;
+        }
+        if(TextUtils.isEmpty(mContactName.getText())){
+            mContactName.setError(getString(R.string.blank_error_msg));
+            isValid = false;
+        }
+        if(TextUtils.isEmpty(mContactPhone.getText())){
+            mContactPhone.setError(getString(R.string.blank_error_msg));
+            isValid = false;
+        }
+        if(TextUtils.isEmpty(mContactEmail.getText())){
+            mContactEmail.setError(getString(R.string.blank_error_msg));
+            isValid = false;
+        }
+        return isValid;
     }
 }

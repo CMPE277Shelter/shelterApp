@@ -2,17 +2,14 @@ package com.android.shelter.helper;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.BitmapFactory;
-import android.media.Image;
 import android.media.ThumbnailUtils;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageView;
 
-import com.android.shelter.ImagePagerActivity;
+import com.android.shelter.landlord.ImagePagerActivity;
 import com.android.shelter.R;
-import com.android.shelter.util.ImagePicker;
 
 
 /**

@@ -38,7 +38,7 @@
                 android:value=".HomeActivity" />
         </activity>
         <activity
-            android:name=".PostPropertyActivity"
+            android:name=".landlord.PostPropertyActivity"
             android:label="@string/title_activity_post_property"
             android:theme="@style/AppTheme">
             <meta-data
@@ -46,12 +46,12 @@
                 android:value=".HomeActivity" />
         </activity>
         <activity
-            android:name=".ImagePagerActivity"
+            android:name=".landlord.ImagePagerActivity"
             android:label="@string/title_activity_image_pager"
             android:theme="@style/AppTheme">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".PostPropertyActivity" />
+                android:value=".landlord.PostPropertyActivity" />
         </activity>
         <activity
             android:name="com.facebook.LoginActivity"
@@ -62,6 +62,10 @@
             android:name=".LoginActivity"
             android:label="@string/title_activity_login"
             android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".landlord.PostedPropertyPagerActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+        </activity>
     </application>
 
 </manifest>

@@ -1,10 +1,10 @@
-package com.android.shelter;
+package com.android.shelter.landlord;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v7.app.AppCompatActivity;
+
+import com.android.shelter.AbstractFragmentActivity;
+import com.android.shelter.R;
 
 /**
  * Activity to add new property.

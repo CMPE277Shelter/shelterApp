@@ -16,6 +16,9 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.android.shelter.landlord.MyPostingFragment;
+import com.android.shelter.landlord.PostPropertyActivity;
+
 /**
  * Landing screen or home activity for the application.
  */
@@ -104,7 +107,7 @@ public class HomeActivity extends AbstractFragmentActivity
     public boolean onCreateOptionsMenu(Menu menu) {
         Log.d(TAG, "Menu inflated");
         MenuInflater inflater= getMenuInflater();
-        inflater.inflate(R.menu.activity_home_menu, menu);
+        inflater.inflate(R.menu.menu_home, menu);
         return true;
     }
 
