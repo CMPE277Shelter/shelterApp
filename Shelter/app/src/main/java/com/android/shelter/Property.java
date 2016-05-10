@@ -2,12 +2,23 @@ package com.android.shelter;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Created by Prasanna on 5/5/16.
  */
 public class Property {
+
+    private UUID id;
+    private String name;
+    private String type;
+    private int photoId;
+    private boolean isFavorite;
+    private String address;
+    private String rent;
+
     public Property() {
+        id = UUID.randomUUID();
     }
 
     Property(String name, String type, int photoId) {
@@ -16,6 +27,9 @@ public class Property {
         this.photoId = photoId;
     }
 
+    public UUID getId(){
+        return id;
+    }
     public String getName() {
         return name;
     }
@@ -40,10 +54,27 @@ public class Property {
         this.photoId = photoId;
     }
 
-    String name;
-    String type;
-    int photoId;
-//    private List<Property> properties;
+    public boolean isFavorite() {
+        return isFavorite;
+    }
 
+    public void setIsFavorite(boolean isFavorite) {
+        this.isFavorite = isFavorite;
+    }
 
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public String getRent() {
+        return rent;
+    }
+
+    public void setRent(String rent) {
+        this.rent = rent;
+    }
 }

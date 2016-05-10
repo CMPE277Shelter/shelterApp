@@ -39,9 +39,9 @@ public class PropertyAdapter extends RecyclerView.Adapter<PropertyAdapter.Proper
 
     @Override
     public void onBindViewHolder(PropertyViewHolder propertyViewHolder, int i) {
-        propertyViewHolder.propertyName.setText(properties.get(i).name);
-        propertyViewHolder.propertyType.setText(properties.get(i).type);
-        propertyViewHolder.propertyPhoto.setImageResource(properties.get(i).photoId);
+        propertyViewHolder.propertyName.setText(properties.get(i).getName());
+        propertyViewHolder.propertyType.setText(properties.get(i).getType());
+        propertyViewHolder.propertyPhoto.setImageResource(properties.get(i).getPhotoId());
     }
 
     @Override
