@@ -14,10 +14,12 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.shelter.landlord.MyPostingFragment;
 import com.android.shelter.landlord.PostPropertyActivity;
+import com.facebook.AccessToken;
 
 /**
  * Landing screen or home activity for the application.
@@ -38,6 +40,9 @@ public class HomeActivity extends AbstractFragmentActivity
 
     private static final String TAG = "HomeActivity";
     private DrawerLayout mDrawer;
+    private LoginActivity login;
+    private String FacebookUser;
+    private String GoogleUser;
 
 
     @Override
@@ -48,6 +53,7 @@ public class HomeActivity extends AbstractFragmentActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        login = new LoginActivity();
         Log.d(TAG, "Now creating the fragment");
         setContentView(R.layout.activity_home);
 
@@ -63,10 +69,8 @@ public class HomeActivity extends AbstractFragmentActivity
         toggle.syncState();
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);
-
-        mDrawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         View navHeaderView = navigationView.getHeaderView(0);
+        navigationView.setNavigationItemSelectedListener(this);
         Button loginButton = (Button) navHeaderView.findViewById(R.id.login_button);
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -80,6 +84,30 @@ public class HomeActivity extends AbstractFragmentActivity
                 startActivity(intent);
             }
         });
+        loginButton.setVisibility(View.VISIBLE);
+
+        mDrawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        TextView Name = (TextView)findViewById(R.id.Name);
+        Bundle extras = getIntent().getExtras();
+
+        if (extras != null) {
+             FacebookUser = extras.getString("FacebookUser");
+             GoogleUser = extras.getString("GoogleUser");
+        }
+        Toast.makeText(HomeActivity.this, "USER:" +FacebookUser, Toast.LENGTH_SHORT).show();
+        Toast.makeText(HomeActivity.this, "USER:"+GoogleUser, Toast.LENGTH_SHORT).show();
+//        if(login.IsLoggedIn()||login.isGoogleLoggedIn()){
+//
+//            if(login.getUser()!="")
+//                Name.setText("Welcome"+login.getUser());
+//                loginButton.setVisibility(View.GONE);
+//
+//        }else if(login.getGoogleUser()!="" && login.isGoogleLoggedIn()){
+//            //Name.setText("Welcome"+login.getGoogleUser());
+//            Toast.makeText(HomeActivity.this, login.getGoogleUser(), Toast.LENGTH_SHORT).show();
+//            loginButton.setVisibility(View.GONE);
+//        }
+//
     }
 
     @Override
@@ -153,4 +181,5 @@ public class HomeActivity extends AbstractFragmentActivity
     public void updateFragment(Fragment fragment, String fragmentTag) {
         super.updateFragment(fragment, fragmentTag);
     }
+
 }
