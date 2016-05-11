@@ -31,9 +31,12 @@ public class HomeActivity extends AbstractFragmentActivity
     public static final String EXTRA_FRAGMENT_ID = "com.android.shelter.fragment_id";
     public static final int HOME_FRAGMENT_ID = 2;
     public static final int MY_POSTING_FRAGMENT_ID = 3;
+    public static final int MY_SAVED_SEARCH_FRAGMENT_ID = 4;
 
     public static final String HOME_FRAGMENT_TAG = "HomeFragment";
     public static final String MY_POSTING_FRAGMENT_TAG = "MyPostingFragment";
+    public static final String MY_SAVED_SEARCH_FRAGMENT_TAG = "MySavedSearchFragment";
+
 
     private static final String TAG = "HomeActivity";
     private DrawerLayout mDrawer;
@@ -120,11 +123,19 @@ public class HomeActivity extends AbstractFragmentActivity
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         int id = item.getItemId();
-        if (id == R.id.nav_gallery) {
+        if (id == R.id.nav_search) {
+            Intent searchPropertyIntent = new Intent(this,SearchPropertyActivity.class);
+            startActivity(searchPropertyIntent);
 
-        } else if (id == R.id.nav_slideshow) {
+        } else if (id == R.id.nav_properties) {
 
+        } else if (id == R.id.nav_favorites) {
+
+        } else if (id == R.id.nav_saved_searches) {
+            Intent savedSearchIntent = new Intent(this, SavedSearchActivity.class);
+            startActivityForResult(savedSearchIntent, HomeActivity.REQUEST_FRAGMENT);
         }
+
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
@@ -158,7 +169,9 @@ public class HomeActivity extends AbstractFragmentActivity
             Log.d(TAG, "Back in Home activity " + data.getIntExtra(EXTRA_FRAGMENT_ID, 1));
             if(data.getIntExtra(EXTRA_FRAGMENT_ID, 1) == MY_POSTING_FRAGMENT_ID){
                 updateFragment(new MyPostingFragment(), MY_POSTING_FRAGMENT_TAG);
-            }else {
+            } else if(data.getIntExtra(EXTRA_FRAGMENT_ID,1)==MY_SAVED_SEARCH_FRAGMENT_ID){
+                updateFragment(new SavedSearchFragment(), MY_SAVED_SEARCH_FRAGMENT_TAG);
+            } else {
                 updateFragment(new HomeFragment(), HOME_FRAGMENT_TAG);
             }
         }
