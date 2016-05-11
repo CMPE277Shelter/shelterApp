@@ -1,0 +1,138 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             xmlns:tools="http://schemas.android.com/tools"
+             android:layout_width="match_parent"
+             android:layout_height="wrap_content"
+             tools:context="com.android.shelter.SearchPropertyFilterFragment">
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                  xmlns:card_view="http://schemas.android.com/apk/res-auto"
+                  android:orientation="vertical"
+                  android:layout_width="match_parent"
+                  android:layout_height="wrap_content">
+        <android.support.v7.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            card_view:cardCornerRadius="2dp"
+            card_view:cardElevation="5dp">
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="10dp">
+
+                <EditText android:id="@+id/filtered_keyword"
+                          android:layout_width="wrap_content"
+                          android:layout_height="wrap_content"
+                          android:ems="13"
+                          android:hint="Keyword"
+                          android:inputType="textPostalAddress|textCapWords"
+                          android:layout_alignParentTop="true"
+                          android:layout_centerHorizontal="true"
+                          android:layout_marginTop="25dp"
+                          android:imeOptions="actionNext"/>
+
+                <LinearLayout android:id="@+id/state_and_zip"
+                              android:layout_width="wrap_content"
+                              android:layout_height="wrap_content"
+                              android:orientation="horizontal"
+                              android:layout_below="@+id/filtered_keyword"
+                              android:layout_centerHorizontal="true">
+                    <EditText android:id="@+id/filtered_zip"
+                              android:layout_width="wrap_content"
+                              android:layout_height="wrap_content"
+                              android:ems="4"
+                              android:hint="Zip Code"
+                              android:inputType="number"
+                              android:layout_marginTop="25dp"
+                              android:imeOptions="actionNext"/>
+                    <EditText android:id="@+id/filtered_city"
+                              android:layout_width="wrap_content"
+                              android:layout_height="wrap_content"
+                              android:ems="9"
+                              android:hint="City"
+                              android:inputType="textPostalAddress|textCapWords"
+                              android:layout_marginTop="25dp"
+                              android:imeOptions="actionNext"/>
+                </LinearLayout>
+            </RelativeLayout>
+        </android.support.v7.widget.CardView>
+
+        <android.support.v7.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            card_view:cardCornerRadius="2dp"
+            card_view:cardElevation="5dp">
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="20dp">
+                <LinearLayout android:id="@+id/property_type_layout"
+                              android:layout_width="wrap_content"
+                              android:layout_height="wrap_content"
+                              android:orientation="horizontal"
+                              android:layout_below="@+id/property_details"
+                              android:layout_marginTop="25dp">
+                    <RadioGroup android:id="@+id/filtered_property_type"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:orientation="vertical">
+                        <RadioButton
+                            android:id="@+id/house_type"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="House"/>
+                        <RadioButton
+                            android:id="@+id/townhouse_type"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Townhouse"/>
+                        <RadioButton
+                            android:id="@+id/apartment_type"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Apartment"/>
+                        <RadioButton
+                            android:id="@+id/all_type"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="All"/>
+                    </RadioGroup>
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:layout_below="@+id/property_details"
+                        android:layout_marginLeft="10dp">
+                        <EditText android:id="@+id/filtered_min_rent"
+                                  android:layout_width="wrap_content"
+                                  android:layout_height="wrap_content"
+                                  android:ems="13"
+                                  android:hint="Min rent/month"
+                                  android:inputType="number"
+                                  android:imeOptions="actionNext"/>
+                        <EditText android:id="@+id/filtered_max_rent"
+                                  android:layout_width="wrap_content"
+                                  android:layout_height="wrap_content"
+                                  android:ems="13"
+                                  android:hint="Max rent/month"
+                                  android:inputType="number"
+                                  android:imeOptions="actionNext"
+                                  android:layout_marginTop="10dp"/>
+                    </LinearLayout>
+                </LinearLayout>
+
+
+            </RelativeLayout>
+        </android.support.v7.widget.CardView>
+        <Button android:id="@+id/filtered_filter_btn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Finish"
+                android:background="@color/colorPrimary"
+                android:layout_alignParentBottom="true"
+            android:textColor="@color/white"/>
+
+    </LinearLayout>
+
+</FrameLayout>
