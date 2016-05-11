@@ -4,7 +4,7 @@
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/nav_camera"
-            android:title="My Property List" />
+            android:title="My Properties" />
             <!--android:icon=""-->
         <item
             android:id="@+id/nav_gallery"
@@ -14,12 +14,5 @@
             android:id="@+id/nav_slideshow"
             android:title="My Saved Searches" />
             <!--android:icon="@drawable/ic_menu_slideshow"-->
-        <item
-            android:id="@+id/login"
-            android:title="Login" />
     </group>
-
-
-
-
 </menu>

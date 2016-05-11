@@ -13,6 +13,7 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.UUID;
 
 import cz.msebera.android.httpclient.HttpEntity;
 import cz.msebera.android.httpclient.HttpResponse;
@@ -56,6 +57,13 @@ public class PropertyLab {
         return mProperties;
     }
 
-
+    public Property getProperty(UUID id) {
+        for(Property property : mProperties){
+            if(property.getId().equals(id)){
+                return property;
+            }
+        }
+        return null;
+    }
 
 }
