@@ -13,7 +13,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="5dp">
+        android:padding="5dp"
+        android:weightSum="1">
         <TextView
             android:id="@+id/close_login"
             android:layout_width="wrap_content"
@@ -31,6 +32,14 @@
             android:gravity="center"
             />
         <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/Name"
+            android:textSize="18dp"
+            android:textColor="@android:color/black"
+            android:gravity="center"
+            android:layout_weight="1.30" />
+        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Search, make favorites and get alerts"
@@ -41,7 +50,7 @@
         <ImageView
             android:layout_width="match_parent"
             android:layout_height="250dp"
-            android:background="@drawable/login_background"/>
+            android:background="@drawable/header"/>
     </LinearLayout>
     <LinearLayout
         android:layout_width="match_parent"
@@ -59,7 +68,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 />
-            />
+
             <com.google.android.gms.common.SignInButton
                 android:id="@+id/sign_in_button"
                 android:layout_width="match_parent"

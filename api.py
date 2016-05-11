@@ -91,6 +91,76 @@ def createPosting():
         else:
                 return dumps({"error":"Error Occured"})
 
+@app.route('/createuser/',methods=['POST'])
+def createUser():
+        user={
+                "user_id":request.json['user_id'],
+                "name":request.json['name']
+        }
+        userDetails = getCollection('user')
+        insertedId = userDetails.insert_one(user)
+        if insertedId:
+                return dumps(user)
+        else:
+                return dumps({"error":"Error Occured"})
+
+@app.route('/addfavourite/',methods=['POST'])
+def addFavourite():
+        user_id = request.json['user_id']
+        fav_details =[]
+        fav = request.json['property_id']
+        owner_id = request.json['owner_id']
+        dict = {"property_id":fav,"owner_id":owner_id}
+        favourites = getCollection('favourites')
+        results = favourites.find({"user_id":user_id},{'_id': False})
+        for record in results:
+                user = record['user_id']
+                print user
+                if user == user_id:
+                        fav_details = record['FavDetails']
+        fav_details.append(dict)
+        user = {
+                "user_id":user_id,
+                "FavDetails":fav_details
+        }
+        if len(fav_details) == 0:
+                favourites.insert_one(user)
+        else:
+                updateId = favourites.update_one({"user_id":user_id},{"$set": {"FavDetails":fav_details}},upsert = True)
+        print updateId
+        if updateId:
+                return dumps(user)
+        else:
+                return dumps({"error":"Error Occured"})
+
+@app.route('/removefavourite/<user_id>/<property_id>/<owner_id>',methods=['DELETE'])
+def deleteFavourite(user_id,property_id,owner_id=""):
+        favourites = getCollection('favourites')
+        search_criteria = {}
+        if 'user_id' in request.args:
+                search_criteria['user_id'] = user_id
+        if 'property_id' in request.args:
+                search_criteria['FavDetails.property_id'] = property_id
+        if 'owner_id' in request.args:
+                search_criteria['FavDetails.owner_id'] = owner_id
+        results=favourites.find(search_criteria,{'_id':False})
+        dict = {"property_id":property_id,"owner_id":owner_id}
+        for record in results:
+                user = record['user_id']
+                print user
+                if user == user_id:
+                        fav_details = record['FavDetails']
+                        if len(fav_details) == 0:
+                                favourites.remove({"user_id":record['user_id']})
+        if dict in fav_details:
+                fav_details.remove(dict)
+        updateId = favourites.update_one({"user_id":user_id},{"$set": {"FavDetails":fav_details}},upsert = True)
+        if updateId:
+                return dumps({"Status" : "OK"})
+        else:
+                return dumps({"error":"Error Occured"})
+
+
 @app.route('/all/', methods=['GET'])
 def getAllPostings():
         postings=getCollection('postings')
