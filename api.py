@@ -140,6 +140,8 @@ def createPosting():
 				"email":request.json['owner_contact_info'][0]['email']
 			}
 		],
+                "is_favorite":False,
+                "isRentedOrCancelled":False,
 		"description":request.json['description'],
 		"more":[
 			{

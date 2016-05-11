@@ -11,5 +11,5 @@
     <item android:id="@+id/action_loc_picker"
           android:icon="@android:drawable/ic_dialog_map"
           android:title="@string/search_menu_action_loc_picker"
-          android:showAsAction="ifRoom|withText"/>
+          app:showAsAction="ifRoom|withText"/>
 </menu>

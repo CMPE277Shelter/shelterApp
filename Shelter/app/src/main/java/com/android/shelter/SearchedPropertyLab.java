@@ -1,19 +1,24 @@
 package com.android.shelter;
 
 import android.content.Context;
+
 import java.util.ArrayList;
 import java.util.UUID;
 
 /**
+ * Created by Prasanna on 5/11/16.
+ */
+
+/**
  * Created by Prasanna on 5/5/16.
  */
-public class PropertyLab {
-    private static PropertyLab sPropertyLab;
+public class SearchedPropertyLab {
+    private static SearchedPropertyLab sPropertyLab;
     private ArrayList<Property> mProperties;
     private Context mAppContext;
 
 
-    private PropertyLab(Context appContext) {
+    private SearchedPropertyLab(Context appContext) {
         mAppContext = appContext;
         mProperties = new ArrayList<>();
     }
@@ -26,9 +31,9 @@ public class PropertyLab {
         mProperties=new ArrayList<Property>();
     }
 
-    public static PropertyLab get(Context c) {
+    public static SearchedPropertyLab get(Context c) {
         if (sPropertyLab == null) {
-            sPropertyLab = new PropertyLab(c.getApplicationContext());
+            sPropertyLab = new SearchedPropertyLab(c.getApplicationContext());
         }
         return sPropertyLab;
     }

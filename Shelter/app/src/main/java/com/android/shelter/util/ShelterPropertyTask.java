@@ -7,6 +7,7 @@ import android.util.Log;
 import com.android.shelter.Property;
 import com.android.shelter.PropertyLab;
 import com.android.shelter.R;
+import com.android.shelter.SearchedPropertyLab;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -20,6 +21,7 @@ import cz.msebera.android.httpclient.HttpEntity;
 import cz.msebera.android.httpclient.HttpResponse;
 import cz.msebera.android.httpclient.client.HttpClient;
 import cz.msebera.android.httpclient.client.methods.HttpGet;
+import cz.msebera.android.httpclient.client.methods.HttpPost;
 import cz.msebera.android.httpclient.impl.client.DefaultHttpClient;
 import cz.msebera.android.httpclient.protocol.BasicHttpContext;
 import cz.msebera.android.httpclient.protocol.HttpContext;
@@ -56,37 +58,43 @@ public class ShelterPropertyTask  extends AsyncTask<Void, Void, String> {
         this.keyword=keyword;
         this.city=city;
         this.zipcode=zipcode;
-        this.min_rent=owner_id;
-        this.max_rent=owner_id;
-        this.property_type=property_type;
+        this.min_rent=min_rent;
+        this.max_rent=max_rent;
+        if(property_type.equals("All")){
+            this.property_type = null;
+        }else{
+            this.property_type=property_type;
+        }
+
     }
 
     private String getAbsoluteURL(){
         absoluteURL=BASE_URL+endpoint;
         if(hasParams){
             absoluteURL+="?execute=1";
-            if(owner_id !=null){
+            if(owner_id !=null && !owner_id.equals("")){
                 absoluteURL+="&owner_id="+ owner_id;
             }
-            if(property_id !=null){
+            if(property_id !=null && !property_id.equals("")){
                 absoluteURL+="&property_id="+ property_id;
             }
-            if(keyword !=null){
+            if(keyword !=null && !keyword.equals("")){
                 absoluteURL+="&keyword="+ keyword;
             }
-            if(zipcode !=null){
+            if(zipcode !=null && !zipcode.equals("")){
                 absoluteURL+="&zipcode="+ zipcode;
             }
-            if(min_rent !=null){
-                absoluteURL+="?min_rent="+ min_rent;
+            if(min_rent !=null && !min_rent.equals("")){
+                absoluteURL+="&min_rent="+ min_rent;
             }
-            if(max_rent !=null){
-                absoluteURL+="?max_rent="+ max_rent;
+            if(max_rent !=null && !max_rent.equals("")){
+                absoluteURL+="&max_rent="+ max_rent;
             }
-            if(property_type !=null){
-                absoluteURL+="?property_type="+ property_type;
+            if(property_type !=null && !property_type.equals("")){
+                absoluteURL+="&property_type="+ property_type;
             }
         }
+        Log.d("absoluteURL",absoluteURL);
         return absoluteURL;
     }
 
@@ -107,6 +115,7 @@ public class ShelterPropertyTask  extends AsyncTask<Void, Void, String> {
         HttpClient httpClient = new DefaultHttpClient();
         HttpContext localContext = new BasicHttpContext();
         HttpGet httpGet = new HttpGet(getAbsoluteURL());
+
         String text = null;
         try {
             HttpResponse response = httpClient.execute(httpGet, localContext);
