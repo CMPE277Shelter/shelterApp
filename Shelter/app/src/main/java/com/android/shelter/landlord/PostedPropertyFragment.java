@@ -1,8 +1,10 @@
 package com.android.shelter.landlord;
 
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -12,6 +14,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -23,14 +26,6 @@ import com.manuelpeinado.fadingactionbar.view.ObservableScrollable;
 import com.manuelpeinado.fadingactionbar.view.OnScrollChangedCallback;
 
 import java.util.UUID;
-
-import cz.msebera.android.httpclient.HttpEntity;
-import cz.msebera.android.httpclient.HttpResponse;
-import cz.msebera.android.httpclient.client.HttpClient;
-import cz.msebera.android.httpclient.client.methods.HttpGet;
-import cz.msebera.android.httpclient.impl.client.DefaultHttpClient;
-import cz.msebera.android.httpclient.protocol.BasicHttpContext;
-import cz.msebera.android.httpclient.protocol.HttpContext;
 
 /**
  * Shows detail view of posted property which are posted by landlord
@@ -46,18 +41,22 @@ public class PostedPropertyFragment extends Fragment implements OnScrollChangedC
     private TextView mPropertyRooms;
     private TextView mPropertyType;
     private TextView mRent;
+    private TextView mBath;
+    private TextView mFloorArea;
     private TextView mContactName;
     private TextView mContactPhone;
     private TextView mContactEmail;
     private TextView mDesc;
 
+    private CheckBox mRentedOrCancel;
+
     private Toolbar mToolbar;
     private int mLastDampedScroll;
 
 
-    public static PostedPropertyFragment newInstance(UUID imageId) {
+    public static PostedPropertyFragment newInstance(UUID propertyId) {
         Bundle args = new Bundle();
-        args.putSerializable(ARG_PROPERTY_ID, imageId);
+        args.putSerializable(ARG_PROPERTY_ID, propertyId);
 
         PostedPropertyFragment fragment = new PostedPropertyFragment();
         fragment.setArguments(args);
@@ -71,7 +70,10 @@ public class PostedPropertyFragment extends Fragment implements OnScrollChangedC
         setHasOptionsMenu(true);
         UUID id = (UUID) getArguments().getSerializable(ARG_PROPERTY_ID);
         mProperty = PropertyLab.get(getContext()).getProperty(id);
-        new IncrementViewCount().execute("http://ec2-52-33-84-233.us-west-2.compute.amazonaws.com:5000/incrementViewCount/");
+
+        // Increments page views
+        // TODO How it undestands which property?
+        //new IncrementViewCount().execute("http://ec2-52-33-84-233.us-west-2.compute.amazonaws.com:5000/incrementViewCount/");
     }
 
     @Override
@@ -91,25 +93,33 @@ public class PostedPropertyFragment extends Fragment implements OnScrollChangedC
         mPropertyName.setText(mProperty.getName());
 
         mAddress = (TextView) v.findViewById(R.id.posted_property_address);
-        mAddress.setText("4th Street, San Jose, 95112");
+        mAddress.setText(mProperty.getAddress());
 
         mPropertyRooms = (TextView) v.findViewById(R.id.posted_property_rooms);
-        mPropertyRooms.append("4 rooms");
+        mPropertyRooms.append(mProperty.getDisplayRoom());
         mPropertyType = (TextView) v.findViewById(R.id.posted_property_type);
-        mPropertyType.append("Townhouse");
+        mPropertyType.append(mProperty.getType());
+        mBath = (TextView) v.findViewById(R.id.posted_property_bath);
+        mBath.append(mProperty.getBath());
+        mFloorArea = (TextView) v.findViewById(R.id.posted_property_floor_area);
+        mFloorArea.append(mProperty.getFloorArea());
 
         mContactName = (TextView) v.findViewById(R.id.posted_property_contact_name);
-        mContactName.setText("Rishiraj Randive");
+        mContactName.setText(mProperty.getContactName());
         mContactPhone = (TextView) v.findViewById(R.id.posted_property_contact_phone);
-        mContactPhone.setText("6692389963");
+        mContactPhone.setText(mProperty.getPhoneNumber());
         mContactEmail = (TextView) v.findViewById(R.id.posted_property_contact_email);
-        mContactEmail.setText("randive.rishiraj@gmail.com");
+        mContactEmail.setText(mProperty.getEmail());
 
         mRent = (TextView) v.findViewById(R.id.posted_property_rent);
-        mRent.setText("$3400");
+        mRent.setText(mProperty.getDisplayRent());
 
         mDesc = (TextView) v.findViewById(R.id.posted_property_desc);
-        mDesc.setText(getString(R.string.loren_ipsum));
+        mDesc.setText(mProperty.getDescription());
+
+        mRentedOrCancel = (CheckBox) v.findViewById(R.id.rented_or_cancel);
+        mRentedOrCancel.setChecked(mProperty.isRentedOrCancel());
+        mRentedOrCancel.setOnClickListener(new RentedOrCancelClickListener());
 
 
         ObservableScrollable scrollView = (ObservableScrollable) v.findViewById(R.id.posted_property_scrollview);
@@ -127,8 +137,16 @@ public class PostedPropertyFragment extends Fragment implements OnScrollChangedC
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
+            case android.R.id.home:
+                Log.d(TAG, "Home clicked");
+                if (NavUtils.getParentActivityIntent(getActivity()) != null) {
+                    NavUtils.navigateUpFromSameTask(getActivity());
+                }
+                return true;
             case android.R.id.edit:
-                Log.d(TAG, "Edit clicked");
+                Log.d(TAG, "Edit clicked restart the PostPropertyActivity");
+                Intent postPropertyActivity = PostPropertyActivity.newIntent(getContext(), mProperty.getId());
+                startActivity(postPropertyActivity);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -144,6 +162,24 @@ public class PostedPropertyFragment extends Fragment implements OnScrollChangedC
         }
         updateActionBarTransparency(ratio);
         updateParallaxEffect(scrollPosition);
+    }
+
+    private class RentedOrCancelClickListener implements View.OnClickListener{
+        @Override
+        public void onClick(View v) {
+            AsyncTask<Void, Void, String> updateRentedOrCancelTask = new AsyncTask<Void, Void, String>() {
+                @Override
+                protected String doInBackground(Void... params) {
+                    // TODO Add code to check rented or cancel
+                    return null;
+                }
+                @Override
+                protected void onPostExecute(String aString) {
+                    super.onPostExecute(aString);
+                    Log.d(TAG, "Favorite updated in database");
+                }
+            }.execute();
+        }
     }
 
     /**

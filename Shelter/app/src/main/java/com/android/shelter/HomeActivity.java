@@ -24,6 +24,7 @@ import android.widget.Toast;
 
 import com.android.shelter.landlord.MyPostingFragment;
 import com.android.shelter.landlord.PostPropertyActivity;
+import com.android.shelter.util.ShelterConstants;
 
 /**
  * Landing screen or home activity for the application.
@@ -76,6 +77,7 @@ public class HomeActivity extends AbstractFragmentActivity
         mDrawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         View navHeaderView = navigationView.getHeaderView(0);
         mAfterSigninLayout = (LinearLayout) navHeaderView.findViewById(R.id.after_signin);
+        mAfterSigninLayout.setOnClickListener(new ProfileClickListener());
         mBeforeSigninLayout = (RelativeLayout) navHeaderView.findViewById(R.id.before_signin);
 
         Button loginButton = (Button) navHeaderView.findViewById(R.id.login_button);
@@ -107,9 +109,8 @@ public class HomeActivity extends AbstractFragmentActivity
         if (id == R.id.nav_search) {
             Intent searchPropertyIntent = new Intent(this,SearchPropertyActivity.class);
             startActivity(searchPropertyIntent);
-
         } else if (id == R.id.nav_properties) {
-
+            updateFragment(new MyPostingFragment(), HOME_FRAGMENT_TAG);
         } else if (id == R.id.nav_favorites) {
 
         } else if (id == R.id.nav_saved_searches) {
@@ -135,8 +136,8 @@ public class HomeActivity extends AbstractFragmentActivity
         switch (item.getItemId()) {
             case R.id.post_new_property:
                 // TODO Check if the user is logged if not ask start LoginActivity
-                Intent postProperty = new Intent(this, PostPropertyActivity.class);
-                startActivityForResult(postProperty, HomeActivity.REQUEST_FRAGMENT);
+                Intent postProperty = PostPropertyActivity.newIntent(getApplicationContext(), null);
+                startActivityForResult(postProperty, REQUEST_FRAGMENT);
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -154,11 +155,11 @@ public class HomeActivity extends AbstractFragmentActivity
             }
         }else if(requestCode == REQUEST_LOGIN){
             SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-            if(preferences.getBoolean("signedIn", false)){
+            if(preferences.getBoolean(ShelterConstants.SHARED_PREFERENCE_SIGNED_IN, false)){
                 Log.d(TAG, preferences.getString("email", "none"));
                 mAfterSigninLayout.setVisibility(View.VISIBLE);
                 TextView userName = (TextView) mAfterSigninLayout.findViewById(R.id.user_name);
-                userName.setText(preferences.getString("userName", "None"));
+                userName.setText(preferences.getString(ShelterConstants.SHARED_PREFERENCE_USER_NAME, ShelterConstants.DEFAULT_STRING));
                 mBeforeSigninLayout.setVisibility(View.GONE);
             }else{
                 mAfterSigninLayout.setVisibility(View.GONE);
@@ -184,6 +185,13 @@ public class HomeActivity extends AbstractFragmentActivity
             Intent intent = new Intent(HomeActivity.this, LoginActivity.class);
             startActivityForResult(intent, REQUEST_LOGIN);
             return null;
+        }
+    }
+
+    private class ProfileClickListener implements View.OnClickListener {
+        @Override
+        public void onClick(View v) {
+            // TODO Start new activity showing the profile
         }
     }
 }
