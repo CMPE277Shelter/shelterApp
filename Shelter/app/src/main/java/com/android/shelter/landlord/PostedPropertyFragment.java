@@ -1,5 +1,6 @@
 package com.android.shelter.landlord;
 
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
@@ -17,10 +18,19 @@ import android.widget.TextView;
 import com.android.shelter.Property;
 import com.android.shelter.PropertyLab;
 import com.android.shelter.R;
+import com.android.shelter.util.IncrementViewCount;
 import com.manuelpeinado.fadingactionbar.view.ObservableScrollable;
 import com.manuelpeinado.fadingactionbar.view.OnScrollChangedCallback;
 
 import java.util.UUID;
+
+import cz.msebera.android.httpclient.HttpEntity;
+import cz.msebera.android.httpclient.HttpResponse;
+import cz.msebera.android.httpclient.client.HttpClient;
+import cz.msebera.android.httpclient.client.methods.HttpGet;
+import cz.msebera.android.httpclient.impl.client.DefaultHttpClient;
+import cz.msebera.android.httpclient.protocol.BasicHttpContext;
+import cz.msebera.android.httpclient.protocol.HttpContext;
 
 /**
  * Shows detail view of posted property which are posted by landlord
@@ -44,11 +54,7 @@ public class PostedPropertyFragment extends Fragment implements OnScrollChangedC
     private Toolbar mToolbar;
     private int mLastDampedScroll;
 
-    /**
-     * Returns instance to {@link PostedPropertyPagerActivitys}
-     * @param imageId
-     * @return
-     */
+
     public static PostedPropertyFragment newInstance(UUID imageId) {
         Bundle args = new Bundle();
         args.putSerializable(ARG_PROPERTY_ID, imageId);
@@ -65,7 +71,7 @@ public class PostedPropertyFragment extends Fragment implements OnScrollChangedC
         setHasOptionsMenu(true);
         UUID id = (UUID) getArguments().getSerializable(ARG_PROPERTY_ID);
         mProperty = PropertyLab.get(getContext()).getProperty(id);
-
+        new IncrementViewCount().execute("http://ec2-52-33-84-233.us-west-2.compute.amazonaws.com:5000/incrementViewCount/");
     }
 
     @Override
@@ -161,6 +167,7 @@ public class PostedPropertyFragment extends Fragment implements OnScrollChangedC
 
         mLastDampedScroll = dampedScroll;
     }
+
 }
 
 
