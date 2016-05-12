@@ -22,8 +22,9 @@ import java.util.UUID;
  */
 public class PostedPropertyPagerActivity extends AppCompatActivity {
 
-    private static final String EXTRA_IMAGE_ID =
-            "com.android.shelter.property_id";
+    private static final String TAG = "PostedPropertyPager";
+    private static final String EXTRA_PROPERTY_ID =
+            "com.android.shelter.posted_property_pager_activity.property_id";
 
     private ViewPager mViewPager;
     private List<Property> mPropertyList;
@@ -31,23 +32,23 @@ public class PostedPropertyPagerActivity extends AppCompatActivity {
     /**
      * Returns new intent pager property
      * @param packageContext
-     * @param imageId
+     * @param propertyId
      * @return
      */
-    public static Intent newIntent(Context packageContext, UUID imageId) {
+    public static Intent newIntent(Context packageContext, UUID propertyId) {
         Intent intent = new Intent(packageContext, PostedPropertyPagerActivity.class);
-        intent.putExtra(EXTRA_IMAGE_ID, imageId);
+        intent.putExtra(EXTRA_PROPERTY_ID, propertyId);
         return intent;
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.d("PostedPropertyPager", "On created for pager activity");
+        Log.d(TAG, "On created for pager activity");
         setContentView(R.layout.activity_posted_property_pager);
 
         UUID imageId = (UUID) getIntent()
-                .getSerializableExtra(EXTRA_IMAGE_ID);
+                .getSerializableExtra(EXTRA_PROPERTY_ID);
 
         mViewPager = (ViewPager) findViewById(R.id.posted_property_pager);
 

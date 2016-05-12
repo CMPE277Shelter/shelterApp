@@ -7,10 +7,4 @@
         app:showAsAction="always"
         android:title="Edit"
         android:icon="@drawable/edit_property"/>
-    <item
-        android:id="@+id/mark_favorite"
-        app:showAsAction="always"
-        android:title="Favorite"
-        android:checkable="true"
-        android:icon="@drawable/not_favorite"/>
 </menu>

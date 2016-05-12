@@ -26,7 +26,7 @@ import java.util.UUID;
 
 
 public class PropertyFragment extends Fragment implements OnScrollChangedCallback {
-    private static final String TAG = "PostedPropertyFragment";
+    private static final String TAG = "PropertyFragment";
     private static final String ARG_PROPERTY_ID = "property_id";
 
     private Property mProperty;
