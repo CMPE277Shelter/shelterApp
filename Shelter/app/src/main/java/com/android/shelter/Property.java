@@ -16,6 +16,8 @@ public class Property {
     private boolean isFavorite;
     private String address;
     private String rent;
+    private String bath;
+    private String floorArea;
 
     public Property() {
         id = UUID.randomUUID();
@@ -76,5 +78,21 @@ public class Property {
 
     public void setRent(String rent) {
         this.rent = rent;
+    }
+
+    public String getBath() {
+        return bath;
+    }
+
+    public void setBath(String bath) {
+        this.bath = bath;
+    }
+
+    public String getFloorArea() {
+        return floorArea;
+    }
+
+    public void setFloorArea(String floorArea) {
+        this.floorArea = floorArea;
     }
 }
