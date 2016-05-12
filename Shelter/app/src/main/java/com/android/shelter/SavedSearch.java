@@ -65,14 +65,14 @@ public class SavedSearch implements Serializable {
         this.zipcode = zipcode;
     }
 
-    public UUID getId(){
+    public String getId(){
         return id;
     }
 
+
     public SavedSearch() {
-        id = UUID.randomUUID();
+        id = UUID.randomUUID()+"";
         savedSearchName="";
-        hasSavedSearchName=false;
         postingType="";
         hasPostingType=false;
         minRent="";
@@ -86,18 +86,31 @@ public class SavedSearch implements Serializable {
         zipcode="";
         hasZipcode=false;
         frequency="Realtime";
-        hasFrequency=false;
     }
 
-    private UUID id;
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    private String id;
     private String savedSearchName;
+    private String frequency;
+
     private String postingType;
     private String minRent;
     private String maxRent;
     private String keyword;
     private String city;
     private String zipcode;
-    private String frequency;
+
+
+    private boolean hasPostingType;
+    private boolean hasMinRent;
+    private boolean hasMaxRent;
+    private boolean hasKeyword;
+    private boolean hasCity;
+    private boolean hasZipcode;
+
 
     public String getFrequency() {
         return frequency;
@@ -105,14 +118,6 @@ public class SavedSearch implements Serializable {
 
     public void setFrequency(String frequency) {
         this.frequency = frequency;
-    }
-
-    public boolean hasSavedSearchName() {
-        return hasSavedSearchName;
-    }
-
-    public void setHasSavedSearchName(boolean hasSavedSearchName) {
-        this.hasSavedSearchName = hasSavedSearchName;
     }
 
     public boolean hasPostingType() {
@@ -139,7 +144,7 @@ public class SavedSearch implements Serializable {
         this.hasMaxRent = hasMaxRent;
     }
 
-    public boolean isHasKeyword() {
+    public boolean hasKeyword() {
         return hasKeyword;
     }
 
@@ -162,23 +167,6 @@ public class SavedSearch implements Serializable {
     public void setHasZipcode(boolean hasZipcode) {
         this.hasZipcode = hasZipcode;
     }
-
-    public boolean hasFrequency() {
-        return hasFrequency;
-    }
-
-    public void setHasFrequency(boolean hasFrequency) {
-        this.hasFrequency = hasFrequency;
-    }
-
-    private boolean hasSavedSearchName;
-    private boolean hasPostingType;
-    private boolean hasMinRent;
-    private boolean hasMaxRent;
-    private boolean hasKeyword;
-    private boolean hasCity;
-    private boolean hasZipcode;
-    private boolean hasFrequency;
 
     public int getPhotoId() {
         return photoId;

@@ -61,6 +61,7 @@ import cz.msebera.android.httpclient.protocol.HttpContext;
  */
 public class PostPropertyFragment extends Fragment {
 
+    //100249344867498039915
     private static final String TAG = "PostPropertyFragment";
     private static final int REQUEST_ADD_IMAGE = 1;
     private RelativeLayout mPhotoLayout;

@@ -1,5 +1,6 @@
 package com.android.shelter;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -17,6 +18,7 @@ import com.android.shelter.util.ShelterConstants;
 import com.facebook.login.LoginManager;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.Scopes;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
@@ -26,7 +28,7 @@ import com.google.android.gms.common.api.Status;
 /**
  * Created by rishi on 5/12/16.
  */
-public class UserProfileActivity extends AppCompatActivity {
+public class UserProfileActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener{
 
     private static final String TAG = "UserProfileActivity";
     private GoogleApiClient mGoogleApiClient;
@@ -56,15 +58,24 @@ public class UserProfileActivity extends AppCompatActivity {
             public void onClick(View v) {
                 final SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
 
+                Log.d(TAG, "Facebook logged out "+ preferences.getString(ShelterConstants.SHARED_PREFERENCE_TYPE, ShelterConstants.DEFAULT_STRING));
                 if(preferences.getString(ShelterConstants.SHARED_PREFERENCE_TYPE, ShelterConstants.DEFAULT_STRING).equalsIgnoreCase(ShelterConstants.FACEBOOK_TYPE)){
                     LoginManager.getInstance().logOut();
-                    preferences.edit().putBoolean(ShelterConstants.SHARED_PREFERENCE_SIGNED_IN, false);
+
+                    SharedPreferences.Editor editor = preferences.edit();
+                    editor.clear().commit();
+                    Log.d(TAG, "Facebook logged out");
+                    finishActivity();
                 }else {
                     Auth.GoogleSignInApi.signOut(mGoogleApiClient).setResultCallback(
                             new ResultCallback<Status>() {
                                 @Override
                                 public void onResult(Status status) {
-                                    preferences.edit().putBoolean(ShelterConstants.SHARED_PREFERENCE_SIGNED_IN, false);
+                                    SharedPreferences.Editor editor = preferences.edit();
+                                    editor.clear();
+                                    editor.commit();
+                                    Log.d(TAG, "Google logged out");
+                                    finishActivity();
                                 }
                             });
                 }
@@ -72,6 +83,12 @@ public class UserProfileActivity extends AppCompatActivity {
         });
     }
 
+    private void finishActivity(){
+        Intent intent = new Intent();
+        intent.putExtra(HomeActivity.EXTRA_IS_LOGGED_OUT, true);
+        setResult(Activity.RESULT_OK, intent);
+        finish();
+    }
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
@@ -84,5 +101,10 @@ public class UserProfileActivity extends AppCompatActivity {
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    @Override
+    public void onConnectionFailed(ConnectionResult connectionResult) {
+        Log.d(TAG, "Connection failed");
     }
 }

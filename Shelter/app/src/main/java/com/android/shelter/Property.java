@@ -46,6 +46,10 @@ public class Property {
         return id;
     }
 
+    public void setId(String id){
+        this.id = UUID.fromString(id);
+    }
+
     public String getAddress(){
         return street + ", " + city + ", " + state + ", " + zipcode;
     }
@@ -56,6 +60,18 @@ public class Property {
 
     public String getDisplayRent(){
         return "$" + rent;
+    }
+
+    public String getDisplayBath() {
+        return bath + " bath";
+    }
+
+    public String getDisplayFloorArea(){
+        return  floorArea + " sq-ft";
+    }
+
+    public String getDisplayPageViews(){
+        return pageReviews + " Page Views";
     }
 
     public String getName() {

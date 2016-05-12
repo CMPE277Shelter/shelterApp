@@ -2,15 +2,12 @@ package com.android.shelter.util;
 
 import android.content.Context;
 import android.os.AsyncTask;
-import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.util.Log;
 
+import com.android.shelter.FragmentCallback;
 import com.android.shelter.Property;
 import com.android.shelter.PropertyLab;
 import com.android.shelter.R;
-import com.android.shelter.SearchPropertyFragment;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -47,15 +44,12 @@ public class ShelterPropertyTask  extends AsyncTask<Void, Void, String> {
     private String property_type;
     private boolean hasParams;
     private String endpoint;
-    private SearchPropertyFragment.FragmentCallback mFragmentCallback;
-
-
-
+    private FragmentCallback mFragmentCallback;
 
     public ShelterPropertyTask(Context context,String endpoint, boolean hasParams,
                                String owner_id, String property_id, String keyword, String city,
                                String zipcode, String min_rent, String max_rent,
-                               String property_type, SearchPropertyFragment.FragmentCallback fragmentCallback){
+                               String property_type, FragmentCallback fragmentCallback){
         this.context=context;
         this.hasParams=hasParams;
         this.endpoint=endpoint;
@@ -67,7 +61,7 @@ public class ShelterPropertyTask  extends AsyncTask<Void, Void, String> {
         this.min_rent=min_rent;
         this.max_rent=max_rent;
         this.mFragmentCallback = fragmentCallback;
-        if(property_type.equals("All")){
+        if(property_type == null || property_type.equals("All")){
             this.property_type = null;
         }else{
             this.property_type=property_type;
@@ -126,30 +120,55 @@ public class ShelterPropertyTask  extends AsyncTask<Void, Void, String> {
         String text = null;
         try {
             HttpResponse response = httpClient.execute(httpGet, localContext);
-            StatusLine status = response.getStatusLine();
+            HttpEntity entity = response.getEntity();
+            text = search(entity);
 
             Log.d("text:",text);
         } catch (Exception e) {
             return e.getLocalizedMessage();
         }
-        return getStatus().toString();
+        return text;
     }
 
     protected void onPostExecute(String results) {
         PropertyLab.get(context).clearPropertyList();
-        ArrayList<Property> properties=PropertyLab.get(context).getProperties();
         if (results!=null) {
             try {
                 JSONArray jsonArray = new JSONArray(results);
                 for (int i = 0; i < jsonArray.length(); i++) {
                     JSONObject jsonObj = jsonArray.getJSONObject(i);
                     Property property=new Property();
-                    property.setName(jsonObj.getString("property_id"));
-                    property.setType(jsonObj.getString("property_type"));
+                    Log.d("ShelterPropertyTask", "Property ID "+ jsonObj.getString(ShelterConstants.PROPERTY_ID));
+                    property.setId(jsonObj.getString(ShelterConstants.PROPERTY_ID));
+                    property.setName(jsonObj.getString(ShelterConstants.PROPERTY_NAME));
+                    property.setType(jsonObj.getString(ShelterConstants.PROPERTY_TYPE));
+                    property.setDescription(jsonObj.getString(ShelterConstants.DESCRIPTION));
+                    property.setFavorite(jsonObj.getBoolean(ShelterConstants.IS_FAVORITE));
+                    property.setRentedOrCancel(jsonObj.getBoolean(ShelterConstants.IS_RENTED_OR_CANCEL));
+                    property.setPageReviews(jsonObj.getString(ShelterConstants.VIEW_COUNT));
+
+                    JSONObject details = (jsonObj.getJSONArray(ShelterConstants.DETAILS)).getJSONObject(0);
+                    property.setBath(details.getString(ShelterConstants.BATH));
+                    property.setRooms(details.getString(ShelterConstants.ROOMS));
+                    property.setFloorArea(details.getString(ShelterConstants.FLOOR_AREA));
+
+                    JSONObject address = (jsonObj.getJSONArray(ShelterConstants.ADDRESS).getJSONObject(0));
+                    property.setStreet(address.getString(ShelterConstants.STREET));
+                    property.setCity(address.getString(ShelterConstants.CITY));
+                    property.setState(address.getString(ShelterConstants.STATE));
+                    property.setZipcode(address.getString(ShelterConstants.ZIPCODE));
+
+                    JSONObject rentDetails = (jsonObj.getJSONArray(ShelterConstants.RENT_DETAILS)).getJSONObject(0);
+                    property.setRent(rentDetails.getString(ShelterConstants.RENT));
+
+                    JSONObject ownerContactInfo = (jsonObj.getJSONArray(ShelterConstants.OWNER_CONTACT_INFO)).getJSONObject(0);
+                    property.setPhoneNumber(ownerContactInfo.getString(ShelterConstants.PHONE_NUMBER));
+                    property.setEmail(ownerContactInfo.getString(ShelterConstants.EMAIL));
+
                     property.setPhotoId(R.drawable.real_estate);
+
                     PropertyLab.get(context).addProperty(property);
                     Log.d("Object-" + i + ":", jsonObj.toString());
-
                 }
                 mFragmentCallback.onTaskDone();
             } catch (JSONException e) {

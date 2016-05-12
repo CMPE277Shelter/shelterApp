@@ -1,6 +1,8 @@
 package com.android.shelter.landlord;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -12,11 +14,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ToggleButton;
 
+import com.android.shelter.FragmentCallback;
 import com.android.shelter.Property;
 import com.android.shelter.PropertyLab;
 import com.android.shelter.R;
 import com.android.shelter.SearchPropertyFragment;
 import com.android.shelter.helper.MyPostingAdapter;
+import com.android.shelter.util.ShelterConstants;
 import com.android.shelter.util.ShelterPropertyTask;
 
 /**
@@ -60,15 +64,15 @@ public class MyPostingFragment extends Fragment {
 //            PropertyLab.get(getContext()).addProperty(property);
 //        }
 
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getContext());
+        String ownerId = preferences.getString(ShelterConstants.SHARED_PREFERENCE_OWNER_ID, ShelterConstants.DEFAULT_STRING);
+
         new ShelterPropertyTask(getActivity().getApplicationContext(), "postings", true,
-                null, null, criteria.getKeyword(), criteria.getCity(), criteria.getZipcode(),
-                criteria.getMinRent(), criteria.getMaxRent(), criteria.getApartmentType(),
-                new SearchPropertyFragment.FragmentCallback() {
+                ownerId, null, null, null, null, null, null, null,
+                new FragmentCallback() {
                     @Override
                     public void onTaskDone() {
-                        mPostingAdapter = new MyPostingAdapter(PropertyLab.get(getContext()).getProperties(),
-                                getActivity(), getActivity().getSupportFragmentManager());
-                        mPostingRecyclerView.setAdapter(mPostingAdapter);
+                        setupAdapter();
                     }
                 }).execute();
     }

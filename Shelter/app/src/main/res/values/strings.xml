@@ -19,7 +19,7 @@
 
     <string name="pick_image_intent_text">Choose from options</string>
 
-
+    <string name="google_api_key">AIzaSyAj15zOB28FTCKo2e_nIm3FGFQ9c8ldtIs</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="app_id">1613948298925955</string>

@@ -34,7 +34,9 @@ public class HomeActivity extends AbstractFragmentActivity
 
     public static final int REQUEST_FRAGMENT = 1;
     public static final int REQUEST_LOGIN = 2;
+    public static final int REQUEST_USER_PROFILE = 3;
     public static final String EXTRA_FRAGMENT_ID = "com.android.shelter.fragment_id";
+    public static final String EXTRA_IS_LOGGED_OUT = "com.android.shelter.is_logged_out";
     public static final int HOME_FRAGMENT_ID = 2;
     public static final int MY_POSTING_FRAGMENT_ID = 3;
     public static final int MY_SAVED_SEARCH_FRAGMENT_ID = 4;
@@ -79,6 +81,8 @@ public class HomeActivity extends AbstractFragmentActivity
         mAfterSigninLayout = (LinearLayout) navHeaderView.findViewById(R.id.after_signin);
         mAfterSigninLayout.setOnClickListener(new ProfileClickListener());
         mBeforeSigninLayout = (RelativeLayout) navHeaderView.findViewById(R.id.before_signin);
+
+        toggleUserProfileLayout();
 
         Button loginButton = (Button) navHeaderView.findViewById(R.id.login_button);
         loginButton.setOnClickListener(new View.OnClickListener() {
@@ -135,9 +139,10 @@ public class HomeActivity extends AbstractFragmentActivity
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.post_new_property:
-                // TODO Check if the user is logged if not ask start LoginActivity
-                Intent postProperty = PostPropertyActivity.newIntent(getApplicationContext(), null);
-                startActivityForResult(postProperty, REQUEST_FRAGMENT);
+                if(isUserLoggedIn()){
+                    Intent postProperty = PostPropertyActivity.newIntent(getApplicationContext(), null);
+                    startActivityForResult(postProperty, REQUEST_FRAGMENT);
+                }
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -157,14 +162,27 @@ public class HomeActivity extends AbstractFragmentActivity
             SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
             if(preferences.getBoolean(ShelterConstants.SHARED_PREFERENCE_SIGNED_IN, false)){
                 Log.d(TAG, preferences.getString("email", "none"));
-                mAfterSigninLayout.setVisibility(View.VISIBLE);
-                TextView userName = (TextView) mAfterSigninLayout.findViewById(R.id.user_name);
-                userName.setText(preferences.getString(ShelterConstants.SHARED_PREFERENCE_USER_NAME, ShelterConstants.DEFAULT_STRING));
-                mBeforeSigninLayout.setVisibility(View.GONE);
-            }else{
-                mAfterSigninLayout.setVisibility(View.GONE);
-                mBeforeSigninLayout.setVisibility(View.VISIBLE);
+                toggleUserProfileLayout();
             }
+        }else if(requestCode == REQUEST_USER_PROFILE && data != null && data.hasExtra(EXTRA_IS_LOGGED_OUT)){
+            toggleUserProfileLayout();
+        }
+    }
+
+    private boolean isUserLoggedIn(){
+        return PreferenceManager.getDefaultSharedPreferences(this).getBoolean(ShelterConstants.SHARED_PREFERENCE_SIGNED_IN, false);
+    }
+
+    private void toggleUserProfileLayout(){
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        if(isUserLoggedIn()){
+            mBeforeSigninLayout.setVisibility(View.GONE);
+            mAfterSigninLayout.setVisibility(View.VISIBLE);
+            TextView userName = (TextView) mAfterSigninLayout.findViewById(R.id.user_name);
+            userName.setText(preferences.getString(ShelterConstants.SHARED_PREFERENCE_USER_NAME, ShelterConstants.DEFAULT_STRING));
+        }else {
+            mBeforeSigninLayout.setVisibility(View.VISIBLE);
+            mAfterSigninLayout.setVisibility(View.GONE);
         }
     }
 
@@ -191,7 +209,8 @@ public class HomeActivity extends AbstractFragmentActivity
     private class ProfileClickListener implements View.OnClickListener {
         @Override
         public void onClick(View v) {
-            // TODO Start new activity showing the profile
+            Intent userProfile = new Intent(HomeActivity.this, UserProfileActivity.class);
+            startActivityForResult(userProfile, REQUEST_USER_PROFILE);
         }
     }
 }

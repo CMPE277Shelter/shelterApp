@@ -39,9 +39,10 @@ public class ShelterConstants {
     public static final String MORE = "more";
     public static final String LEASE_TYPE = "lease_type";
     public static final String DEPOSIT = "deposit";
+    public static final String VIEW_COUNT = "view_count";
 
     public static final String IS_FAVORITE = "is_favorite";
-    public static final String IS_RENTED_OR_CANCEL = "isRentedOrCancelled";
+    public static final String IS_RENTED_OR_CANCEL = "is_rented_or_cancel";
 
 }
 
