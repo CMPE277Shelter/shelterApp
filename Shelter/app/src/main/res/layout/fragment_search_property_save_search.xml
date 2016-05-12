@@ -1,0 +1,91 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             xmlns:tools="http://schemas.android.com/tools"
+             android:layout_width="match_parent"
+             android:layout_height="match_parent"
+             tools:context="com.android.shelter.SearchPropertySaveSearchFragment">
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                  xmlns:card_view="http://schemas.android.com/apk/res-auto"
+                  android:orientation="vertical"
+                  android:layout_width="match_parent"
+                  android:layout_height="wrap_content">
+        <android.support.v7.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            card_view:cardCornerRadius="2dp"
+            card_view:cardElevation="5dp">
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="10dp">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Name"/>
+                <EditText android:id="@+id/save_search_name"
+                          android:layout_width="wrap_content"
+                          android:layout_height="wrap_content"
+                          android:ems="13"
+                          android:hint="Keyword"
+                          android:inputType="textPostalAddress|textCapWords"
+                          android:layout_alignParentTop="true"
+                          android:layout_centerHorizontal="true"
+                          android:layout_marginTop="25dp"
+                          android:imeOptions="actionNext"/>
+            </RelativeLayout>
+        </android.support.v7.widget.CardView>
+
+        <android.support.v7.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            card_view:cardCornerRadius="2dp"
+            card_view:cardElevation="5dp">
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="20dp">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Notification Frequency"/>
+                <LinearLayout android:id="@+id/save_search_frequency_type_layout"
+                              android:layout_width="wrap_content"
+                              android:layout_height="wrap_content"
+                              android:orientation="horizontal"
+                              android:layout_below="@+id/property_details"
+                              android:layout_marginTop="25dp">
+                    <RadioGroup android:id="@+id/save_search_frequency"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal">
+                        <RadioButton
+                            android:id="@+id/frequency_real_time"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Realtime"/>
+                        <RadioButton
+                            android:id="@+id/frequency_daily"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Daily"/>
+                        <RadioButton
+                            android:id="@+id/frequency_weekly"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Weekly"/>
+                    </RadioGroup>
+                </LinearLayout>
+            </RelativeLayout>
+        </android.support.v7.widget.CardView>
+        <Button android:id="@+id/save_search_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Save"
+                android:background="@color/colorPrimary"
+                android:layout_alignParentBottom="true"
+                android:textColor="@color/white"/>
+    </LinearLayout>
+
+</FrameLayout>

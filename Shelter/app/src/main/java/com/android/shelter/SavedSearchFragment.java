@@ -27,17 +27,17 @@ public class SavedSearchFragment extends Fragment {
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
         setHasOptionsMenu(false);
-        for (int i = 0; i < 5; i++) {
-            SavedSearch savedSearch=new SavedSearch();
-            savedSearch.setSavedSearchName("101");
-            savedSearch.setPostingType("Townhouse");
-            savedSearch.setPhotoId(R.color.colorAccent);
-            savedSearch.setCity("San Jose");
-            savedSearch.setZipcode("95112");
-            savedSearch.setMinRent(2000);
-            savedSearch.setMaxRent(5000);
-            SavedSearchesLab.get(getContext()).addSavedSearch(savedSearch);
-        }
+//        for (int i = 0; i < 5; i++) {
+//            SavedSearch savedSearch=new SavedSearch();
+//            savedSearch.setSavedSearchName("101");
+//            savedSearch.setPostingType("Townhouse");
+//            savedSearch.setPhotoId(R.color.colorAccent);
+//            savedSearch.setCity("San Jose");
+//            savedSearch.setZipcode("95112");
+//            savedSearch.setMinRent(2000);
+//            savedSearch.setMaxRent(5000);
+//            SavedSearchesLab.get(getContext()).addSavedSearch(savedSearch);
+//        }
     }
 
     @Override
