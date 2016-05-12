@@ -51,7 +51,7 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
     private CallbackManager callbackManager;
     private SharedPreferences preferences;
     private String emailId;
-
+    private com.android.shelter.User appUser = new com.android.shelter.User();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -84,12 +84,15 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
                                     if(object.has("name")){
                                         userName = object.getString("name");
                                         Log.d(TAG, "Username = "+ userName);
+                                       appUser.setUserName(userName);
                                     }
                                     if(object.has("id")){
                                         id = object.getString("id");
+                                        appUser.setUserId(id);
                                     }
                                     if(object.has("email")){
                                         emailId = object.getString("email");
+                                        appUser.setEmailId(emailId);
                                     }
                                     loginSuccessfull(true, id, emailId, userName);
                                 } catch (JSONException e) {
@@ -152,6 +155,9 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
             GoogleSignInAccount acct = result.getSignInAccount();
             if (acct != null) {
                 loginSuccessfull(true, acct.getId(), acct.getEmail(), acct.getDisplayName());
+                appUser.setEmailId(acct.getEmail());
+                appUser.setUserId(acct.getId());
+                appUser.setUserName(acct.getDisplayName());
             }
             updateUI(true);
         } else {

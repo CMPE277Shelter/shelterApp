@@ -45,7 +45,7 @@ public class SearchPropertyFilterFragment extends DialogFragment {
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
 
-
+        Location appLocation = Location.getInstance();
         View v = LayoutInflater.from(getActivity())
                 .inflate(R.layout.fragment_search_property_filter, null);
 
@@ -58,7 +58,8 @@ public class SearchPropertyFilterFragment extends DialogFragment {
         mMaxRent=(EditText) v.findViewById(R.id.filtered_max_rent);
         mMinRent =(EditText) v.findViewById(R.id.filtered_min_rent);
 
-
+        mZipCode.setText(appLocation.getPostalCode());
+        mCity.setText(appLocation.getCityName());
 
 
         ((Button)v.findViewById(R.id.filtered_filter_btn)).setOnClickListener(new View.OnClickListener() {
