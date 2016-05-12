@@ -19,6 +19,7 @@ import java.util.ArrayList;
 
 import cz.msebera.android.httpclient.HttpEntity;
 import cz.msebera.android.httpclient.HttpResponse;
+import cz.msebera.android.httpclient.StatusLine;
 import cz.msebera.android.httpclient.client.HttpClient;
 import cz.msebera.android.httpclient.client.methods.HttpGet;
 import cz.msebera.android.httpclient.client.methods.HttpPost;
@@ -119,13 +120,13 @@ public class ShelterPropertyTask  extends AsyncTask<Void, Void, String> {
         String text = null;
         try {
             HttpResponse response = httpClient.execute(httpGet, localContext);
-            HttpEntity entity = response.getEntity();
-            text = search(entity);
+            StatusLine status = response.getStatusLine();
+
             Log.d("text:",text);
         } catch (Exception e) {
             return e.getLocalizedMessage();
         }
-        return text;
+        return getStatus().toString();
     }
 
     protected void onPostExecute(String results) {
