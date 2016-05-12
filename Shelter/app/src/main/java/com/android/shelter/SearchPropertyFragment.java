@@ -3,6 +3,8 @@ package com.android.shelter;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.location.Address;
+import android.location.Geocoder;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -16,6 +18,7 @@ import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.Toast;
 
 import com.android.shelter.helper.MyPostingAdapter;
 import com.android.shelter.util.PostPropertyTask;
@@ -26,6 +29,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
+import java.util.List;
 import java.util.UUID;
 
 
@@ -43,6 +48,8 @@ public class SearchPropertyFragment extends Fragment {
     private RecyclerView mPostingRecyclerView;
     private MyPostingAdapter mPostingAdapter;
     private SearchView mSearchView;
+    Location appLoc = Location.getInstance();
+
 
 
     Button btnFilter;
@@ -185,7 +192,8 @@ public class SearchPropertyFragment extends Fragment {
         jsonObject.put("haszipcode",searchToBeSaved.hasZipcode());
         jsonObject.put("hasminrent",searchToBeSaved.hasMinRent());
         jsonObject.put("hasmaxrent",searchToBeSaved.hasMaxRent());
-        jsonObject.put("haspropertyType",searchToBeSaved.hasPostingType());
+        jsonObject.put("haspropertyType", searchToBeSaved.hasPostingType());
+        jsonObject.put("staticmapurl",searchToBeSaved.getMapURL());
 
 
         Log.d(TAG, jsonObject.toString());
