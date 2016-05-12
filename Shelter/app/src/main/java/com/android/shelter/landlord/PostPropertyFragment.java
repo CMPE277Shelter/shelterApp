@@ -3,6 +3,7 @@ package com.android.shelter.landlord;
 import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.NavUtils;
@@ -22,14 +23,31 @@ import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
 
 import com.android.shelter.HomeActivity;
+import com.android.shelter.Property;
+import com.android.shelter.PropertyLab;
 import com.android.shelter.R;
 import com.android.shelter.helper.PropertyImage;
 import com.android.shelter.helper.PropertyImageAdapter;
 import com.android.shelter.util.ImagePicker;
+import com.android.shelter.util.PostPropertyTask;
 import com.android.shelter.util.SendEmail;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
+
+import cz.msebera.android.httpclient.HttpEntity;
+import cz.msebera.android.httpclient.HttpResponse;
+import cz.msebera.android.httpclient.client.HttpClient;
+import cz.msebera.android.httpclient.client.methods.HttpGet;
+import cz.msebera.android.httpclient.client.methods.HttpPost;
+import cz.msebera.android.httpclient.impl.client.DefaultHttpClient;
+import cz.msebera.android.httpclient.protocol.BasicHttpContext;
+import cz.msebera.android.httpclient.protocol.HttpContext;
 
 /**
  * Fragment for handling operations for posting new property.
@@ -44,6 +62,7 @@ public class PostPropertyFragment extends Fragment {
     private RecyclerView mImageRecyclerView;
     private List<PropertyImage> mImageList = new ArrayList<>();
     private Uri mCapturedImageURI;
+
     private EditText mPropertyName;
     private EditText mStreet;
     private EditText mCity;
@@ -56,6 +75,7 @@ public class PostPropertyFragment extends Fragment {
     private RadioButton mHouseType;
     private RadioButton mTownhouseType;
     private RadioButton mApartmentType;
+    private String mPropertyType;
 
     private EditText mContactName;
     private EditText mContactEmail;
@@ -137,7 +157,13 @@ public class PostPropertyFragment extends Fragment {
                 //TODO Add code to send data to DB and move to next activity My Postings
                 //composeEmail();
                 //if(isFormValid()){
-                    showMyPostings();
+                    //showMyPostings();
+                try{
+                    postPropertyData();
+                }catch (Exception ex){
+                    Log.e(TAG, ex.getStackTrace().toString());
+                }
+
                 //}
             }
         });
@@ -167,13 +193,8 @@ public class PostPropertyFragment extends Fragment {
             case REQUEST_ADD_IMAGE:
                 if (resultCode == getActivity().RESULT_OK && null != data) {
 
-                    mImageList.add(ImagePicker.getPropertyImage(getContext(), data));
+                    mImageList.add(ImagePicker.get(getContext()).getPropertyImage(getContext(), data));
                     setupAdapter();
-
-//                    // convert bitmap to byte
-//                    ByteArrayOutputStream stream = new ByteArrayOutputStream();
-//                    yourImage.compress(Bitmap.CompressFormat.PNG, 100, stream);
-//                    byte imageInByte[] = stream.toByteArray();
                 }
                 break;
 
@@ -215,14 +236,17 @@ public class PostPropertyFragment extends Fragment {
         // Check which radio button was clicked
         switch(id) {
             case R.id.house_type:
-                    Log.d(TAG, "Its house type");
-                    break;
+                Log.d(TAG, "Its house type");
+                mPropertyType = "House";
+                break;
             case R.id.townhouse_type:
-                    Log.d(TAG, "Its townhouse type");
-                    break;
+                Log.d(TAG, "Its townhouse type");
+                mPropertyType = "Townhouse";
+                break;
             case R.id.apartment_type:
-                    Log.d(TAG, "Its apartment type");
-                    break;
+                Log.d(TAG, "Its apartment type");
+                mPropertyType = "Apartment";
+                break;
         }
 
     }
@@ -283,4 +307,62 @@ public class PostPropertyFragment extends Fragment {
         }
         return isValid;
     }
+
+    private void postPropertyData() throws JSONException{
+
+        JSONObject jsonObject = new JSONObject();
+
+        jsonObject.put("property_id", UUID.randomUUID().toString());
+        Log.d(TAG, "");
+        jsonObject.put("owner_id", "4567");
+
+        JSONArray address = new JSONArray();
+        JSONObject addressObject = new JSONObject();
+        addressObject.put("street", mStreet.getText().toString());
+        addressObject.put("city", mCity.getText().toString());
+        addressObject.put("state", mState.getText().toString());
+        addressObject.put("zipcode", mZipcode.getText().toString());
+        address.put(addressObject);
+        jsonObject.put("address", address);
+
+        jsonObject.put("property_type", mPropertyType);
+
+        JSONArray details = new JSONArray();
+        JSONObject detailsObject = new JSONObject();
+        detailsObject.put("rooms", mTotalRooms.getText().toString());
+        detailsObject.put("bath", "2");
+        detailsObject.put("floor_area", "2000");
+        details.put(detailsObject);
+        jsonObject.put("details", details);
+
+        JSONArray rentDetails = new JSONArray();
+        JSONObject rentObject = new JSONObject();
+        rentObject.put("rent", mMonthlyRent.getText().toString());
+        rentDetails.put(rentObject);
+        jsonObject.put("rent_details", rentDetails);
+
+        JSONArray ownerInfo = new JSONArray();
+        JSONObject ownerObject = new JSONObject();
+        ownerObject.put("phone_number", mContactPhone.getText().toString());
+        ownerObject.put("display_phone", mContactPhone.getText().toString());
+        ownerObject.put("email", mContactEmail.getText().toString());
+        ownerInfo.put(ownerObject);
+        jsonObject.put("owner_contact_info", ownerInfo);
+
+        jsonObject.put("is_favorite", false);
+        jsonObject.put("is_rented_or_cancel", false);
+        jsonObject.put("description", mPropertyDescription.getText().toString());
+
+        JSONArray moreInfo = new JSONArray();
+        JSONObject moreObject = new JSONObject();
+        moreObject.put("lease_type", "Percentage");
+        moreObject.put("deposit", "2000");
+        moreInfo.put(moreObject);
+        jsonObject.put("more", moreInfo);
+
+        Log.d(TAG, jsonObject.toString());
+
+        new PostPropertyTask(getContext(), "postings/", true, jsonObject).execute();
+    }
 }
+

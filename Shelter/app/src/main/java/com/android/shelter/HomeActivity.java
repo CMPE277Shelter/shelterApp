@@ -1,11 +1,15 @@
 package com.android.shelter;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v4.widget.TextViewCompat;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -14,6 +18,9 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.shelter.landlord.MyPostingFragment;
@@ -26,6 +33,7 @@ public class HomeActivity extends AbstractFragmentActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     public static final int REQUEST_FRAGMENT = 1;
+    public static final int REQUEST_LOGIN = 2;
     public static final String EXTRA_FRAGMENT_ID = "com.android.shelter.fragment_id";
     public static final int HOME_FRAGMENT_ID = 2;
     public static final int MY_POSTING_FRAGMENT_ID = 3;
@@ -35,6 +43,8 @@ public class HomeActivity extends AbstractFragmentActivity
 
     private static final String TAG = "HomeActivity";
     private DrawerLayout mDrawer;
+    private RelativeLayout mBeforeSigninLayout;
+    private LinearLayout mAfterSigninLayout;
 
 
     @Override
@@ -64,6 +74,9 @@ public class HomeActivity extends AbstractFragmentActivity
 
         mDrawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         View navHeaderView = navigationView.getHeaderView(0);
+        mBeforeSigninLayout = (RelativeLayout) navHeaderView.findViewById(R.id.before_signin);
+        mAfterSigninLayout = (LinearLayout) navHeaderView.findViewById(R.id.after_signin);
+
         Button loginButton = (Button) navHeaderView.findViewById(R.id.login_button);
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -72,9 +85,7 @@ public class HomeActivity extends AbstractFragmentActivity
                 if (mDrawer.isDrawerOpen(GravityCompat.START)) {
                     mDrawer.closeDrawer(GravityCompat.START);
                 }
-                Toast.makeText(HomeActivity.this, "Login code", Toast.LENGTH_SHORT).show();
-                Intent intent = new Intent(HomeActivity.this, LoginActivity.class);
-                startActivity(intent);
+                new StartLoginProcess().execute();
             }
         });
     }
@@ -133,11 +144,39 @@ public class HomeActivity extends AbstractFragmentActivity
             }else {
                 updateFragment(new HomeFragment(), HOME_FRAGMENT_TAG);
             }
+        }else if(requestCode == REQUEST_LOGIN){
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+            if(preferences.getBoolean("signedIn", false)){
+                Log.d(TAG, preferences.getString("email", "none"));
+                mAfterSigninLayout.setVisibility(View.VISIBLE);
+                TextView userName = (TextView) mAfterSigninLayout.findViewById(R.id.user_name);
+                userName.setText(preferences.getString("userName", "None"));
+                mBeforeSigninLayout.setVisibility(View.GONE);
+            }else{
+                mAfterSigninLayout.setVisibility(View.GONE);
+                mBeforeSigninLayout.setVisibility(View.VISIBLE);
+            }
         }
     }
 
     @Override
     public void updateFragment(Fragment fragment, String fragmentTag) {
         super.updateFragment(fragment, fragmentTag);
+    }
+
+
+    private class StartLoginProcess extends AsyncTask<Void, Void, Void>{
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            Log.d(TAG, "Login activity started");
+        }
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            Intent intent = new Intent(HomeActivity.this, LoginActivity.class);
+            startActivityForResult(intent, REQUEST_LOGIN);
+            return null;
+        }
     }
 }

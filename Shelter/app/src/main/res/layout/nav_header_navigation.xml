@@ -14,7 +14,8 @@
 
     <RelativeLayout android:id="@+id/before_signin"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:visibility="visible">
         <Button android:id="@+id/login_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -35,19 +36,20 @@
             />
     </RelativeLayout>
     <!--TODO Add code in the LoginActivity to hide/show on signin  -->
-    <!--<LinearLayout android:id="@+id/after_signin"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:orientation="horizontal">-->
-        <!--<ImageView-->
-            <!--android:layout_width="100dp"-->
-            <!--android:layout_height="100dp"-->
-            <!--android:background="@drawable/propic"/>-->
-        <!--<TextView-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:textSize="20dp"-->
-            <!--android:padding="15dp"-->
-            <!--android:text="User Name"/>-->
-    <!--</LinearLayout>-->
+    <LinearLayout android:id="@+id/after_signin"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:visibility="gone">
+        <ImageView
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:background="@drawable/propic"/>
+        <TextView android:id="@+id/user_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="20dp"
+            android:padding="15dp"
+            android:text="User Name"/>
+    </LinearLayout>
 </RelativeLayout>

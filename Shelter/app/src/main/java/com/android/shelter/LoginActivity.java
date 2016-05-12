@@ -1,19 +1,26 @@
 package com.android.shelter;
 
-import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
-import android.widget.ImageView;
+import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.facebook.Session;
-import com.facebook.SessionState;
-import com.facebook.UiLifecycleHelper;
+import com.facebook.CallbackManager;
+import com.facebook.FacebookCallback;
+import com.facebook.FacebookException;
+import com.facebook.FacebookSdk;
+import com.facebook.GraphRequest;
+import com.facebook.GraphResponse;
+import com.facebook.Profile;
+import com.facebook.login.LoginManager;
+import com.facebook.login.LoginResult;
+import com.facebook.login.widget.LoginButton;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
@@ -27,23 +34,85 @@ import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Scope;
 import com.google.android.gms.common.api.Status;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.Arrays;
+
 public class LoginActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener,
         View.OnClickListener{
 
-    private UiLifecycleHelper uiHelper;
     private static final String TAG = "MainActivity";
     private static final int RC_SIGN_IN = 9001;
     private GoogleApiClient mGoogleApiClient;
     private TextView mStatusTextView;
     private ProgressDialog mProgressDialog;
+    private LoginButton loginButton;
+    private CallbackManager callbackManager;
+    private SharedPreferences preferences;
+    private String emailId;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        preferences = PreferenceManager.getDefaultSharedPreferences(this);
+
+        // Facebook login
+        FacebookSdk.sdkInitialize(getApplicationContext());
+        callbackManager = CallbackManager.Factory.create();
         setContentView(R.layout.content_login);
+        LoginButton loginButton = (LoginButton) findViewById(R.id.authButton);
+        loginButton.setReadPermissions(Arrays.asList("email"));
 
+        loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
+            @Override
+            public void onSuccess(LoginResult loginResult) {
+                Profile profile = Profile.getCurrentProfile();
 
-        uiHelper = new UiLifecycleHelper(this, callback);
-        uiHelper.onCreate(savedInstanceState);
+                // Facebook Email address
+                GraphRequest request = GraphRequest.newMeRequest(
+                        loginResult.getAccessToken(),
+                        new GraphRequest.GraphJSONObjectCallback() {
+                            @Override
+                            public void onCompleted(JSONObject object, GraphResponse response) {
+                                Log.v("LoginActivity Response ", response.toString());
+                                try {
+                                    String id = null;
+                                    String emailId = null;
+                                    String userName = null;
+                                    if(object.has("name")){
+                                        userName = object.getString("name");
+                                        Log.d(TAG, "Username = "+ userName);
+                                    }
+                                    if(object.has("id")){
+                                        id = object.getString("id");
+                                    }
+                                    if(object.has("email")){
+                                        emailId = object.getString("email");
+                                    }
+                                    loginSuccessfull(true, id, emailId, userName);
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        });
+                Bundle parameters = new Bundle();
+                parameters.putString("fields", "id,name,email");
+                request.setParameters(parameters);
+                request.executeAsync();
+            }
+
+            @Override
+            public void onCancel() {
+
+            }
+
+            @Override
+            public void onError(FacebookException error) {
+
+            }
+        });
 
         // Google login
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -64,53 +133,11 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
         signInButton.setOnClickListener(this);
     }
 
-    // Called when facebook session changes
-    private Session.StatusCallback callback = new Session.StatusCallback() {
-
-        @Override
-        public void call(Session session, SessionState state,
-                         Exception exception) {
-            onSessionStateChange(session, state, exception);
-        }
-    };
-
-    // When session is changed, this method is called from callback method
-    private void onSessionStateChange(final Session session, SessionState state,
-                                      Exception exception) {
-//        final TextView name = (TextView) findViewById(R.id.name);
-//        final TextView gender = (TextView) findViewById(R.id.gender);
-//        final TextView location = (TextView) findViewById(R.id.location);
-//        // When Session is successfully opened (User logged-in)
-
-
-        if (state.isOpened()) {
-            Log.i(TAG, "Logged in...");
-            // make request to the /me API to get Graph user
-
-                        // Set User name
-//                        name.setText("Hello " + user.getName());
-//                        // Set Gender
-//                        gender.setText("Your Gender: "
-//                                + user.getId());
-//                        location.setText("Your Current Location: "
-//                                + user.getLocation().getProperty("name")
-//                                .toString());
-
-
-//                    }
-//                }
-//            }).executeAsync();
-        } else if (state.isClosed()) {
-            Log.i(TAG, "Logged out...");
-
-        }
-    }
-
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        uiHelper.onActivityResult(requestCode, resultCode, data);
+        callbackManager.onActivityResult(requestCode, resultCode, data);
         Log.i(TAG, "OnActivityResult...");
         if (requestCode == RC_SIGN_IN) {
             GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
@@ -119,19 +146,12 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
     }
     private void handleSignInResult(GoogleSignInResult result) {
         Log.d(TAG, "handleSignInResult:" + result.isSuccess());
-//        final TextView name = (TextView) findViewById(R.id.name);
-//        final TextView gender = (TextView) findViewById(R.id.gender);
-//        final TextView location = (TextView) findViewById(R.id.location);
 
         if (result.isSuccess()) {
             // Signed in successfully, show authenticated UI.
             GoogleSignInAccount acct = result.getSignInAccount();
             if (acct != null) {
-
-//
-                Log.d(acct.getPhotoUrl().toString(),"URL");
-                Toast.makeText(LoginActivity.this, acct.getPhotoUrl().toString(), Toast.LENGTH_SHORT).show();
-//                mStatusTextView.setText(getString(R.string.signed_in_fmt, acct.getEmail()));
+                loginSuccessfull(true, acct.getId(), acct.getEmail(), acct.getDisplayName());
             }
             updateUI(true);
         } else {
@@ -147,7 +167,6 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
         if (opr.isDone()) {
             // If the user's cached credentials are valid, the OptionalPendingResult will be "done"
             // and the GoogleSignInResult will be available instantly.
-            Log.d(TAG, "Got cached sign-in");
             GoogleSignInResult result = opr.get();
             handleSignInResult(result);
         } else {
@@ -163,6 +182,12 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
                 }
             });
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mProgressDialog.dismiss();
     }
 
     private void showProgressDialog() {
@@ -182,30 +207,6 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
-        uiHelper.onResume();
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        uiHelper.onPause();
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        uiHelper.onDestroy();
-    }
-
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        uiHelper.onSaveInstanceState(outState);
-    }
-
-    @Override
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.sign_in_button:
@@ -214,6 +215,7 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
         }
     }
     private void signIn() {
+        //signOut();
         Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
         startActivityForResult(signInIntent, RC_SIGN_IN);
     }
@@ -224,10 +226,12 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
                     @Override
                     public void onResult(Status status) {
                         // [START_EXCLUDE]
+                        Log.d(TAG, "Signed out");
                         updateUI(false);
                         // [END_EXCLUDE]
                     }
                 });
+        LoginManager.getInstance().logOut();
     }
 
 
@@ -239,9 +243,6 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
         if (signedIn) {
             findViewById(R.id.sign_in_button).setVisibility(View.GONE);
         } else {
-//            mStatusTextView.setText(R.string.signed_out);
-          //
-          //  otherView.setVisibility(View.GONE);
             findViewById(R.id.sign_in_button).setVisibility(View.VISIBLE);
         }
 
@@ -254,6 +255,16 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
      */
     public void closeLogin(View view){
         Log.d(TAG, "Finishing the activity");
+        finish();
+    }
+
+    private void loginSuccessfull(boolean isLogin, String ownerId, String emailId, String userName){
+        Log.d(TAG, "Login successfull .............." + ownerId + "   " + emailId + "  " + userName);
+        preferences.edit().putBoolean("signedIn", isLogin).commit();
+        preferences.edit().putString("ownerId", ownerId).commit();
+        preferences.edit().putString("email", emailId).commit();
+        preferences.edit().putString("userName", userName).commit();
+
         finish();
     }
 
