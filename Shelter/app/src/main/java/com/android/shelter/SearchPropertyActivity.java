@@ -8,6 +8,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
@@ -18,12 +19,14 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.android.shelter.landlord.MyPostingFragment;
+import com.android.shelter.util.ShelterPropertyTask;
 
 public class SearchPropertyActivity extends AbstractFragmentActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     private static final String TAG = "SearchPropertyActivity";
     private DrawerLayout mDrawer;
+
     @Override
     protected Fragment createFragment() {
         return new SearchPropertyFragment();
@@ -35,6 +38,7 @@ public class SearchPropertyActivity extends AbstractFragmentActivity
         setContentView(R.layout.activity_search_property);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(

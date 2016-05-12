@@ -23,18 +23,18 @@
             android:name=".HomeActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar"
-            android:launchMode="singleTop"
+            android:launchMode="singleInstance"
             android:configChanges="orientation|screenSize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
-
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
         <activity
             android:name=".landlord.PostPropertyActivity"
             android:label="@string/title_activity_post_property"
-            android:theme="@style/AppTheme">
+            android:theme="@style/AppTheme"
+            android:launchMode="singleInstance">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".HomeActivity"/>
@@ -60,11 +60,18 @@
             android:name=".landlord.PostedPropertyPagerActivity"
             android:theme="@style/AppTheme.NoActionBar">
         </activity>
-        <activity android:name=".SavedSearchActivity">
+        <activity android:name=".SavedSearchActivity"
+                  android:label="@string/app_name"
+                  android:theme="@style/AppTheme.NoActionBar"
+                  android:launchMode="singleInstance">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".HomeActivity"/>
         </activity>
         <activity android:name=".SearchPropertyActivity"
                   android:label="@string/app_name"
-                  android:theme="@style/AppTheme.NoActionBar">
+                  android:theme="@style/AppTheme.NoActionBar"
+                  android:launchMode="singleInstance">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".HomeActivity"/>

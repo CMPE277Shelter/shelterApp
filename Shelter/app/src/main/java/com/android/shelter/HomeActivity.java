@@ -133,7 +133,7 @@ public class HomeActivity extends AbstractFragmentActivity
 
         } else if (id == R.id.nav_saved_searches) {
             Intent savedSearchIntent = new Intent(this, SavedSearchActivity.class);
-            startActivityForResult(savedSearchIntent, HomeActivity.REQUEST_FRAGMENT);
+            startActivity(savedSearchIntent);
         }
 
 
@@ -169,9 +169,7 @@ public class HomeActivity extends AbstractFragmentActivity
             Log.d(TAG, "Back in Home activity " + data.getIntExtra(EXTRA_FRAGMENT_ID, 1));
             if(data.getIntExtra(EXTRA_FRAGMENT_ID, 1) == MY_POSTING_FRAGMENT_ID){
                 updateFragment(new MyPostingFragment(), MY_POSTING_FRAGMENT_TAG);
-            } else if(data.getIntExtra(EXTRA_FRAGMENT_ID,1)==MY_SAVED_SEARCH_FRAGMENT_ID){
-                updateFragment(new SavedSearchFragment(), MY_SAVED_SEARCH_FRAGMENT_TAG);
-            } else {
+            }  else {
                 updateFragment(new HomeFragment(), HOME_FRAGMENT_TAG);
             }
         }
