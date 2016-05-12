@@ -61,6 +61,7 @@ public class SearchPropertySaveSearchFragment extends DialogFragment {
             public void onClick(View v) {
                 SavedSearch savedSearch = new SavedSearch();
                 savedSearch.setSavedSearchName(mSearchName.getText().toString());
+                savedSearch.setMapURL(mCriteria.getMapUrl());
 
                 int checkedRadioButtonId = mRadioGroup.getCheckedRadioButtonId();
                 savedSearch.setFrequency(getFrequencyType(checkedRadioButtonId));

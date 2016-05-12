@@ -86,6 +86,7 @@ public class SavedSearch implements Serializable {
         zipcode="";
         hasZipcode=false;
         frequency="Realtime";
+        mapURL="";
     }
 
     public void setId(String id) {
@@ -96,12 +97,24 @@ public class SavedSearch implements Serializable {
     private String savedSearchName;
     private String frequency;
 
+    public String getMapURL() {
+        return mapURL;
+    }
+
+    public void setMapURL(String mapURL) {
+        this.mapURL = mapURL;
+    }
+
+    private String mapURL;
+
+
     private String postingType;
     private String minRent;
     private String maxRent;
     private String keyword;
     private String city;
     private String zipcode;
+
 
 
     private boolean hasPostingType;
