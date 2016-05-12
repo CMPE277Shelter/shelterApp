@@ -45,27 +45,11 @@ public class MyPostingHolder extends RecyclerView.ViewHolder
         mActivity = context;
         mFragmentManager = fragmentManager;
 
-        mPropertyImageView = (ImageView) itemView.findViewById(R.id.property_imageview);
-        mPropertyName = (TextView) itemView.findViewById(R.id.property_name);
-        mPropertyType = (TextView) itemView.findViewById(R.id.property_type);
-        mAddress = (TextView) itemView.findViewById(R.id.property_address);
-        mRent = (TextView) itemView.findViewById(R.id.property_rent);
-
-        mFavToggleButton = (ToggleButton) itemView.findViewById(R.id.fav_toggle_button);
-        mFavToggleButton.setChecked(true);
-        mFavToggleButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(mFavToggleButton.isChecked()){
-                    mFavToggleButton.setChecked(false);
-                    Log.d("MyPostingHolder", "Toggle clicked white");
-                }else {
-                    mFavToggleButton.setChecked(true);
-                    Log.d("MyPostingHolder", "Toggle clicked red");
-                }
-            }
-        });
-
+        mPropertyImageView = (ImageView) itemView.findViewById(R.id.my_property_photo);
+        mPropertyName = (TextView) itemView.findViewById(R.id.my_property_name);
+        mPropertyType = (TextView) itemView.findViewById(R.id.my_property_type);
+        mAddress = (TextView) itemView.findViewById(R.id.my_property_address);
+        mRent = (TextView) itemView.findViewById(R.id.my_property_rent);
     }
 
     /**

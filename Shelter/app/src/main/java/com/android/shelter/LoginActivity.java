@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.android.shelter.util.ShelterConstants;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
@@ -94,7 +95,7 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
                                         emailId = object.getString("email");
                                         appUser.setEmailId(emailId);
                                     }
-                                    loginSuccessfull(true, id, emailId, userName);
+                                    loginSuccessfull("login", id, emailId, userName);
                                 } catch (JSONException e) {
                                     e.printStackTrace();
                                 }
@@ -154,7 +155,7 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
             // Signed in successfully, show authenticated UI.
             GoogleSignInAccount acct = result.getSignInAccount();
             if (acct != null) {
-                loginSuccessfull(true, acct.getId(), acct.getEmail(), acct.getDisplayName());
+                loginSuccessfull("google", acct.getId(), acct.getEmail(), acct.getDisplayName());
                 appUser.setEmailId(acct.getEmail());
                 appUser.setUserId(acct.getId());
                 appUser.setUserName(acct.getDisplayName());
@@ -263,13 +264,13 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
         finish();
     }
 
-    private void loginSuccessfull(boolean isLogin, String ownerId, String emailId, String userName){
+    private void loginSuccessfull(String type, String ownerId, String emailId, String userName){
         Log.d(TAG, "Login successfull .............." + ownerId + "   " + emailId + "  " + userName);
-        preferences.edit().putBoolean("signedIn", isLogin).commit();
-        preferences.edit().putString("ownerId", ownerId).commit();
-        preferences.edit().putString("email", emailId).commit();
-        preferences.edit().putString("userName", userName).commit();
-
+        preferences.edit().putBoolean(ShelterConstants.SHARED_PREFERENCE_SIGNED_IN, true).commit();
+        preferences.edit().putString(ShelterConstants.SHARED_PREFERENCE_OWNER_ID, ownerId).commit();
+        preferences.edit().putString(ShelterConstants.SHARED_PREFERENCE_EMAIL, emailId).commit();
+        preferences.edit().putString(ShelterConstants.SHARED_PREFERENCE_USER_NAME, userName).commit();
+        preferences.edit().putString(ShelterConstants.SHARED_PREFERENCE_TYPE, type).commit();
         finish();
     }
 

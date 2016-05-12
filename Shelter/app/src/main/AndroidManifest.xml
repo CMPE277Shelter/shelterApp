@@ -75,6 +75,9 @@
         <activity
             android:name=".landlord.PostedPropertyPagerActivity"
             android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".HomeActivity"/>
         </activity>
         <activity android:name=".SavedSearchActivity"
             android:label="@string/app_name"
@@ -96,6 +99,13 @@
             android:name=".tenant.PropertyPagerActivity"
             android:label="@string/title_activity_property_pager"
             android:theme="@style/AppTheme.NoActionBar">
+        </activity>
+        <activity
+            android:name=".UserProfileActivity"
+            android:theme="@style/AppTheme">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".HomeActivity"/>
         </activity>
     </application>
 
