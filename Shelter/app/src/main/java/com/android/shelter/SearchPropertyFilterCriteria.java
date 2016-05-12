@@ -62,4 +62,13 @@ public class SearchPropertyFilterCriteria implements Serializable{
     private String apartmentType;
     private String minRent;
     private String maxRent;
+
+    public SearchPropertyFilterCriteria(){
+        this.keyword="";
+        this.zipcode="";
+        this.city="";
+        this.apartmentType="All";
+        this.maxRent="";
+        this.minRent="";
+    }
 }

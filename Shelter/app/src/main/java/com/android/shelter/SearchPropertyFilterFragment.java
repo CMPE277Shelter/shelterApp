@@ -33,32 +33,40 @@ public class SearchPropertyFilterFragment extends DialogFragment {
     private EditText mMaxRent;
     private RadioButton mPropertyType;
     private View mView;
+    private static SearchPropertyFilterCriteria mCriteria;
 
 
-    public static SearchPropertyFilterFragment newInstance() {
+    public static SearchPropertyFilterFragment newInstance(SearchPropertyFilterCriteria criteria) {
         Bundle args = new Bundle();
         SearchPropertyFilterFragment fragment = new SearchPropertyFilterFragment();
         fragment.setArguments(args);
+        mCriteria=criteria;
         return fragment;
     }
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
 
-
         View v = LayoutInflater.from(getActivity())
                 .inflate(R.layout.fragment_search_property_filter, null);
 
         mRadioGroup = (RadioGroup) v.findViewById(R.id.filtered_property_type);
-        ((RadioButton) mRadioGroup.findViewById(R.id.all_type)).setChecked(true);
+        ((RadioButton) mRadioGroup.findViewById(getPropertyTypeId(mCriteria.getApartmentType()))).setChecked(true);
 
         mCity =(EditText) v.findViewById(R.id.filtered_city);
+        mCity.setText(mCriteria.getCity());
+
         mKeyword=(EditText) v.findViewById(R.id.filtered_keyword);
+        mKeyword.setText(mCriteria.getKeyword());
+
         mZipCode =(EditText) v.findViewById(R.id.filtered_zip);
+        mZipCode.setText(mCriteria.getZipcode());
+
         mMaxRent=(EditText) v.findViewById(R.id.filtered_max_rent);
+        mMaxRent.setText(mCriteria.getMaxRent());
+
         mMinRent =(EditText) v.findViewById(R.id.filtered_min_rent);
-
-
+        mMinRent.setText(mCriteria.getMinRent());
 
 
         ((Button)v.findViewById(R.id.filtered_filter_btn)).setOnClickListener(new View.OnClickListener() {
@@ -90,6 +98,18 @@ public class SearchPropertyFilterFragment extends DialogFragment {
                 .setView(v)
                 .setTitle("Filter Options")
                 .create();
+    }
+
+    private int getPropertyTypeId(String type){
+        if(type.equals("Apartment")){
+            return R.id.apartment_type;
+        }else if(type.equals("House")){
+            return R.id.house_type;
+        }else if(type.equals("Townhouse")){
+            return R.id.townhouse_type;
+        }else {
+            return R.id.all_type;
+        }
     }
 
     private String getPropertyType(int checkedRadioButtonId) {
