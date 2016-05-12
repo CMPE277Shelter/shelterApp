@@ -1,6 +1,7 @@
-package com.android.shelter.landlord;
+package com.android.shelter.tenant;
 
-import android.os.AsyncTask;
+import android.content.Context;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
@@ -18,24 +19,13 @@ import android.widget.TextView;
 import com.android.shelter.Property;
 import com.android.shelter.PropertyLab;
 import com.android.shelter.R;
-import com.android.shelter.util.IncrementViewCount;
 import com.manuelpeinado.fadingactionbar.view.ObservableScrollable;
 import com.manuelpeinado.fadingactionbar.view.OnScrollChangedCallback;
 
 import java.util.UUID;
 
-import cz.msebera.android.httpclient.HttpEntity;
-import cz.msebera.android.httpclient.HttpResponse;
-import cz.msebera.android.httpclient.client.HttpClient;
-import cz.msebera.android.httpclient.client.methods.HttpGet;
-import cz.msebera.android.httpclient.impl.client.DefaultHttpClient;
-import cz.msebera.android.httpclient.protocol.BasicHttpContext;
-import cz.msebera.android.httpclient.protocol.HttpContext;
 
-/**
- * Shows detail view of posted property which are posted by landlord
- */
-public class PostedPropertyFragment extends Fragment implements OnScrollChangedCallback{
+public class PropertyFragment extends Fragment implements OnScrollChangedCallback {
     private static final String TAG = "PostedPropertyFragment";
     private static final String ARG_PROPERTY_ID = "property_id";
 
@@ -55,11 +45,12 @@ public class PostedPropertyFragment extends Fragment implements OnScrollChangedC
     private int mLastDampedScroll;
 
 
-    public static PostedPropertyFragment newInstance(UUID imageId) {
+
+    public static PropertyFragment newInstance(UUID imageId) {
         Bundle args = new Bundle();
         args.putSerializable(ARG_PROPERTY_ID, imageId);
 
-        PostedPropertyFragment fragment = new PostedPropertyFragment();
+       PropertyFragment fragment = new PropertyFragment();
         fragment.setArguments(args);
         return fragment;
     }
@@ -71,11 +62,12 @@ public class PostedPropertyFragment extends Fragment implements OnScrollChangedC
         setHasOptionsMenu(true);
         UUID id = (UUID) getArguments().getSerializable(ARG_PROPERTY_ID);
         mProperty = PropertyLab.get(getContext()).getProperty(id);
-        new IncrementViewCount().execute("http://ec2-52-33-84-233.us-west-2.compute.amazonaws.com:5000/incrementViewCount/");
+
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_posted_property_detail, container, false);
 
         mToolbar = (Toolbar) v.findViewById(R.id.posted_property_toolbar);
@@ -117,13 +109,13 @@ public class PostedPropertyFragment extends Fragment implements OnScrollChangedC
 
         onScroll(-1, 0);
         return v;
-    }
 
+    }
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.menu_posted_property, menu);
     }
-
+    // TODO: Rename method, update argument and hook method into UI event
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
@@ -136,6 +128,17 @@ public class PostedPropertyFragment extends Fragment implements OnScrollChangedC
     }
 
     @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+    }
+
+    @Override
     public void onScroll(int l, int scrollPosition) {
         int headerHeight = mImage.getHeight() - mToolbar.getHeight();
         float ratio = 0;
@@ -145,20 +148,10 @@ public class PostedPropertyFragment extends Fragment implements OnScrollChangedC
         updateActionBarTransparency(ratio);
         updateParallaxEffect(scrollPosition);
     }
-
-    /**
-     * Updates alpha for toolbar.
-     * @param scrollRatio
-     */
     private void updateActionBarTransparency(float scrollRatio) {
         int newAlpha = (int) (scrollRatio * 255);
         mToolbar.getBackground().setAlpha(newAlpha);
     }
-
-    /**
-     * Scrolling effect
-     * @param scrollPosition
-     */
     private void updateParallaxEffect(int scrollPosition) {
         float damping = 0.5f;
         int dampedScroll = (int) (scrollPosition * damping);
@@ -167,7 +160,4 @@ public class PostedPropertyFragment extends Fragment implements OnScrollChangedC
 
         mLastDampedScroll = dampedScroll;
     }
-
 }
-
-
