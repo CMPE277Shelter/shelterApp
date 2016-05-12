@@ -78,7 +78,7 @@ def getImage():
 @app.route('/postings/<owner_id>/<property_id>', methods=['GET'])
 def getPostings(owner_id,property_id=""):
         postings=getCollection('postings')
-        results = postings.find({"owner_id":int(owner_id),"property_id":int(property_id)},{'_id': False})
+        results = postings.find({"owner_id":owner_id,"property_id":property_id},{'_id': False})
         return dumps(results)
 
 @app.route('/postings',methods=['GET'])
@@ -122,22 +122,22 @@ def createPosting():
 				"street":request.json['address'][0]['street'],
 				"city":request.json['address'][0]['city'],
 				"state":request.json['address'][0]['state'],
-				"zipcode":request.json['address'][0]['zipcode']
+				"zipcode":int(request.json['address'][0]['zipcode'])
 			}
 		],
 		"property_type":request.json['property_type'],
 		"details":[
 			{
-				"rooms":request.json['details'][0]['rooms'],
-				"bath":request.json['details'][0]['bath'],
-				"floor_area":request.json['details'][0]['floor_area'],
+				"rooms":int(request.json['details'][0]['rooms']),
+				"bath":int(request.json['details'][0]['bath']),
+				"floor_area":int(request.json['details'][0]['floor_area']),
 				"unit":"square feet",
 				"small_unit":"sq-ft"
 			}
 		],
 		"rent_details":[
 			{
-				"rent":request.json['rent_details'][0]['rent'],
+				"rent":int(request.json['rent_details'][0]['rent']),
 				"unit":"US dollar",
 				"small_unit":"USD"
 			}
@@ -150,12 +150,12 @@ def createPosting():
 			}
 		],
                 "is_favorite":False,
-                "isRentedOrCancelled":False,
+                "is_rented_or_cancel":False,
 		"description":request.json['description'],
 		"more":[
 			{
 				"lease_type":request.json['more'][0]['lease_type'],
-				"deposit":request.json['more'][0]['deposit']
+				"deposit":int(request.json['more'][0]['deposit'])
 			}
 		]
 	}
@@ -166,7 +166,55 @@ def createPosting():
 		return dumps(posting)
 	else:
 		return dumps({"error":"Error Occured"})
-	
+
+def strToBool(val):
+        return val=='true'
+
+def toInt(val):
+        if val=='':
+                return -1
+        else:
+                return int(val)
+
+@app.route('/savesearch/',methods=['POST'])
+def createSearch():
+	search={
+		"id":request.json['id'],
+                "user":request.json['user'],
+                "name":request.json['name'],
+                "frequency":request.json['frequency'],
+                "keyword":request.json['keyword'],
+                "city":request.json['city'],
+                "zipcode":toInt(request.json['zipcode']),
+                "minrent":toInt(request.json['minrent']),
+                "maxrent":toInt(request.json['maxrent']),
+                "propertyType":request.json['propertyType'],
+                "haskeyword":strToBool(request.json['haskeyword']),
+                "hascity":strToBool(request.json['hascity']),
+                "haszipcode":strToBool(request.json['haszipcode']),
+                "hasminrent":strToBool(request.json['hasminrent']),
+                "hasmaxrent":strToBool(request.json['hasmaxrent']),
+                "haspropertyType":strToBool(request.json['haspropertyType'])
+	}
+
+	searches=getCollection('searches')
+	insertedId=searches.insert_one(search)
+	if insertedId:
+		return dumps(search)
+	else:
+		return dumps({"error":"Error Occured"})
+
+@app.route('/getsearch',methods=['GET'])
+def createSearch():
+	searches=getCollection('searches')
+	search_criteria={}
+	if 'user' in request.args:
+		search_criteria['user']=request.args['user']
+	if 'id' in request.args:
+                search_criteria['id']=request.args['id']
+        
+	results=searches.find(search_criteria,{'_id':False})
+	return dumps(results)
 
 @app.route('/createuser/',methods=['POST'])
 def createUser():

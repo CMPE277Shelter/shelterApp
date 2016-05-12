@@ -13,6 +13,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.android.shelter.util.ShelterSavedSearchTask;
+
 /**
  * Created by Prasanna on 5/10/16.
  */
@@ -20,6 +22,7 @@ public class SavedSearchFragment extends Fragment {
     private static final String TAG = "MySearchesFragment";
 
     private RecyclerView mSearchesRecyclerView;
+    private SavedSearch mSavedSearch;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -27,17 +30,6 @@ public class SavedSearchFragment extends Fragment {
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
         setHasOptionsMenu(false);
-//        for (int i = 0; i < 5; i++) {
-//            SavedSearch savedSearch=new SavedSearch();
-//            savedSearch.setSavedSearchName("101");
-//            savedSearch.setPostingType("Townhouse");
-//            savedSearch.setPhotoId(R.color.colorAccent);
-//            savedSearch.setCity("San Jose");
-//            savedSearch.setZipcode("95112");
-//            savedSearch.setMinRent(2000);
-//            savedSearch.setMaxRent(5000);
-//            SavedSearchesLab.get(getContext()).addSavedSearch(savedSearch);
-//        }
     }
 
     @Override
@@ -53,6 +45,16 @@ public class SavedSearchFragment extends Fragment {
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         layoutManager.scrollToPosition(0);
         mSearchesRecyclerView.setLayoutManager(layoutManager);
+
+        mSavedSearch = new SavedSearch();
+        mSavedSearch.setId("");
+        new ShelterSavedSearchTask(getContext(), "getsearch", "GET", true, null,
+                mSavedSearch, new FragmentCallback() {
+            @Override
+            public void onTaskDone() {
+                setupAdapter();
+            }
+        }).execute();
         setupAdapter();
 
         return view;
@@ -80,7 +82,12 @@ public class SavedSearchFragment extends Fragment {
     private void setupAdapter() {
         if (isAdded()) {
             Log.d(TAG, "Setting adapter for view");
-            mSearchesRecyclerView.setAdapter(new SavedSearchAdapter(SavedSearchesLab.get(getContext()).getSavedSearches(), getActivity(), getActivity().getSupportFragmentManager()));
+            mSearchesRecyclerView.setAdapter(
+                    new SavedSearchAdapter(
+                            SavedSearchesLab.get(getContext()).getSavedSearches(), getActivity(),
+                            getActivity().getSupportFragmentManager()
+                    )
+            );
         }
     }
 }

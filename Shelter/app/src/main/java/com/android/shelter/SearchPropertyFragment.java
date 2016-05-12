@@ -6,8 +6,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
@@ -18,10 +16,17 @@ import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.Toolbar;
 
 import com.android.shelter.helper.MyPostingAdapter;
+import com.android.shelter.util.PostPropertyTask;
 import com.android.shelter.util.ShelterPropertyTask;
+import com.android.shelter.util.ShelterSavedSearchTask;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.UUID;
 
 
 /**
@@ -71,7 +76,7 @@ public class SearchPropertyFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-                SearchPropertySaveSearchFragment dialog = SearchPropertySaveSearchFragment.newInstance(searchToBeSaved);
+                SearchPropertySaveSearchFragment dialog = SearchPropertySaveSearchFragment.newInstance(searchToBeSaved,criteria);
                 dialog.setTargetFragment(SearchPropertyFragment.this, REQUEST_SAVE_SEARCH_OPTION);
                 dialog.show(fragmentManager, DIALOG_SAVE_SEARCH);
             }
@@ -149,31 +154,53 @@ public class SearchPropertyFragment extends Fragment {
             }
         }else if (requestCode == REQUEST_SAVE_SEARCH_OPTION){
             if(resultCode == Activity.RESULT_OK){
-                searchToBeSaved = (SavedSearch)
-                        data.getSerializableExtra(SavedSearch.EXTRA_OPTION);
-//                new ShelterPropertyTask(getActivity().getApplicationContext(), "postings", true,
-//                        null, null, criteria.getKeyword(), criteria.getCity(), criteria.getZipcode(),
-//                        criteria.getMinRent(), criteria.getMaxRent(), criteria.getApartmentType(),
-//                        new FragmentCallback() {
-//                            @Override
-//                            public void onTaskDone() {
-//                                mPostingAdapter = new MyPostingAdapter(PropertyLab.get(getContext()).getProperties(),
-//                                        getActivity(), getActivity().getSupportFragmentManager());
-//                                mPostingRecyclerView.setAdapter(mPostingAdapter);
-//                            }
-//                        }).execute();
+                searchToBeSaved = (SavedSearch) data.getSerializableExtra(SavedSearch.EXTRA_OPTION);
+                try{
+                    postSearchData(searchToBeSaved);
+                }catch (Exception ex){
+                    Log.e(TAG, ex.getStackTrace().toString());
+                }
+
             }
         }
+    }
+
+    private void postSearchData(SavedSearch searchToBeSaved) throws JSONException {
+        JSONObject jsonObject = new JSONObject();
+
+        jsonObject.put("id", searchToBeSaved.getId().toString());
+        jsonObject.put("user","010743005");
+        jsonObject.put("name",searchToBeSaved.getSavedSearchName());
+        jsonObject.put("frequency",searchToBeSaved.getFrequency());
+
+        jsonObject.put("keyword",searchToBeSaved.getKeyword());
+        jsonObject.put("city",searchToBeSaved.getCity());
+        jsonObject.put("zipcode",searchToBeSaved.getZipcode());
+        jsonObject.put("minrent",searchToBeSaved.getMinRent());
+        jsonObject.put("maxrent",searchToBeSaved.getMaxRent());
+        jsonObject.put("propertyType",searchToBeSaved.getPostingType());
+
+        jsonObject.put("haskeyword",searchToBeSaved.hasKeyword());
+        jsonObject.put("hascity",searchToBeSaved.hasCity());
+        jsonObject.put("haszipcode",searchToBeSaved.hasZipcode());
+        jsonObject.put("hasminrent",searchToBeSaved.hasMinRent());
+        jsonObject.put("hasmaxrent",searchToBeSaved.hasMaxRent());
+        jsonObject.put("haspropertyType",searchToBeSaved.hasPostingType());
+
+
+        Log.d(TAG, jsonObject.toString());
+
+        new ShelterSavedSearchTask(getContext(), "savesearch/", "POST", true, jsonObject,
+                searchToBeSaved, new FragmentCallback() {
+            @Override
+            public void onTaskDone() {
+
+            }
+        }).execute();
     }
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
-
-
-    }
-
-    public interface FragmentCallback {
-        public void onTaskDone();
     }
 }

@@ -2,15 +2,12 @@ package com.android.shelter.util;
 
 import android.content.Context;
 import android.os.AsyncTask;
-import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.util.Log;
 
+import com.android.shelter.FragmentCallback;
 import com.android.shelter.Property;
 import com.android.shelter.PropertyLab;
 import com.android.shelter.R;
-import com.android.shelter.SearchPropertyFragment;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -47,15 +44,12 @@ public class ShelterPropertyTask  extends AsyncTask<Void, Void, String> {
     private String property_type;
     private boolean hasParams;
     private String endpoint;
-    private SearchPropertyFragment.FragmentCallback mFragmentCallback;
-
-
-
+    private FragmentCallback mFragmentCallback;
 
     public ShelterPropertyTask(Context context,String endpoint, boolean hasParams,
                                String owner_id, String property_id, String keyword, String city,
                                String zipcode, String min_rent, String max_rent,
-                               String property_type, SearchPropertyFragment.FragmentCallback fragmentCallback){
+                               String property_type, FragmentCallback fragmentCallback){
         this.context=context;
         this.hasParams=hasParams;
         this.endpoint=endpoint;
@@ -126,13 +120,14 @@ public class ShelterPropertyTask  extends AsyncTask<Void, Void, String> {
         String text = null;
         try {
             HttpResponse response = httpClient.execute(httpGet, localContext);
-            StatusLine status = response.getStatusLine();
+            HttpEntity entity = response.getEntity();
+            text = search(entity);
 
             Log.d("text:",text);
         } catch (Exception e) {
             return e.getLocalizedMessage();
         }
-        return getStatus().toString();
+        return text;
     }
 
     protected void onPostExecute(String results) {
