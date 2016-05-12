@@ -18,7 +18,10 @@ import cz.msebera.android.httpclient.HttpEntity;
 import cz.msebera.android.httpclient.HttpResponse;
 import cz.msebera.android.httpclient.client.HttpClient;
 import cz.msebera.android.httpclient.client.methods.HttpPost;
+import cz.msebera.android.httpclient.entity.ByteArrayEntity;
 import cz.msebera.android.httpclient.entity.StringEntity;
+import cz.msebera.android.httpclient.entity.mime.HttpMultipartMode;
+import cz.msebera.android.httpclient.extras.Base64;
 import cz.msebera.android.httpclient.impl.client.DefaultHttpClient;
 import cz.msebera.android.httpclient.protocol.BasicHttpContext;
 import cz.msebera.android.httpclient.protocol.HttpContext;
@@ -38,18 +41,21 @@ public class PostImageTask extends AsyncTask<Void, Void, String> {
     private String ownerId;
     private String filename;
     private String imageString64;
+    private byte[] imageInByte;
+    private JSONObject mJSONObject;
 
 
 
     public PostImageTask(Context context, String endpoint, boolean hasParams, String propertyId,
-                         String ownerId, String filename, String imageString64){
+                         String ownerId, String filename, byte[] imageInByte){
         this.context=context;
         this.hasParams=hasParams;
         this.endpoint=endpoint;
         this.propertyId = propertyId;
         this.ownerId = ownerId;
         this.filename = filename;
-        this.imageString64 = imageString64;
+        this.imageInByte=imageInByte;
+
     }
 
     private String getAbsoluteURL(){
@@ -65,8 +71,8 @@ public class PostImageTask extends AsyncTask<Void, Void, String> {
             if(filename !=null){
                 absoluteURL+="&filename="+ filename;
             }
-            if(imageString64 !=null){
-                absoluteURL+="&strByte="+ imageString64;
+            if(imageInByte !=null){
+                absoluteURL+="&strByte="+ Base64.encodeToString(imageInByte,0);
             }
         }
         return absoluteURL;

@@ -94,7 +94,8 @@ public class PostPropertyTask extends AsyncTask<Void, Void, String> {
         String ownerId = "";
         for(PropertyImage images : ImagePicker.get(context).getPropertyImages()){
             Log.d(TAG, "Image getting uploaded ==== " + images.getImagePath());
-            new PostImageTask(context, "image", true, propertyId, ownerId, images.getImagePath(), ImagePicker.get(context).getImageString64(images.getImageBitMap())).execute();
+            new PostImageTask(context, "image", true, propertyId, ownerId, images.getImagePath(),
+                    ImagePicker.get(context).getImageString64(images.getImageBitMap())).execute();
         }
     }
 }

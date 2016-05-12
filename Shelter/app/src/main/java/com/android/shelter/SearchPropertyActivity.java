@@ -159,7 +159,7 @@ public class SearchPropertyActivity extends AbstractFragmentActivity
         String provider = service.getBestProvider(criteria, true);
         if (ContextCompat.checkSelfPermission(c.getApplicationContext(), Manifest.permission.ACCESS_COARSE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED ){
-            return new LatLng(37.398160, -122.180831);
+            return new LatLng(37.322993, -121.883200);
         }
 
 
@@ -167,7 +167,7 @@ public class SearchPropertyActivity extends AbstractFragmentActivity
 
 
         if(location==null){
-            return new LatLng(37.398160, -122.180831);
+            return new LatLng(37.322993, -121.883200);
         }
         LatLng userLocation = new LatLng(location.getLatitude(), location.getLongitude());
         return userLocation;
