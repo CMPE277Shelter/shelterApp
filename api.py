@@ -235,6 +235,30 @@ def deleteFavourite(user_id,property_id,owner_id=""):
         else:
                 return dumps({"error":"Error Occured"})
 
+@app.route('/isrented/',methods=['PUT'])
+def isRented():
+        postings = getCollection('postings')
+        isPropRented = request.json['isRented']
+        search_criteria={}
+        if 'owner_id' in request.args:
+                owner_id = request.args['owner_id']
+                search_criteria['owner_id']=request.args['owner_id']
+        if 'property_id' in request.args:
+                property_id = request.args['property_id']
+                search_criteria['property_id']=request.args['property_id']
+
+        results=postings.find(search_criteria,{'_id':False})
+        for record in results:
+                print record
+                fowner = record['owner_id']
+                fprop = record['property_id']
+        updateId = postings.update_one({"owner_id":fowner,"property_id":fprop},{"$set": {"isRentedOrCancelled":isPropRented}},upsert = True)
+
+        if updateId:
+                return dumps({"Status" : "OK"})
+        else:
+                return dumps({"error":"Error Occured"})       
+        
 
 @app.route('/all/', methods=['GET'])
 def getAllPostings():
