@@ -41,8 +41,8 @@ public class HomeFragment extends Fragment {
         startSearch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent searchActivity = new Intent(getActivity(), SearchActivity.class);
-                startActivity(searchActivity);
+//                Intent searchActivity = new Intent(getActivity(), SearchActivity.class);
+//                startActivity(searchActivity);
             }
         });
 

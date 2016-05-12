@@ -187,7 +187,6 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        mProgressDialog.dismiss();
     }
 
     private void showProgressDialog() {
