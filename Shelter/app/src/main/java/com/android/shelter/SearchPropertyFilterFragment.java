@@ -5,10 +5,13 @@ import android.app.Dialog;
 
 import android.content.Intent;
 
+import android.location.Address;
+import android.location.Geocoder;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 
 import android.support.v7.app.AlertDialog;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 
@@ -16,6 +19,10 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.Toast;
+
+import java.io.IOException;
+import java.util.List;
 
 
 public class SearchPropertyFilterFragment extends DialogFragment {
@@ -47,7 +54,7 @@ public class SearchPropertyFilterFragment extends DialogFragment {
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
 
-        Location appLocation = Location.getInstance();
+        final Location appLocation = Location.getInstance();
         View v = LayoutInflater.from(getActivity())
                 .inflate(R.layout.fragment_search_property_filter, null);
 
@@ -87,7 +94,33 @@ public class SearchPropertyFilterFragment extends DialogFragment {
 
                 int checkedRadioButtonId = mRadioGroup.getCheckedRadioButtonId();
                 criteria.setApartmentType(getPropertyType(checkedRadioButtonId));
+
+                appLocation.setCityName(criteria.getCity());
+                appLocation.setPostalCode(criteria.getZipcode());
+                try {
+                    final Geocoder geocoder = new Geocoder(getActivity().getApplicationContext());
+                    String location = criteria.getCity();
+
+                    List<Address> addresses = geocoder.getFromLocationName(location, 1);
+                    if (addresses != null && !addresses.isEmpty()) {
+                        Address address = addresses.get(0);
+                        String url = "http://maps.google.com/maps/api/staticmap?center=" + address.getLatitude()
+                                + "," + address.getLongitude() + "&zoom=15&size=400x200&sensor=false&markers=color:red|"
+                                +address.getLatitude()+","+address.getLongitude();
+                        appLocation.setStaticMapUrl(url);
+                        criteria.setMapUrl(url);
+
+                        //Toast.makeText(getActivity().getApplicationContext(), "Modified" + url, Toast.LENGTH_SHORT).show();
+                    } else {
+
+
+                    }
+                } catch (IOException e) {
+                    e.toString();
+                }
+
                 getDialog().dismiss();
+
                 sendResult(Activity.RESULT_OK, criteria);
             }
         });

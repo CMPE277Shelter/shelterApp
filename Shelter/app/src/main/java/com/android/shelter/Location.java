@@ -10,6 +10,7 @@ public class Location {
     private String postalCode;
     private String staticMapUrl;
 
+
     public static void initInstance()
     {
         if (instance == null)

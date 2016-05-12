@@ -58,6 +58,7 @@ public class SavedSearchHolder extends RecyclerView.ViewHolder
         mSavedSearchName.setText(search.getSavedSearchName());
         mPropertyType.setText(search.getPostingType());
         mSavedSearchImageView.setImageResource(search.getPhotoId());
+        
         mCity.setText(search.getCity());
         mRent.setText(search.getMinRent() + "-" + search.getMaxRent());
         mKeyword.setText(search.getKeyword());

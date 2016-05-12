@@ -55,6 +55,13 @@ public class SearchPropertyFilterCriteria implements Serializable{
     public void setMaxRent(String maxRent) {
         this.maxRent = maxRent;
     }
+    public String getMapUrl() {
+        return mapUrl;
+    }
+
+    public void setMapUrl(String mapUrl) {
+        this.mapUrl = mapUrl;
+    }
 
     private String keyword;
     private String zipcode;
@@ -63,6 +70,10 @@ public class SearchPropertyFilterCriteria implements Serializable{
     private String minRent;
     private String maxRent;
 
+
+
+    private String mapUrl;
+
     public SearchPropertyFilterCriteria(){
         this.keyword="";
         this.zipcode="";
@@ -70,5 +81,6 @@ public class SearchPropertyFilterCriteria implements Serializable{
         this.apartmentType="All";
         this.maxRent="";
         this.minRent="";
+        this.mapUrl="";
     }
 }
