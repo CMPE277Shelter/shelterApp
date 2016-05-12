@@ -14,11 +14,14 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.provider.MediaStore;
+import android.provider.Settings;
+import android.util.Base64;
 import android.util.Log;
 
 import com.android.shelter.R;
 import com.android.shelter.helper.PropertyImage;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
@@ -100,7 +103,7 @@ public class ImagePicker {
      * Returns bitmap to display on view
      * @return
      */
-    public static PropertyImage getPropertyImage(Context context, Intent data) {
+    public PropertyImage getPropertyImage(Context context, Intent data) {
         Log.d(TAG, "Creating and returing new PropertyImage");
         Bitmap capturedImage = (Bitmap) data.getExtras().get("data");
         Uri selectedImage = data.getData();
@@ -120,7 +123,7 @@ public class ImagePicker {
         }else {
             image.setImageBitMap(BitmapFactory.decodeFile(picturePath));
         }
-
+        //image.setImageString64(getImageString64(image.getImageBitMap()));
         return image;
     }
 
@@ -129,6 +132,7 @@ public class ImagePicker {
      * @param imageList
      */
     public void updateImageList(List<PropertyImage> imageList){
+        mPropertyImages = new ArrayList<>();
         mPropertyImages = imageList;
     }
 
@@ -147,6 +151,38 @@ public class ImagePicker {
             }
         }
         return null;
+    }
+
+    public String getImageString64(Bitmap image){
+        // convert bitmap to byte
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        image.compress(Bitmap.CompressFormat.PNG, 100, stream);
+        byte imageInByte[] = stream.toByteArray();
+        try{
+            System.gc();
+            return Base64.encodeToString(imageInByte, Base64.NO_WRAP);
+        }catch (OutOfMemoryError ex){
+            stream = new ByteArrayOutputStream();
+            image.compress(Bitmap.CompressFormat.PNG, 50, stream);
+            imageInByte = stream.toByteArray();
+
+            return Base64.encodeToString(imageInByte, Base64.NO_WRAP);
+        } catch (Exception ex){
+            Log.d(TAG, ex.toString());
+        }
+        return null;
+    }
+
+    public List<String> getPropertyImageString64(){
+        List<String> imageStrings = new ArrayList<>();
+        for (PropertyImage image : mPropertyImages){
+            // convert bitmap to byte
+            ByteArrayOutputStream stream = new ByteArrayOutputStream();
+            image.getImageBitMap().compress(Bitmap.CompressFormat.PNG, 100, stream);
+            byte imageInByte[] = stream.toByteArray();
+            imageStrings.add(Base64.encodeToString(imageInByte, Base64.NO_WRAP));
+        }
+        return imageStrings;
     }
 
 }
