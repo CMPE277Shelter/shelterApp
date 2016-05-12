@@ -1,7 +1,10 @@
 package com.android.shelter;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.GravityCompat;
@@ -14,12 +17,13 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.shelter.landlord.MyPostingFragment;
 import com.android.shelter.landlord.PostPropertyActivity;
-import com.facebook.AccessToken;
 
 /**
  * Landing screen or home activity for the application.
@@ -28,6 +32,7 @@ public class HomeActivity extends AbstractFragmentActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     public static final int REQUEST_FRAGMENT = 1;
+    public static final int REQUEST_LOGIN = 2;
     public static final String EXTRA_FRAGMENT_ID = "com.android.shelter.fragment_id";
     public static final int HOME_FRAGMENT_ID = 2;
     public static final int MY_POSTING_FRAGMENT_ID = 3;
@@ -37,12 +42,10 @@ public class HomeActivity extends AbstractFragmentActivity
     public static final String MY_POSTING_FRAGMENT_TAG = "MyPostingFragment";
     public static final String MY_SAVED_SEARCH_FRAGMENT_TAG = "MySavedSearchFragment";
 
-
     private static final String TAG = "HomeActivity";
     private DrawerLayout mDrawer;
-    private LoginActivity login;
-    private String FacebookUser;
-    private String GoogleUser;
+    private RelativeLayout mBeforeSigninLayout;
+    private LinearLayout mAfterSigninLayout;
 
 
     @Override
@@ -53,7 +56,6 @@ public class HomeActivity extends AbstractFragmentActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        login = new LoginActivity();
         Log.d(TAG, "Now creating the fragment");
         setContentView(R.layout.activity_home);
 
@@ -69,8 +71,13 @@ public class HomeActivity extends AbstractFragmentActivity
         toggle.syncState();
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        View navHeaderView = navigationView.getHeaderView(0);
         navigationView.setNavigationItemSelectedListener(this);
+
+        mDrawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        View navHeaderView = navigationView.getHeaderView(0);
+        mAfterSigninLayout = (LinearLayout) navHeaderView.findViewById(R.id.after_signin);
+        mBeforeSigninLayout = (RelativeLayout) navHeaderView.findViewById(R.id.before_signin);
+
         Button loginButton = (Button) navHeaderView.findViewById(R.id.login_button);
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -79,35 +86,9 @@ public class HomeActivity extends AbstractFragmentActivity
                 if (mDrawer.isDrawerOpen(GravityCompat.START)) {
                     mDrawer.closeDrawer(GravityCompat.START);
                 }
-                Toast.makeText(HomeActivity.this, "Login code", Toast.LENGTH_SHORT).show();
-                Intent intent = new Intent(HomeActivity.this, LoginActivity.class);
-                startActivity(intent);
+                new StartLoginProcess().execute();
             }
         });
-        loginButton.setVisibility(View.VISIBLE);
-
-        mDrawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        TextView Name = (TextView)findViewById(R.id.Name);
-        Bundle extras = getIntent().getExtras();
-
-        if (extras != null) {
-             FacebookUser = extras.getString("FacebookUser");
-             GoogleUser = extras.getString("GoogleUser");
-        }
-        Toast.makeText(HomeActivity.this, "USER:" +FacebookUser, Toast.LENGTH_SHORT).show();
-        Toast.makeText(HomeActivity.this, "USER:"+GoogleUser, Toast.LENGTH_SHORT).show();
-//        if(login.IsLoggedIn()||login.isGoogleLoggedIn()){
-//
-//            if(login.getUser()!="")
-//                Name.setText("Welcome"+login.getUser());
-//                loginButton.setVisibility(View.GONE);
-//
-//        }else if(login.getGoogleUser()!="" && login.isGoogleLoggedIn()){
-//            //Name.setText("Welcome"+login.getGoogleUser());
-//            Toast.makeText(HomeActivity.this, login.getGoogleUser(), Toast.LENGTH_SHORT).show();
-//            loginButton.setVisibility(View.GONE);
-//        }
-//
     }
 
     @Override
@@ -135,7 +116,6 @@ public class HomeActivity extends AbstractFragmentActivity
             Intent savedSearchIntent = new Intent(this, SavedSearchActivity.class);
             startActivity(savedSearchIntent);
         }
-
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
@@ -172,6 +152,18 @@ public class HomeActivity extends AbstractFragmentActivity
             }  else {
                 updateFragment(new HomeFragment(), HOME_FRAGMENT_TAG);
             }
+        }else if(requestCode == REQUEST_LOGIN){
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+            if(preferences.getBoolean("signedIn", false)){
+                Log.d(TAG, preferences.getString("email", "none"));
+                mAfterSigninLayout.setVisibility(View.VISIBLE);
+                TextView userName = (TextView) mAfterSigninLayout.findViewById(R.id.user_name);
+                userName.setText(preferences.getString("userName", "None"));
+                mBeforeSigninLayout.setVisibility(View.GONE);
+            }else{
+                mAfterSigninLayout.setVisibility(View.GONE);
+                mBeforeSigninLayout.setVisibility(View.VISIBLE);
+            }
         }
     }
 
@@ -180,4 +172,18 @@ public class HomeActivity extends AbstractFragmentActivity
         super.updateFragment(fragment, fragmentTag);
     }
 
+    private class StartLoginProcess extends AsyncTask<Void, Void, Void> {
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            Log.d(TAG, "Login activity started");
+        }
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            Intent intent = new Intent(HomeActivity.this, LoginActivity.class);
+            startActivityForResult(intent, REQUEST_LOGIN);
+            return null;
+        }
+    }
 }

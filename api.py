@@ -5,6 +5,7 @@ from bson.json_util import dumps
 import base64
 import os
 import gridfs
+import re
 
 
 app = Flask(__name__,static_url_path='/static')
@@ -21,9 +22,9 @@ def getCollection(collectionName):
 @app.route('/image',methods=['POST'])
 def saveImage():
         if 'owner_id' in request.args:
-                owner=int(request.args['owner_id'])
+                owner=request.args['owner_id']
         if 'property_id' in request.args:
-                property=int(request.args['property_id'])
+                property=request.args['property_id']
         if 'filename' in request.args:
                 file=request.args['filename']
         if 'strByte' in request.args:
@@ -44,9 +45,9 @@ def getImages():
         properties = getCollection('properties')
         search_criteria={}
         if 'owner_id' in request.args:
-                search_criteria['owner_id']=int(request.args['owner_id'])
+                search_criteria['owner_id']=request.args['owner_id']
         if 'property_id' in request.args:
-                search_criteria['property_id']=int(request.args['property_id'])
+                search_criteria['property_id']=request.args['property_id']
         results=properties.find(search_criteria,{'_id':False})
 	return dumps(results)
 
@@ -85,18 +86,24 @@ def searchPosting():
 	postings=getCollection('postings')
 	search_criteria={}
 	if 'owner_id' in request.args:
-		search_criteria['owner_id']=int(request.args['owner_id'])
+		search_criteria['owner_id']=request.args['owner_id']
 	if 'property_id' in request.args:
-		search_criteria['property_id']=int(request.args['property_id'])
-	if 'desc' in request.args:
-		regex=re.compile("*"+request.args['desc']+"*", re.IGNORECASE)
-		search_criteria['description']={"$regex":regex}
+		search_criteria['property_id']=request.args['property_id']
+        if 'keyword' in request.args:
+                keyword = str(request.args['keyword'])
+                pattern = '.*'+keyword+'.*'
+                regex = re.compile(pattern,re.IGNORECASE)
+                search_criteria['description']={"$regex":regex}
 	if 'city' in request.args:
 		search_criteria['address.city']=request.args['city']
 	if 'zipcode' in request.args:
 		search_criteria['address.zipcode']=int(request.args['zipcode'])
 	if 'min_rent' in request.args and 'max_rent' in request.args:
 		search_criteria['rent_details.rent']={"$gte":int(request.args['min_rent']),"$lte":int(request.args['max_rent'])}
+        elif 'min_rent' in request.args:
+                search_criteria['rent_details.rent']={"$gte":int(request.args['min_rent'])}
+        elif 'max_rent' in request.args:
+                search_criteria['rent_details']={"$lte":int(request.args['max_rent'])}
 	if 'property_type' in request.args:
 		search_criteria['property_type']=request.args['property_type']
 	
@@ -106,8 +113,10 @@ def searchPosting():
 @app.route('/postings/',methods=['POST'])
 def createPosting():
 	posting={
-		"property_id":getPropertyId(),
+		"property_id":request.json['property_id'],
+                "property_name":request.json['property_name'],
 		"owner_id":request.json['owner_id'],
+                "view_count":1,
 		"address":[
 			{
 				"street":request.json['address'][0]['street'],
@@ -223,6 +232,42 @@ def deleteFavourite(user_id,property_id,owner_id=""):
         if dict in fav_details:
                 fav_details.remove(dict)
         updateId = favourites.update_one({"user_id":user_id},{"$set": {"FavDetails":fav_details}},upsert = True)
+        if updateId:
+                return dumps({"Status" : "OK"})
+        else:
+                return dumps({"error":"Error Occured"})
+
+@app.route('/isrented/',methods=['PUT'])
+def isRented():
+        postings = getCollection('postings')
+        isPropRented = request.json['isRented']
+        search_criteria={}
+        owner_id = request.json['owner_id']
+        search_criteria['owner_id']=request.json['owner_id']
+        property_id = request.json['property_id']
+        search_criteria['property_id']=request.json['property_id']
+
+        results=postings.find(search_criteria,{'_id':False})
+        for record in results:
+                print record
+                fowner = record['owner_id']
+                fprop = record['property_id']
+        updateId = postings.update_one({"owner_id":fowner,"property_id":fprop},{"$set": {"isRentedOrCancelled":isPropRented}},upsert = True)
+
+        if updateId:
+                return dumps({"Status" : "OK"})
+        else:
+                return dumps({"error":"Error Occured"})       
+        
+@app.route('/incrementViewCount/',methods=['PUT'])
+def incrementViewCount():
+        postings = getCollection('postings')
+        search_criteria = {}
+        owner_id = request.json['owner_id']
+        search_criteria['owner_id']=request.json['owner_id']
+        property_id = request.json['property_id']
+        search_criteria['property_id']=request.json['property_id']
+        updateId = postings.update_one({"owner_id":owner_id,"property_id":property_id},{"$inc": {"view_count":1}},upsert = False)
         if updateId:
                 return dumps({"Status" : "OK"})
         else:
