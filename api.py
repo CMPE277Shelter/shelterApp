@@ -114,6 +114,7 @@ def searchPosting():
 def createPosting():
 	posting={
 		"property_id":request.json['property_id'],
+                "property_name":request.json['property_name'],
 		"owner_id":request.json['owner_id'],
 		"address":[
 			{
