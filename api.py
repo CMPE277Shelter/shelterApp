@@ -73,6 +73,23 @@ def getImage():
                 f.write(imageData)
         return send_file(fileName)
         
+@app.route('/drawable',methods=['GET'])
+def getDrawableImage():
+        homePart='/home/ubuntu/ShelterImages/'
+        requestedFile=request.args['filename']
+        client=MongoClient('127.0.0.1',27017)
+        db = client.Drawable
+        fs = gridfs.GridFS(db)
+        search_criteria = {}
+        search_criteria['image_name']=requestedFile
+        images = db.images
+        results = images.find(search_criteria,{'_id':False})
+        for record in images.find(search_criteria,{'_id':False}):
+                fileId = record['fileId']
+        imageData = fs.get(fileId).read().decode('base64')
+        with open(homePart+requestedFile,"wb") as f:
+                f.write(imageData)
+        return send_file(homePart+requestedFile)
 
         
 @app.route('/postings/<owner_id>/<property_id>', methods=['GET'])

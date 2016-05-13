@@ -8,7 +8,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
+
+import com.android.shelter.util.DownloadImageTask;
 
 /**
  * Fragment for {@link HomeActivity} TODO Make toolbar transparent on landing and scorlling effect.
@@ -19,12 +22,10 @@ public class HomeFragment extends Fragment {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-
+        Log.d(TAG, "On create called");
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
         setHasOptionsMenu(true);
-        Log.d(TAG, "On create called");
-
     }
 
     @Override
@@ -33,18 +34,10 @@ public class HomeFragment extends Fragment {
         Log.d(TAG, "On create view");
         View v = inflater.inflate(R.layout.content_home, container, false);
 
-        ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle(R.string.app_name);
+        ImageView header = (ImageView)v.findViewById(R.id.header);
+        new DownloadImageTask(header).execute("http://ec2-52-33-84-233.us-west-2.compute.amazonaws.com:5000/drawable?filename=header.jpg");
 
-        LinearLayout startSearch = (LinearLayout) v.findViewById(R.id.start_search);
-        startSearch.setClickable(true);
-
-        startSearch.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-//                Intent searchActivity = new Intent(getActivity(), SearchActivity.class);
-//                startActivity(searchActivity);
-            }
-        });
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(R.string.app_name);
 
         return v;
     }

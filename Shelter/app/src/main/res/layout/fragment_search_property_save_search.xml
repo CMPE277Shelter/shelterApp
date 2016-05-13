@@ -2,7 +2,7 @@
              xmlns:tools="http://schemas.android.com/tools"
              android:layout_width="match_parent"
              android:layout_height="match_parent"
-             tools:context="com.android.shelter.SearchPropertySaveSearchFragment">
+             tools:context=".user.tenant.search.SearchPropertySaveSearchFragment">
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
                   xmlns:card_view="http://schemas.android.com/apk/res-auto"

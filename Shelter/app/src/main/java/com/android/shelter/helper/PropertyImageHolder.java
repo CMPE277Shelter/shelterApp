@@ -8,7 +8,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageView;
 
-import com.android.shelter.landlord.ImagePagerActivity;
+import com.android.shelter.user.landlord.ImagePagerActivity;
 import com.android.shelter.R;
 
 

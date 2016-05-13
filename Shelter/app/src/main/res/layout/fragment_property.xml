@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@null"
-    tools:context=".tenant.PropertyPagerActivity">
+    tools:context=".user.tenant.PropertyPagerActivity">
     <com.manuelpeinado.fadingactionbar.view.ObservableScrollView
         android:id="@+id/posted_property_scrollview"
         android:layout_width="match_parent"

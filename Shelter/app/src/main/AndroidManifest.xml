@@ -39,7 +39,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".landlord.PostPropertyActivity"
+            android:name=".user.landlord.PostPropertyActivity"
             android:label="@string/title_activity_post_property"
             android:theme="@style/AppTheme"
             android:launchMode="singleInstance">
@@ -48,12 +48,12 @@
                 android:value=".HomeActivity" />
         </activity>
         <activity
-            android:name=".landlord.ImagePagerActivity"
+            android:name=".user.landlord.ImagePagerActivity"
             android:label="@string/title_activity_image_pager"
             android:theme="@style/AppTheme">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".landlord.PostPropertyActivity" />
+                android:value=".user.landlord.PostPropertyActivity" />
         </activity>
         <activity
             android:name="com.facebook.FacebookActivity"
@@ -61,7 +61,7 @@
             android:label="@string/app_name"
             android:theme="@android:style/Theme.Translucent.NoTitleBar" />
         <activity
-            android:name=".LoginActivity"
+            android:name=".user.LoginActivity"
             android:label="@string/title_activity_login"
 
             android:theme="@style/AppTheme.NoActionBar">
@@ -73,35 +73,19 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".landlord.PostedPropertyPagerActivity"
+            android:name=".user.landlord.PostedPropertyPagerActivity"
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".HomeActivity"/>
         </activity>
-        <activity android:name=".SavedSearchActivity"
-            android:label="@string/app_name"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:launchMode="singleInstance">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".HomeActivity"/>
-        </activity>
-        <activity android:name=".SearchPropertyActivity"
-            android:label="@string/app_name"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:launchMode="singleInstance">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".HomeActivity" />
-        </activity>
         <activity
-            android:name=".tenant.PropertyPagerActivity"
+            android:name=".user.tenant.PropertyPagerActivity"
             android:label="@string/title_activity_property_pager"
             android:theme="@style/AppTheme.NoActionBar">
         </activity>
         <activity
-            android:name=".UserProfileActivity"
+            android:name=".user.UserProfileActivity"
             android:theme="@style/AppTheme">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
