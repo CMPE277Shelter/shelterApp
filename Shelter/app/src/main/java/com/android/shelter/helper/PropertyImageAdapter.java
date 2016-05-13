@@ -20,8 +20,6 @@ public class PropertyImageAdapter extends RecyclerView.Adapter<PropertyImageHold
 
     private Activity mActivity;
 
-    //private IconDownloader<PropertyImageHolder> mIconDownloader;
-
     private FragmentManager mFragmentManager;
 
     /**

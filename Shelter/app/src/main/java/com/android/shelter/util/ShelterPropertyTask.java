@@ -5,8 +5,8 @@ import android.os.AsyncTask;
 import android.util.Log;
 
 import com.android.shelter.FragmentCallback;
-import com.android.shelter.Property;
-import com.android.shelter.PropertyLab;
+import com.android.shelter.property.Property;
+import com.android.shelter.property.PropertyLab;
 import com.android.shelter.R;
 
 import org.json.JSONArray;
@@ -15,14 +15,12 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
+import java.util.Random;
 
 import cz.msebera.android.httpclient.HttpEntity;
 import cz.msebera.android.httpclient.HttpResponse;
-import cz.msebera.android.httpclient.StatusLine;
 import cz.msebera.android.httpclient.client.HttpClient;
 import cz.msebera.android.httpclient.client.methods.HttpGet;
-import cz.msebera.android.httpclient.client.methods.HttpPost;
 import cz.msebera.android.httpclient.impl.client.DefaultHttpClient;
 import cz.msebera.android.httpclient.protocol.BasicHttpContext;
 import cz.msebera.android.httpclient.protocol.HttpContext;
@@ -82,6 +80,9 @@ public class ShelterPropertyTask  extends AsyncTask<Void, Void, String> {
             if(keyword !=null && !keyword.equals("")){
                 absoluteURL+="&keyword="+ keyword;
             }
+            if(city !=null && !city.equals("")){
+                absoluteURL+="&city="+ city;
+            }
             if(zipcode !=null && !zipcode.equals("")){
                 absoluteURL+="&zipcode="+ zipcode;
             }
@@ -95,9 +96,11 @@ public class ShelterPropertyTask  extends AsyncTask<Void, Void, String> {
                 absoluteURL+="&property_type="+ property_type;
             }
         }
-        Log.d("absoluteURL",absoluteURL);
-        return absoluteURL;
+        Log.d("absoluteURL",absoluteURL.trim().replace(" ","%20"));
+        return absoluteURL.trim().replace(" ","%20");
     }
+
+
 
     protected String search(HttpEntity entity) throws IllegalStateException, IOException {
         InputStream in = entity.getContent();
@@ -109,6 +112,24 @@ public class ShelterPropertyTask  extends AsyncTask<Void, Void, String> {
             if (n>0) out.append(new String(b, 0, n));
         }
         return out.toString();
+    }
+
+    protected int getPic(){
+        Random rand=new Random();
+        int randomNum = rand.nextInt((4 - 1) + 1) + 1;
+
+        switch (randomNum){
+            case 1:
+                return R.drawable.p1;
+            case 2:
+                return R.drawable.p2;
+            case 3:
+                return R.drawable.p3;
+            case 4:
+                return R.drawable.p4;
+            default:
+                return R.drawable.p1;
+        }
     }
 
     @Override
@@ -123,12 +144,13 @@ public class ShelterPropertyTask  extends AsyncTask<Void, Void, String> {
             HttpEntity entity = response.getEntity();
             text = search(entity);
 
-            Log.d("text:",text);
+//            Log.d("text:",text);
         } catch (Exception e) {
             return e.getLocalizedMessage();
         }
         return text;
     }
+
 
     protected void onPostExecute(String results) {
         PropertyLab.get(context).clearPropertyList();
@@ -165,7 +187,7 @@ public class ShelterPropertyTask  extends AsyncTask<Void, Void, String> {
                     property.setPhoneNumber(ownerContactInfo.getString(ShelterConstants.PHONE_NUMBER));
                     property.setEmail(ownerContactInfo.getString(ShelterConstants.EMAIL));
 
-                    property.setPhotoId(R.drawable.real_estate);
+                    property.setPhotoId(getPic());
 
                     PropertyLab.get(context).addProperty(property);
                     Log.d("Object-" + i + ":", jsonObj.toString());

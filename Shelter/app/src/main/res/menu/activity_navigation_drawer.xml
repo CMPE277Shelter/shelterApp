@@ -3,6 +3,10 @@
 
     <group android:checkableBehavior="single">
         <item
+            android:id="@+id/nav_home"
+            android:title="Home"
+            android:icon="@drawable/my_properties"/>
+        <item
             android:id="@+id/nav_search"
             android:title="Search"
             android:icon="@android:drawable/ic_menu_search"/>
@@ -20,5 +24,17 @@
             android:id="@+id/nav_saved_searches"
             android:title="My Saved Searches"
             android:icon="@drawable/saved_search"/>
+
+        <item
+            android:id="@+id/nav_login"
+            android:title="Login"
+            android:icon="@android:drawable/ic_input_add"/>
+
+        <item
+            android:id="@+id/nav_logout"
+            android:title="Logout"
+            android:icon="@android:drawable/ic_delete"
+            />
+
     </group>
 </menu>

@@ -153,24 +153,24 @@ public class ImagePicker {
         return null;
     }
 
-    public String getImageString64(Bitmap image){
+    public byte[] getImageString64(Bitmap image){
         // convert bitmap to byte
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
         image.compress(Bitmap.CompressFormat.PNG, 100, stream);
-        byte imageInByte[] = stream.toByteArray();
-        try{
-            System.gc();
-            return Base64.encodeToString(imageInByte, Base64.NO_WRAP);
-        }catch (OutOfMemoryError ex){
-            stream = new ByteArrayOutputStream();
-            image.compress(Bitmap.CompressFormat.PNG, 50, stream);
-            imageInByte = stream.toByteArray();
-
-            return Base64.encodeToString(imageInByte, Base64.NO_WRAP);
-        } catch (Exception ex){
-            Log.d(TAG, ex.toString());
-        }
-        return null;
+        byte[] imageInByte = stream.toByteArray();
+//        try{
+//            System.gc();
+//            return Base64.encodeToString(imageInByte, Base64.NO_WRAP);
+//        }catch (OutOfMemoryError ex){
+//            stream = new ByteArrayOutputStream();
+//            image.compress(Bitmap.CompressFormat.PNG, 50, stream);
+//            imageInByte = stream.toByteArray();
+//
+//            return Base64.encodeToString(imageInByte, Base64.NO_WRAP);
+//        } catch (Exception ex){
+//            Log.d(TAG, ex.toString());
+//        }
+        return imageInByte;
     }
 
     public List<String> getPropertyImageString64(){

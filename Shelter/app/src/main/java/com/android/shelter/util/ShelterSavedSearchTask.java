@@ -1,24 +1,22 @@
 package com.android.shelter.util;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
+import android.preference.PreferenceManager;
 import android.util.Log;
 
 import com.android.shelter.FragmentCallback;
-import com.android.shelter.Property;
-import com.android.shelter.PropertyLab;
 import com.android.shelter.R;
-import com.android.shelter.SavedSearch;
-import com.android.shelter.SavedSearchesLab;
-import com.android.shelter.helper.PropertyImage;
+import com.android.shelter.user.tenant.savedsearch.SavedSearch;
+import com.android.shelter.user.tenant.savedsearch.SavedSearchesLab;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.UUID;
+import java.util.Random;
 
 import cz.msebera.android.httpclient.HttpEntity;
 import cz.msebera.android.httpclient.HttpResponse;
@@ -53,7 +51,9 @@ public class ShelterSavedSearchTask extends AsyncTask<Void, Void, String>{
         this.endpoint=endpoint;
         this.jsonObject = jsonObject;
         this.requestType=requestType;
-        this.user="010743005";
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        this.user = preferences.getString(ShelterConstants.SHARED_PREFERENCE_OWNER_ID, ShelterConstants.DEFAULT_INT_STRING);
+
         this.mSavedSearch=savedSearchObj;
         this.mFragmentCallback=fragmentCallback;
     }
@@ -90,6 +90,24 @@ public class ShelterSavedSearchTask extends AsyncTask<Void, Void, String>{
         return out.toString();
     }
 
+    protected int getPic(){
+        Random rand=new Random();
+        int randomNum = rand.nextInt((4 - 1) + 1) + 1;
+
+        switch (randomNum){
+            case 1:
+                return R.drawable.p1;
+            case 2:
+                return R.drawable.p2;
+            case 3:
+                return R.drawable.p3;
+            case 4:
+                return R.drawable.p4;
+            default:
+                return R.drawable.p1;
+        }
+    }
+
     @Override
     protected String doInBackground(Void... params) {
         HttpClient httpClient = new DefaultHttpClient();
@@ -104,7 +122,7 @@ public class ShelterSavedSearchTask extends AsyncTask<Void, Void, String>{
                 HttpResponse response = httpClient.execute(httpPost, localContext);
                 HttpEntity entity = response.getEntity();
                 text = search(entity);
-                Log.d(TAG, "Property Data posted ID "+ entity);
+//                Log.d(TAG, "Property Data posted ID "+ entity);
             } catch (Exception e) {
                 Log.e(TAG, e.getStackTrace().toString());
             }
@@ -114,8 +132,7 @@ public class ShelterSavedSearchTask extends AsyncTask<Void, Void, String>{
                 HttpResponse response = httpClient.execute(httpGet, localContext);
                 HttpEntity entity = response.getEntity();
                 text = search(entity);
-
-                Log.d("text:",text);
+//                Log.d("text:",text);
             } catch (Exception e) {
                 return e.getLocalizedMessage();
             }
@@ -126,7 +143,7 @@ public class ShelterSavedSearchTask extends AsyncTask<Void, Void, String>{
 
     protected void onPostExecute(String results) {
         if (results!=null) {
-            Log.d(TAG, "Search posted successfully......." + results);
+//            Log.d(TAG, "Search posted successfully......." + results);
             if(requestType.equals("GET")){
                 SavedSearchesLab.get(context).clearSavedSearchesList();
 
@@ -183,9 +200,9 @@ public class ShelterSavedSearchTask extends AsyncTask<Void, Void, String>{
                             savedSearch.setHasPostingType(false);
                         }
 
-                        savedSearch.setPhotoId(R.drawable.real_estate);
+                        savedSearch.setPhotoId(getPic());
                         SavedSearchesLab.get(context).addSavedSearch(savedSearch);
-                        Log.d("Object-" + i + ":", jsonObj.toString());
+//                        Log.d("Object-" + i + ":", jsonObj.toString());
 
                     }
                     mFragmentCallback.onTaskDone();
