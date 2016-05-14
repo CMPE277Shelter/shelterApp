@@ -35,7 +35,8 @@ public class HomeFragment extends Fragment {
         View v = inflater.inflate(R.layout.content_home, container, false);
 
         ImageView header = (ImageView)v.findViewById(R.id.header);
-        new DownloadImageTask(header).execute("http://ec2-52-33-84-233.us-west-2.compute.amazonaws.com:5000/drawable?filename=header.jpg");
+        new DownloadImageTask(header).execute
+                ("http://ec2-52-36-142-168.us-west-2.compute.amazonaws.com:5000/drawable?filename=header.jpg");
 
         ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(R.string.app_name);
 

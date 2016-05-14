@@ -61,7 +61,7 @@ public class SavedSearchHolder extends RecyclerView.ViewHolder
         mSavedSearchName.setText(search.getSavedSearchName());
         mPropertyType.setText(search.getPostingType());
         new DownloadImageTask(mSavedSearchImageView).execute("" +
-                "http://ec2-52-33-84-233.us-west-2.compute.amazonaws.com:5000/drawable?filename=p1.jpg");
+                "http://ec2-52-36-142-168.us-west-2.compute.amazonaws.com:5000/drawable?filename=p1.jpg");
         
         mCity.setText(search.getCity());
         mRent.setText(search.getMinRent() + "-" + search.getMaxRent());

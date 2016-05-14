@@ -57,7 +57,7 @@ import java.util.Locale;
  * A simple {@link Fragment} subclass.
  */
 public class SearchPropertyFragment extends Fragment {
-    private static final String TAG = "SearchPropertyFragment";
+    private static final String TAG = "MySearchFragment";
     private static final String DIALOG_FILTER = "DialogFilter";
     private static final String DIALOG_SAVE_SEARCH = "DialogSaveSearch";
     private static final int REQUEST_FILTER_OPTION = 0;
@@ -68,7 +68,7 @@ public class SearchPropertyFragment extends Fragment {
     private SearchPropertyFilterCriteria criteria;
     private SavedSearch searchToBeSaved;
     private RecyclerView mPostingRecyclerView;
-    private MyPostingAdapter mPostingAdapter;
+    private SearchPropertyAdapter mPostingAdapter;
     public static Location appLocation ;
 
     Button btnFilter;
@@ -153,18 +153,18 @@ public class SearchPropertyFragment extends Fragment {
         mPostingRecyclerView.setLayoutManager(layoutManager);
 
         new ShelterPropertyTask(getActivity().getApplicationContext(), "postings", true,
-                null, null, criteria.getKeyword(), criteria.getCity(), criteria.getZipcode(),
+                null, null, criteria.getKeyword(), criteria.getCity(), null,
                 criteria.getMinRent(), criteria.getMaxRent(), criteria.getApartmentType(),
                 new FragmentCallback() {
                     @Override
                     public void onTaskDone() {
-                        mPostingAdapter = new MyPostingAdapter(PropertyLab.get(getContext()).getProperties(),
+                        mPostingAdapter = new SearchPropertyAdapter(PropertyLab.get(getContext()).getProperties(),
                                 getActivity(), getActivity().getSupportFragmentManager());
                         mPostingRecyclerView.setAdapter(mPostingAdapter);
                     }
                 }).execute();
 
-        mPostingAdapter = new MyPostingAdapter(PropertyLab.get(getContext()).getProperties(),
+        mPostingAdapter = new SearchPropertyAdapter(PropertyLab.get(getContext()).getProperties(),
                 getActivity(), getActivity().getSupportFragmentManager());
         mPostingRecyclerView.setAdapter(mPostingAdapter);
         return rootView;
@@ -237,7 +237,7 @@ public class SearchPropertyFragment extends Fragment {
                         new FragmentCallback() {
                     @Override
                     public void onTaskDone() {
-                        mPostingAdapter = new MyPostingAdapter(PropertyLab.get(getContext()).getProperties(),
+                        mPostingAdapter = new SearchPropertyAdapter(PropertyLab.get(getContext()).getProperties(),
                         getActivity(), getActivity().getSupportFragmentManager());
                         mPostingRecyclerView.setAdapter(mPostingAdapter);
                     }
@@ -267,6 +267,22 @@ public class SearchPropertyFragment extends Fragment {
                 if (addresses.size() > 0) {
                     appLocation.setCityName(addresses.get(0).getLocality());
                     appLocation.setPostalCode(addresses.get(0).getPostalCode());
+
+                    criteria.setCity(appLocation.getCityName());
+                    criteria.setZipcode(appLocation.getPostalCode());
+                    criteria.setMapUrl(appLocation.getStaticMapUrl());
+
+                    new ShelterPropertyTask(getActivity().getApplicationContext(), "postings", true,
+                            null, null, criteria.getKeyword(), criteria.getCity(), null,
+                            criteria.getMinRent(), criteria.getMaxRent(), criteria.getApartmentType(),
+                            new FragmentCallback() {
+                                @Override
+                                public void onTaskDone() {
+                                    mPostingAdapter = new SearchPropertyAdapter(PropertyLab.get(getContext()).getProperties(),
+                                            getActivity(), getActivity().getSupportFragmentManager());
+                                    mPostingRecyclerView.setAdapter(mPostingAdapter);
+                                }
+                            }).execute();
                 }
             } catch (IOException e) {
                 e.printStackTrace();

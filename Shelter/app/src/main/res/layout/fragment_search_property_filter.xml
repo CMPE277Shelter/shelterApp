@@ -128,7 +128,7 @@
         <Button android:id="@+id/filtered_filter_btn"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Finish"
+                android:text="Search"
                 android:background="@color/colorPrimary"
                 android:layout_alignParentBottom="true"
             android:textColor="@color/white"/>

@@ -24,6 +24,7 @@ import android.widget.TextView;
 import com.android.shelter.user.LoginActivity;
 import com.android.shelter.user.landlord.MyPostingFragment;
 import com.android.shelter.user.landlord.PostPropertyActivity;
+import com.android.shelter.user.tenant.favorite.FavoriteFragment;
 import com.android.shelter.user.tenant.savedsearch.SavedSearchFragment;
 import com.android.shelter.user.tenant.search.SearchPropertyFragment;
 import com.android.shelter.user.UserProfileActivity;
@@ -44,16 +45,19 @@ public class HomeActivity extends AbstractFragmentActivity
     public static final int MY_POSTING_FRAGMENT_ID = 3;
     public static final int MY_SAVED_SEARCH_FRAGMENT_ID = 4;
     public static final int MY_SEARCH_FRAGMENT_ID = 5;
+    public static final int MY_FAVORITES_FRAGMENT_ID = 6;
 
     public static final String HOME_FRAGMENT_TAG = "HomeFragment";
     public static final String MY_POSTING_FRAGMENT_TAG = "MyPostingFragment";
     public static final String MY_SEARCH_FRAGMENT_TAG = "MySearchFragment";
     public static final String MY_SAVED_SEARCH_FRAGMENT_TAG = "MySavedSearchFragment";
+    public static final String MY_FAVORITES_FRAGMENT_TAG = "MyFavoritesFragment";
 
     private static final String TAG = "HomeActivity";
     private DrawerLayout mDrawer;
     private RelativeLayout mBeforeSigninLayout;
     private LinearLayout mAfterSigninLayout;
+
 
 
     @Override
@@ -122,7 +126,7 @@ public class HomeActivity extends AbstractFragmentActivity
         } else if (id == R.id.nav_properties) {
             updateFragment(new MyPostingFragment(), MY_POSTING_FRAGMENT_TAG);
         } else if (id == R.id.nav_favorites) {
-
+            updateFragment(new FavoriteFragment(), MY_FAVORITES_FRAGMENT_TAG);
         } else if (id == R.id.nav_saved_searches) {
             updateFragment(new SavedSearchFragment(), MY_SAVED_SEARCH_FRAGMENT_TAG);
         }
@@ -166,6 +170,8 @@ public class HomeActivity extends AbstractFragmentActivity
                 updateFragment(new SearchPropertyFragment(), MY_SEARCH_FRAGMENT_TAG);
             }else if(data.getIntExtra(EXTRA_FRAGMENT_ID, 1) == MY_SAVED_SEARCH_FRAGMENT_ID){
                 updateFragment(new SavedSearchFragment(), MY_SAVED_SEARCH_FRAGMENT_TAG);
+            }else if(data.getIntExtra(EXTRA_FRAGMENT_ID, 1) == MY_FAVORITES_FRAGMENT_ID){
+                updateFragment(new SavedSearchFragment(), MY_FAVORITES_FRAGMENT_TAG);
             }else{
                 updateFragment(new HomeFragment(), HOME_FRAGMENT_TAG);
             }
