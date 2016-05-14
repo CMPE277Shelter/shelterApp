@@ -63,14 +63,16 @@
         <activity
             android:name=".user.LoginActivity"
             android:label="@string/title_activity_login"
-
-            android:theme="@style/AppTheme.NoActionBar">
+            android:theme="@style/AppTheme">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
                 <data android:scheme="@string/app_id" />
             </intent-filter>
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".HomeActivity" />
         </activity>
         <activity
             android:name=".user.landlord.PostedPropertyPagerActivity"
@@ -79,11 +81,11 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".HomeActivity"/>
         </activity>
-        <activity
-            android:name=".user.tenant.PropertyPagerActivity"
-            android:label="@string/title_activity_property_pager"
-            android:theme="@style/AppTheme.NoActionBar">
-        </activity>
+        <!--<activity-->
+            <!--android:name=".user.tenant.PropertyPagerActivity"-->
+            <!--android:label="@string/title_activity_property_pager"-->
+            <!--android:theme="@style/AppTheme.NoActionBar">-->
+        <!--</activity>-->
         <activity
             android:name=".user.UserProfileActivity"
             android:theme="@style/AppTheme">
