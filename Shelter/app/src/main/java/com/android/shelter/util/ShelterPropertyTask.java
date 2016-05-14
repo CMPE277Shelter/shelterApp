@@ -29,7 +29,7 @@ import cz.msebera.android.httpclient.protocol.HttpContext;
  * Created by Prasanna on 5/6/16.
  */
 public class ShelterPropertyTask  extends AsyncTask<Void, Void, String> {
-    private final String BASE_URL="http://ec2-52-33-84-233.us-west-2.compute.amazonaws.com:5000/";
+    private final String BASE_URL="http://ec2-52-36-142-168.us-west-2.compute.amazonaws.com:5000/";
     private String absoluteURL;
     private Context context;
     private String owner_id;
@@ -162,6 +162,7 @@ public class ShelterPropertyTask  extends AsyncTask<Void, Void, String> {
                     Property property=new Property();
                     Log.d("ShelterPropertyTask", "Property ID "+ jsonObj.getString(ShelterConstants.PROPERTY_ID));
                     property.setId(jsonObj.getString(ShelterConstants.PROPERTY_ID));
+                    property.setOwnerId(jsonObj.getString(ShelterConstants.OWNER_ID));
                     property.setName(jsonObj.getString(ShelterConstants.PROPERTY_NAME));
                     property.setType(jsonObj.getString(ShelterConstants.PROPERTY_TYPE));
                     property.setDescription(jsonObj.getString(ShelterConstants.DESCRIPTION));
@@ -190,7 +191,7 @@ public class ShelterPropertyTask  extends AsyncTask<Void, Void, String> {
                     property.setPhotoId(getPic());
 
                     PropertyLab.get(context).addProperty(property);
-                    Log.d("Object-" + i + ":", jsonObj.toString());
+//                    Log.d("Object-" + i + ":", jsonObj.toString());
                 }
                 mFragmentCallback.onTaskDone();
             } catch (JSONException e) {

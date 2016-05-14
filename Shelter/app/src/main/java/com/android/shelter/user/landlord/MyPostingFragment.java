@@ -24,7 +24,7 @@ import com.android.shelter.util.ShelterPropertyTask;
  * Created by rishi on 5/7/16.
  */
 public class MyPostingFragment extends Fragment {
-    private static final String TAG = "MyPostingsFragment";
+    private static final String TAG = "MyPostingFragment";
     private RecyclerView mPostingRecyclerView;
 
     @Override

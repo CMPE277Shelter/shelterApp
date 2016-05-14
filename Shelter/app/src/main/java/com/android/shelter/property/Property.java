@@ -29,6 +29,35 @@ public class Property {
     private boolean isRentedOrCancel;
     private String description;
 
+    public String getOwnerId() {
+        return ownerId;
+    }
+
+    public void setOwnerId(String ownerId) {
+        this.ownerId = ownerId;
+    }
+
+    private String ownerId;
+
+    public String getPrimaryImageURL() {
+        return primaryImageURL;
+    }
+
+    public void setPrimaryImageURL(String primaryImageURL) {
+        this.primaryImageURL = primaryImageURL;
+    }
+
+    public String[] getImageURLs() {
+        return imageURLs;
+    }
+
+    public void setImageURLs(String[] imageURLs) {
+        this.imageURLs = imageURLs;
+    }
+
+    private String primaryImageURL;
+    private String[] imageURLs;
+
 
     public Property() {
         id = UUID.randomUUID();

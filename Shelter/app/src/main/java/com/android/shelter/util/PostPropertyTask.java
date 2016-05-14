@@ -22,7 +22,7 @@ import cz.msebera.android.httpclient.protocol.HttpContext;
 public class PostPropertyTask extends AsyncTask<Void, Void, String> {
 
     private final static String TAG = "PostPropertyTask";
-    private final String BASE_URL="http://ec2-52-33-84-233.us-west-2.compute.amazonaws.com:5000/";
+    private final String BASE_URL="http://ec2-52-36-142-168.us-west-2.compute.amazonaws.com:5000/";
     private String absoluteURL;
     private Context context;
     private boolean hasParams;

@@ -62,8 +62,8 @@ public class MyPostingHolder extends RecyclerView.ViewHolder
         mPropertyName.setText(property.getName());
         mPropertyType.setText(property.getType());
 //        mPropertyImageView.setImageResource(property.getPhotoId());
-        new DownloadImageTask(mPropertyImageView).execute("" +
-                "http://ec2-52-33-84-233.us-west-2.compute.amazonaws.com:5000/drawable?filename=p1.jpg");
+        new DownloadImageTask(mPropertyImageView).
+                execute("http://ec2-52-36-142-168.us-west-2.compute.amazonaws.com:5000/drawable?filename=p2.jpg");
         mAddress.setText(property.getAddress());
         mRent.setText(property.getRent());
     }
