@@ -78,7 +78,7 @@ public class PostedPropertyFragment extends Fragment implements OnScrollChangedC
 
         // Increments page views
         // TODO How it undestands which property?
-        //new IncrementViewCount().execute("http://ec2-52-33-84-233.us-west-2.compute.amazonaws.com:5000/incrementViewCount/");
+        //new IncrementViewCountTask().execute("http://ec2-52-33-84-233.us-west-2.compute.amazonaws.com:5000/incrementViewCount/");
     }
 
     @Override

@@ -5,9 +5,9 @@ import android.os.AsyncTask;
 import android.util.Log;
 
 import com.android.shelter.FragmentCallback;
+import com.android.shelter.R;
 import com.android.shelter.property.Property;
 import com.android.shelter.property.PropertyLab;
-import com.android.shelter.R;
 
 import org.json.JSONArray;
 import org.json.JSONException;

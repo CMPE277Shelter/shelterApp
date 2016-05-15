@@ -1,30 +1,21 @@
 package com.android.shelter.user.tenant.search;
 
-
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.ToggleButton;
 
 import com.android.shelter.R;
 import com.android.shelter.property.Property;
 import com.android.shelter.property.PropertyLab;
 import com.android.shelter.util.DownloadImageTask;
-import com.android.shelter.util.RentedOrCancelTask;
-import com.android.shelter.util.ShelterConstants;
-import com.manuelpeinado.fadingactionbar.view.ObservableScrollable;
-import com.manuelpeinado.fadingactionbar.view.OnScrollChangedCallback;
-
-import org.json.JSONException;
-import org.json.JSONObject;
+import com.android.shelter.util.IncrementViewCountTask;
 
 import java.util.UUID;
 
@@ -44,11 +35,12 @@ public class SearchPropertyDetailFragment extends Fragment  {
     private TextView mRent;
     private TextView mBath;
     private TextView mFloorArea;
-    private TextView mContactName;
     private TextView mContactPhone;
     private TextView mContactEmail;
     private TextView mDesc;
     private Toolbar mToolbar;
+    private ToggleButton mFavToggleButton;
+
     public SearchPropertyDetailFragment() {
         // Required empty public constructor
     }
@@ -56,7 +48,6 @@ public class SearchPropertyDetailFragment extends Fragment  {
     public static SearchPropertyDetailFragment newInstance(UUID propertyId) {
         Bundle args = new Bundle();
         args.putSerializable(ARG_PROPERTY_ID, propertyId);
-
         SearchPropertyDetailFragment fragment = new SearchPropertyDetailFragment();
         fragment.setArguments(args);
         return fragment;
@@ -72,7 +63,8 @@ public class SearchPropertyDetailFragment extends Fragment  {
 
         // Increments page views
         // TODO How it undestands which property?
-        //new IncrementViewCount().execute("http://ec2-52-33-84-233.us-west-2.compute.amazonaws.com:5000/incrementViewCount/");
+        new IncrementViewCountTask().execute("http://ec2-52-36-142-168.us-west-2.compute.amazonaws.com:5000/" +
+                "incrementViewCount/",id.toString(),mProperty.getOwnerId());
     }
 
     @Override
@@ -90,8 +82,7 @@ public class SearchPropertyDetailFragment extends Fragment  {
 
 
         mImage = (ImageView) v.findViewById(R.id.detail_thumbnail);
-        new DownloadImageTask(mImage).execute("" +
-                "http://ec2-52-36-142-168.us-west-2.compute.amazonaws.com:5000/drawable?filename=p1.jpg");
+        new DownloadImageTask(mImage).execute("http://ec2-52-36-142-168.us-west-2.compute.amazonaws.com:5000/drawable?filename=p1.jpg");
 
         mPropertyName = (TextView) v.findViewById(R.id.detail_name);
         mPropertyName.setText(mProperty.getName());
@@ -118,6 +109,9 @@ public class SearchPropertyDetailFragment extends Fragment  {
 
         mDesc = (TextView) v.findViewById(R.id.detail_property_desc);
         mDesc.setText(mProperty.getDescription());
+
+        mFavToggleButton =(ToggleButton)v.findViewById(R.id.detail_fav_toggle_button);
+        mFavToggleButton.setChecked(mProperty.isFavorite());
 
         return v;
     }

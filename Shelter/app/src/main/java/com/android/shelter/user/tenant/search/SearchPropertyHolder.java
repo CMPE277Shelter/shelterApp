@@ -10,7 +10,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import com.android.shelter.FragmentCallback;
@@ -84,10 +83,10 @@ public class SearchPropertyHolder extends RecyclerView.ViewHolder
                     FavoriteCriteria criteria = new FavoriteCriteria();
                     SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(mActivity.getApplicationContext());
                     criteria.setUser(preferences.getString(
-                            ShelterConstants.SHARED_PREFERENCE_USER_NAME, ShelterConstants.DEFAULT_STRING));
+                            ShelterConstants.SHARED_PREFERENCE_OWNER_ID, ShelterConstants.DEFAULT_STRING));
                     criteria.setOwner_id(mProperty.getOwnerId());
                     criteria.setProperty_id(mProperty.getId().toString());
-                    new ShelterFavoriteTask(mActivity.getApplicationContext(), "addfavourite", "POST",
+                    new ShelterFavoriteTask(mActivity.getApplicationContext(), "removefavourite", "DELETE",
                             true, criteria, new FragmentCallback() {
                         @Override
                         public void onTaskDone() {
@@ -100,10 +99,10 @@ public class SearchPropertyHolder extends RecyclerView.ViewHolder
                     FavoriteCriteria criteria = new FavoriteCriteria();
                     SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(mActivity.getApplicationContext());
                     criteria.setUser(preferences.getString(
-                            ShelterConstants.SHARED_PREFERENCE_USER_NAME, ShelterConstants.DEFAULT_STRING));
+                            ShelterConstants.SHARED_PREFERENCE_OWNER_ID, ShelterConstants.DEFAULT_STRING));
                     criteria.setOwner_id(mProperty.getOwnerId());
                     criteria.setProperty_id(mProperty.getId().toString());
-                    new ShelterFavoriteTask(mActivity.getApplicationContext(), "removefavourite", "DELETE",
+                    new ShelterFavoriteTask(mActivity.getApplicationContext(), "addfavourite", "POST",
                             true, criteria, new FragmentCallback() {
                         @Override
                         public void onTaskDone() {

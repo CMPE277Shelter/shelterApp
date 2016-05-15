@@ -43,7 +43,6 @@
         <activity
             android:name=".user.landlord.PostPropertyActivity"
             android:label="@string/title_activity_post_property"
-            android:launchMode="singleInstance"
             android:theme="@style/AppTheme">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
