@@ -36,10 +36,18 @@
     <string name="search_menu_action_loc_picker">Pick Location</string>
 
 
+    <!-- Headings for post property -->
+    <string name="property_name_address">Property name with address</string>
+    <string name="property_details">Property details</string>
+    <string name="contact_info">Contact information</string>
+    <string name="property_desc">Add description for property</string>
+
     <!-- Error messages for property -->
     <string name="blank_error_msg">Field cannot be left blank</string>
     <string name="type_not_selected_error_msg">Select a type</string>
     <string name="title_activity_saved_search">SavedSearchActivity</string>
     <string name="title_activity_property_pager">PropertyPagerActivity</string>
+    
+    
 
 </resources>

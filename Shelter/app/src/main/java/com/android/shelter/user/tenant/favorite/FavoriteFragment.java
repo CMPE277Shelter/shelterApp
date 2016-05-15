@@ -69,7 +69,7 @@ public class FavoriteFragment extends Fragment {
         mFavoriteCriteria.setUser(preferences.getString(ShelterConstants.SHARED_PREFERENCE_OWNER_ID
                 ,ShelterConstants.DEFAULT_STRING));
 
-        new ShelterFavoriteTask(getActivity().getApplicationContext(), "favorites", "GET",true, mFavoriteCriteria,
+        new ShelterFavoriteTask(getActivity().getApplicationContext(), "favorites", "GET", true, mFavoriteCriteria,
                 new FragmentCallback() {
             @Override
             public void onTaskDone() {

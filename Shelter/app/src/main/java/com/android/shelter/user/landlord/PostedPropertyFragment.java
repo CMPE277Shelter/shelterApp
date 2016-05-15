@@ -19,12 +19,11 @@ import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
 import com.android.shelter.R;
+import com.android.shelter.helper.PropertyImage;
 import com.android.shelter.property.Property;
 import com.android.shelter.property.PropertyLab;
 import com.android.shelter.util.RentedOrCancelTask;
 import com.android.shelter.util.ShelterConstants;
-import com.manuelpeinado.fadingactionbar.view.ObservableScrollable;
-import com.manuelpeinado.fadingactionbar.view.OnScrollChangedCallback;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -53,12 +52,9 @@ public class PostedPropertyFragment extends Fragment {
     private TextView mContactEmail;
     private TextView mDesc;
     private TextView mPageViews;
-
     private CheckBox mRentedOrCancel;
 
-    private Toolbar mToolbar;
-    private int mLastDampedScroll;
-
+    private PropertyImage mPropertyImage;
 
     public static PostedPropertyFragment newInstance(UUID propertyId) {
         Bundle args = new Bundle();
@@ -76,6 +72,9 @@ public class PostedPropertyFragment extends Fragment {
         setHasOptionsMenu(true);
         UUID id = (UUID) getArguments().getSerializable(ARG_PROPERTY_ID);
         mProperty = PropertyLab.get(getContext()).getProperty(id);
+        if(mProperty.getPropertyImages().size() > 0){
+            mPropertyImage = mProperty.getPropertyImages().get(0);
+        }
     }
 
     @Override
@@ -89,6 +88,7 @@ public class PostedPropertyFragment extends Fragment {
 
         mImage = (ImageView) v.findViewById(R.id.posted_property_image);
         mImage.setImageResource(R.drawable.header);
+
 
         mPropertyName = (TextView) v.findViewById(R.id.posted_property_name);
         mPropertyName.setText(mProperty.getName());
@@ -136,9 +136,16 @@ public class PostedPropertyFragment extends Fragment {
 
                     new RentedOrCancelTask(getContext(), "/isrented/", putData).execute();
                 }catch (JSONException ex){
-
+                    Log.d(TAG, "Exception in fetching data");
                 }
+            }
+        });
 
+        mImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = ImagePagerActivity.newIntent(getActivity(), mPropertyImage.getId());
+                getActivity().startActivity(intent);
             }
         });
         return v;
@@ -166,12 +173,6 @@ public class PostedPropertyFragment extends Fragment {
             default:
                 return super.onOptionsItemSelected(item);
         }
-    }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
     }
 }
 

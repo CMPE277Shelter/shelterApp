@@ -1,5 +1,7 @@
 package com.android.shelter.property;
 
+import com.android.shelter.helper.PropertyImage;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -11,8 +13,8 @@ public class Property {
 
     private UUID id;
     private String name;
+    private String ownerId;
     private String type;
-    private int photoId;
     private boolean isFavorite;
     private String rent;
     private String bath;
@@ -28,49 +30,14 @@ public class Property {
     private String email;
     private boolean isRentedOrCancel;
     private String description;
-
-    public String getOwnerId() {
-        return ownerId;
-    }
-
-    public void setOwnerId(String ownerId) {
-        this.ownerId = ownerId;
-    }
-
-    private String ownerId;
-
-    public String getPrimaryImageURL() {
-        return primaryImageURL;
-    }
-
-    public void setPrimaryImageURL(String primaryImageURL) {
-        this.primaryImageURL = primaryImageURL;
-    }
-
-    public String[] getImageURLs() {
-        return imageURLs;
-    }
-
-    public void setImageURLs(String[] imageURLs) {
-        this.imageURLs = imageURLs;
-    }
-
-    private String primaryImageURL;
-    private String[] imageURLs;
-
+    private List<PropertyImage> propertyImages;
 
     public Property() {
         isFavorite = false;
         isRentedOrCancel = false;
+        propertyImages = new ArrayList<>();
     }
 
-    public UUID getId(){
-        return id;
-    }
-
-    public void setId(String id){
-        this.id = UUID.fromString(id);
-    }
 
     public String getAddress(){
         return street + ", " + city + ", " + state + ", " + zipcode;
@@ -96,6 +63,22 @@ public class Property {
         return pageReviews + " Page Views";
     }
 
+    public String getOwnerId() {
+        return ownerId;
+    }
+
+    public void setOwnerId(String ownerId) {
+        this.ownerId = ownerId;
+    }
+
+    public UUID getId(){
+        return id;
+    }
+
+    public void setId(String id){
+        this.id = UUID.fromString(id);
+    }
+
     public String getName() {
         return name;
     }
@@ -110,14 +93,6 @@ public class Property {
 
     public void setType(String type) {
         this.type = type;
-    }
-
-    public int getPhotoId() {
-        return photoId;
-    }
-
-    public void setPhotoId(int photoId) {
-        this.photoId = photoId;
     }
 
     public boolean isFavorite() {
@@ -238,5 +213,13 @@ public class Property {
 
     public void setContactName(String contactName) {
         this.contactName = contactName;
+    }
+
+    public List<PropertyImage> getPropertyImages() {
+        return propertyImages;
+    }
+
+    public void setPropertyImages(List<PropertyImage> propertyImages) {
+        this.propertyImages = propertyImages;
     }
 }

@@ -1,6 +1,7 @@
 package com.android.shelter.user.landlord;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
@@ -55,7 +56,6 @@ import cz.msebera.android.httpclient.extras.Base64;
  */
 public class PostPropertyFragment extends Fragment {
 
-    //100249344867498039915
     private static final String TAG = "PostPropertyFragment";
     private static final int REQUEST_ADD_IMAGE = 1;
     private RelativeLayout mPhotoLayout;
@@ -88,6 +88,8 @@ public class PostPropertyFragment extends Fragment {
     private Property mPropertyToPost;
     private Button mSelectPictureButton;
 
+    private ProgressDialog mProgressDialog;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
 
@@ -114,7 +116,7 @@ public class PostPropertyFragment extends Fragment {
 
         // TODO Populate complete data in model and send it to DB
 
-        mPropertyName = (EditText) view.findViewById(R.id.property_name);
+        mPropertyName = (EditText) view.findViewById(R.id.post_property_name);
 
         mStreet = (EditText) view.findViewById(R.id.street_name);
         mCity = (EditText) view.findViewById(R.id.city_name);
@@ -171,8 +173,6 @@ public class PostPropertyFragment extends Fragment {
                     if(isFormValid()){
                         populatePropertyToPost();
                         postPropertyData();
-                        composeEmail();
-                        showMyPostings();
                     }
                 } catch (JSONException ex){
                     Log.e(TAG, ex.getStackTrace().toString());
@@ -218,6 +218,9 @@ public class PostPropertyFragment extends Fragment {
                         Log.d(TAG, "Image selected ");
                         mImageList.add(ImagePicker.get(getContext()).getPropertyImage(getContext(), data));
                         setupAdapter();
+                        if(mImageList.size() == 4){
+                            mSelectPictureButton.setClickable(false);
+                        }
                     }
                     break;
                 default:
@@ -233,7 +236,7 @@ public class PostPropertyFragment extends Fragment {
     private void setupAdapter() {
         if (isAdded()) {
             Log.d(TAG, "Setting adapter for view");
-            ImagePicker.get(getContext()).updateImageList(mImageList);
+            PropertyLab.get(getContext()).updateImageList(mImageList);
             mImageRecyclerView.setAdapter(new PropertyImageAdapter(mImageList, getActivity(), getActivity().getSupportFragmentManager()));
         }
     }
@@ -294,6 +297,8 @@ public class PostPropertyFragment extends Fragment {
         mPropertyToPost.setPhoneNumber(mContactPhone.getText().toString());
 
         mPropertyToPost.setDescription(mPropertyDescription.getText().toString());
+
+        mPropertyToPost.setPropertyImages(mImageList);
     }
 
     private void populateFields(){
@@ -322,6 +327,9 @@ public class PostPropertyFragment extends Fragment {
         mContactPhone.setText(mPropertyToPost.getPhoneNumber());
 
         mPropertyDescription.setText(mPropertyToPost.getDescription());
+
+        mImageList = mPropertyToPost.getPropertyImages();
+        setupAdapter();
 
         mSelectPictureButton.setText("Update");
     }
@@ -444,15 +452,34 @@ public class PostPropertyFragment extends Fragment {
         moreInfo.put(moreObject);
         jsonObject.put(ShelterConstants.MORE, moreInfo);
 
-        jsonObject.put("images", new ArrayList<String>());
+        jsonObject.put(ShelterConstants.PROPERTY_IMAGES, new ArrayList<String>());
         Log.d(TAG, jsonObject.toString());
 
+        showProgressDialog();
         new PostPropertyTask(getContext(), "postings/", true, jsonObject, new FragmentCallback(){
             @Override
             public void onTaskDone() {
                 Log.d(TAG, "Property posting done.....");
+                hideProgressDialog();
+                composeEmail();
+                showMyPostings();
             }
         }).execute();
+    }
+
+    private void showProgressDialog(){
+        if(mProgressDialog == null){
+            mProgressDialog = new ProgressDialog(getContext());
+            mProgressDialog.setMessage("Saving property");
+            mProgressDialog.setIndeterminate(true);
+        }
+        mProgressDialog.show();
+    }
+
+    private void hideProgressDialog(){
+        if(mProgressDialog != null && mProgressDialog.isShowing()){
+            mProgressDialog.hide();
+        }
     }
 }
 

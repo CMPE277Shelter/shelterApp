@@ -14,6 +14,7 @@ import android.widget.ImageView;
 
 import com.android.shelter.R;
 import com.android.shelter.helper.PropertyImage;
+import com.android.shelter.property.PropertyLab;
 import com.android.shelter.util.ImagePicker;
 import com.android.shelter.util.ImageResizer;
 
@@ -46,7 +47,7 @@ public class ImageDisplayFragment extends Fragment {
         setRetainInstance(true);
         setHasOptionsMenu(true);
         UUID imageId = (UUID) getArguments().getSerializable(ARG_IMAGE_ID);
-        mPropertyImage = ImagePicker.get(getContext()).getPropertyImage(imageId);
+        mPropertyImage = PropertyLab.get(getContext()).getPropertyImage(imageId);
     }
 
     @Override

@@ -2,8 +2,6 @@ package com.android.shelter.user.tenant.search;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -15,9 +13,10 @@ import android.widget.ToggleButton;
 import com.android.shelter.FragmentCallback;
 import com.android.shelter.R;
 import com.android.shelter.property.Property;
+import com.android.shelter.property.PropertyLab;
+import com.android.shelter.user.UserSessionManager;
 import com.android.shelter.user.tenant.favorite.FavoriteCriteria;
 import com.android.shelter.util.DownloadImageTask;
-import com.android.shelter.util.ShelterConstants;
 import com.android.shelter.util.ShelterFavoriteTask;
 
 /**
@@ -74,51 +73,71 @@ public class SearchPropertyHolder extends RecyclerView.ViewHolder
         mBaths.setText(property.getDisplayBath());
         mBeds.setText(property.getDisplayRoom());
         mFloorArea.setText(property.getDisplayFloorArea());
+        mFavToggleButton.setChecked(mProperty.isFavorite());
+
         mFavToggleButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (property.isFavorite()) {
-                    property.setFavorite(false);
-                    mProperty = property;
-                    FavoriteCriteria criteria = new FavoriteCriteria();
-                    SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(mActivity.getApplicationContext());
-                    criteria.setUser(preferences.getString(
-                            ShelterConstants.SHARED_PREFERENCE_OWNER_ID, ShelterConstants.DEFAULT_STRING));
-                    criteria.setOwner_id(mProperty.getOwnerId());
-                    criteria.setProperty_id(mProperty.getId().toString());
-                    new ShelterFavoriteTask(mActivity.getApplicationContext(), "removefavourite", "DELETE",
-                            true, criteria, new FragmentCallback() {
-                        @Override
-                        public void onTaskDone() {
-
-                        }
-                    }).execute();
-                } else {
-                    property.setFavorite(true);
-                    mProperty = property;
-                    FavoriteCriteria criteria = new FavoriteCriteria();
-                    SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(mActivity.getApplicationContext());
-                    criteria.setUser(preferences.getString(
-                            ShelterConstants.SHARED_PREFERENCE_OWNER_ID, ShelterConstants.DEFAULT_STRING));
-                    criteria.setOwner_id(mProperty.getOwnerId());
-                    criteria.setProperty_id(mProperty.getId().toString());
+                FavoriteCriteria criteria = new FavoriteCriteria();
+                criteria.setUser(UserSessionManager.get(mActivity).getOwnerId());
+                criteria.setOwner_id(mProperty.getOwnerId());
+                criteria.setProperty_id(mProperty.getId().toString());
+                if(mFavToggleButton.isChecked()){
                     new ShelterFavoriteTask(mActivity.getApplicationContext(), "addfavourite", "POST",
                             true, criteria, new FragmentCallback() {
                         @Override
                         public void onTaskDone() {
-
+                            mProperty.setFavorite(true);
                         }
                     }).execute();
-//                    addFavorite
+                }else{
+                    new ShelterFavoriteTask(mActivity.getApplicationContext(), "removefavourite", "DELETE",
+                            true, criteria, new FragmentCallback() {
+                        @Override
+                        public void onTaskDone() {
+                            mProperty.setFavorite(false);
+                        }
+                    }).execute();
                 }
+//                if (property.isFavorite()) {
+//                    property.setFavorite(false);
+//                    mProperty = property;
+//                    FavoriteCriteria criteria = new FavoriteCriteria();
+//                    criteria.setUser(UserSessionManager.get(mActivity).getOwnerId());
+//                    criteria.setOwner_id(mProperty.getOwnerId());
+//                    criteria.setProperty_id(mProperty.getId().toString());
+//                    new ShelterFavoriteTask(mActivity.getApplicationContext(), "removefavourite", "DELETE",
+//                            true, criteria, new FragmentCallback() {
+//                        @Override
+//                        public void onTaskDone() {
+//
+//                        }
+//                    }).execute();
+//                } else {
+//                    property.setFavorite(true);
+//                    mProperty = property;
+//                    FavoriteCriteria criteria = new FavoriteCriteria();
+//                    SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(mActivity.getApplicationContext());
+//                    criteria.setUser(preferences.getString(
+//                            ShelterConstants.SHARED_PREFERENCE_OWNER_ID, ShelterConstants.DEFAULT_STRING));
+//                    criteria.setOwner_id(mProperty.getOwnerId());
+//                    criteria.setProperty_id(mProperty.getId().toString());
+//                    new ShelterFavoriteTask(mActivity.getApplicationContext(), "addfavourite", "POST",
+//                            true, criteria, new FragmentCallback() {
+//                        @Override
+//                        public void onTaskDone() {
+//
+//                        }
+//                    }).execute();
+//                }
             }
         });
-        mFavToggleButton.setChecked(property.isFavorite());
     }
 
     @Override
     public void onClick(View v) {
         Log.d("SearchPropertyHolder", "Pager activity starting");
+        PropertyLab.get(mActivity).updatePropertyFavorite(mProperty.getId(), mProperty.isFavorite());
         Intent intent = SearchPropertyPagerActivity.newIntent(mActivity, mProperty.getId());
         mActivity.startActivity(intent);
     }

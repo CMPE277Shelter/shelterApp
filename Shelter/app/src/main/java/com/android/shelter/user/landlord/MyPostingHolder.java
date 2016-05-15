@@ -10,6 +10,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
+import com.android.shelter.helper.PropertyImage;
 import com.android.shelter.property.Property;
 import com.android.shelter.user.landlord.PostedPropertyPagerActivity;
 import com.android.shelter.R;
@@ -29,6 +30,7 @@ public class MyPostingHolder extends RecyclerView.ViewHolder
     private TextView mFloorArea;
 
     private Property mProperty;
+    private PropertyImage mPropertyImage;
 
     private Activity mActivity;
 
@@ -67,8 +69,12 @@ public class MyPostingHolder extends RecyclerView.ViewHolder
         mPropertyName.setText(property.getName());
         mPropertyType.setText(property.getType());
 //        mPropertyImageView.setImageResource(property.getPhotoId());
-        new DownloadImageTask(mPropertyImageView).
-                execute("http://ec2-52-36-142-168.us-west-2.compute.amazonaws.com:5000/drawable?filename=p2.jpg");
+        mPropertyImage = new PropertyImage();
+        if(mProperty.getPropertyImages().size() > 0){
+            mPropertyImage = mProperty.getPropertyImages().get(0);
+            new DownloadImageTask(mPropertyImageView).
+                    execute(mPropertyImage.getImagePath());
+        }
         mAddress.setText(property.getAddress());
         mRent.setText(property.getRent());
         mBath.setText(property.getBath());

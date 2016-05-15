@@ -11,11 +11,15 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
+import com.android.shelter.FragmentCallback;
 import com.android.shelter.R;
 import com.android.shelter.property.Property;
 import com.android.shelter.property.PropertyLab;
+import com.android.shelter.user.UserSessionManager;
+import com.android.shelter.user.tenant.favorite.FavoriteCriteria;
 import com.android.shelter.util.DownloadImageTask;
 import com.android.shelter.util.IncrementViewCountTask;
+import com.android.shelter.util.ShelterFavoriteTask;
 
 import java.util.UUID;
 
@@ -113,6 +117,32 @@ public class SearchPropertyDetailFragment extends Fragment  {
         mFavToggleButton =(ToggleButton)v.findViewById(R.id.detail_fav_toggle_button);
         mFavToggleButton.setChecked(mProperty.isFavorite());
 
+        mFavToggleButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FavoriteCriteria criteria = new FavoriteCriteria();
+                criteria.setUser(UserSessionManager.get(getActivity()).getOwnerId());
+                criteria.setOwner_id(mProperty.getOwnerId());
+                criteria.setProperty_id(mProperty.getId().toString());
+                if (mFavToggleButton.isChecked()) {
+                    new ShelterFavoriteTask(getActivity().getApplicationContext(), "addfavourite", "POST",
+                            true, criteria, new FragmentCallback() {
+                        @Override
+                        public void onTaskDone() {
+                            mProperty.setFavorite(true);
+                        }
+                    }).execute();
+                } else {
+                    new ShelterFavoriteTask(getActivity().getApplicationContext(), "removefavourite", "DELETE",
+                            true, criteria, new FragmentCallback() {
+                        @Override
+                        public void onTaskDone() {
+                            mProperty.setFavorite(false);
+                        }
+                    }).execute();
+                }
+            }
+        });
         return v;
     }
 }

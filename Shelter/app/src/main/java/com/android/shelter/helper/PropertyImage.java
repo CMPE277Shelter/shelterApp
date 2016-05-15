@@ -15,9 +15,6 @@ public class PropertyImage {
     private UUID mId;
     private Bitmap mImageBitMap;
     private String mImagePath;
-    private String ownerId;
-    private String propertyId;
-    private String imageString64;
     private String imageName;
 
     public PropertyImage(){
@@ -41,30 +38,6 @@ public class PropertyImage {
 
     public void setImagePath(String mImagePath) {
         this.mImagePath = mImagePath;
-    }
-
-    public String getOwnerId() {
-        return ownerId;
-    }
-
-    public void setOwnerId(String ownerId) {
-        this.ownerId = ownerId;
-    }
-
-    public String getPropertyId() {
-        return propertyId;
-    }
-
-    public void setPropertyId(String propertyId) {
-        this.propertyId = propertyId;
-    }
-
-    public String getImageString64() {
-        return imageString64;
-    }
-
-    public void setImageString64(String imageString64) {
-        this.imageString64 = imageString64;
     }
 
     public String getImageName() {

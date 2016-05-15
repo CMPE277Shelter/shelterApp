@@ -47,7 +47,7 @@ public class PropertyImageHolder extends RecyclerView.ViewHolder
      */
     public void bindImage(PropertyImage aImage) {
         mPropertyImage = aImage;
-        mPropertyImageView.setImageBitmap(ThumbnailUtils.extractThumbnail(mPropertyImage.getImageBitMap(), 96, 96));
+        mPropertyImageView.setImageBitmap(ThumbnailUtils.extractThumbnail(mPropertyImage.getImageBitMap(), 180, 100));
     }
 
     @Override

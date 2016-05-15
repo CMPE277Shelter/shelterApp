@@ -6,6 +6,7 @@ import android.util.Log;
 
 import com.android.shelter.FragmentCallback;
 import com.android.shelter.helper.PropertyImage;
+import com.android.shelter.property.PropertyLab;
 import com.android.shelter.user.UserSessionManager;
 
 import org.json.JSONArray;
@@ -29,7 +30,6 @@ import cz.msebera.android.httpclient.protocol.HttpContext;
 public class PostPropertyTask extends AsyncTask<Void, Void, String> {
 
     private final static String TAG = "PostPropertyTask";
-    private final String BASE_URL="http://ec2-52-36-142-168.us-west-2.compute.amazonaws.com:5000/";
     private String absoluteURL;
     private Context context;
     private boolean hasParams;
@@ -46,7 +46,7 @@ public class PostPropertyTask extends AsyncTask<Void, Void, String> {
     }
 
     private String getAbsoluteURL(){
-        absoluteURL=BASE_URL+endpoint;
+        absoluteURL=ShelterConstants.BASE_URL+endpoint;
         return absoluteURL;
     }
 
@@ -94,22 +94,20 @@ public class PostPropertyTask extends AsyncTask<Void, Void, String> {
                         propertyId = jsonObj.getString(ShelterConstants.PROPERTY_ID);
                     }
                 }
-                for (PropertyImage images : ImagePicker.get(context).getPropertyImages()) {
+                for (PropertyImage images : PropertyLab.get(context).getPropertyImages()) {
                     Log.d(TAG, "Image getting uploaded ==== " + images.getImagePath());
                     JSONObject imageData = new JSONObject();
                     imageData.put(ShelterConstants.PROPERTY_ID, propertyId);
                     imageData.put(ShelterConstants.OWNER_ID, UserSessionManager.get(context).getOwnerId());
                     imageData.put(ShelterConstants.FILENAME, images.getImageName());
-                    byte[] imageByte = ImagePicker.get(context).getImageString64(images.getImageBitMap());
-                    imageData.put(ShelterConstants.IMAGE_STRING64, Base64.encodeToString(imageByte, 0));
+                    byte[] imageByte = ImagePicker.get(context).getImageBytes(images.getImageBitMap());
+                    imageData.put(ShelterConstants.STR_BYTE, Base64.encodeToString(imageByte, 0));
 
-                    new PostImageTask(context, "image", true, imageData).execute();
+                    new PostImageTask(context, "image", true, imageData, fragmentCallback).execute();
                 }
             }catch (JSONException ex){
                 Log.d(TAG, ex.getStackTrace().toString());
             }
         }
-
-        fragmentCallback.onTaskDone();
     }
 }
