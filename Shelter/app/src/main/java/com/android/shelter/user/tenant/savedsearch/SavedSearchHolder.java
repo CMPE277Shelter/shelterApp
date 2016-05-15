@@ -16,12 +16,7 @@ public class SavedSearchHolder extends RecyclerView.ViewHolder
 
     private ImageView mSavedSearchImageView;
     private TextView mSavedSearchName;
-    private TextView mKeyword;
-    private TextView mPropertyType;
-    private TextView mRent;
-    private TextView mCity;
-    private TextView mZipcode;
-
+    private TextView mSavedSearchcriteria;
 
     private SavedSearch mSavedSearch;
 
@@ -44,12 +39,7 @@ public class SavedSearchHolder extends RecyclerView.ViewHolder
 
         mSavedSearchImageView = (ImageView) itemView.findViewById(R.id.search_imageview);
         mSavedSearchName = (TextView) itemView.findViewById(R.id.search_name);
-        mPropertyType = (TextView) itemView.findViewById(R.id.search_property_type);
-        mRent = (TextView) itemView.findViewById(R.id.search_property_rent);
-        mKeyword = (TextView) itemView.findViewById(R.id.search_keyword);
-        mCity =(TextView) itemView.findViewById(R.id.search_city);
-        mZipcode=(TextView) itemView.findViewById(R.id.search_zipcode);
-
+        mSavedSearchcriteria = (TextView) itemView.findViewById(R.id.search_criteria);
     }
 
     /**
@@ -59,20 +49,66 @@ public class SavedSearchHolder extends RecyclerView.ViewHolder
     public void bindView(SavedSearch search) {
         mSavedSearch = search;
         mSavedSearchName.setText(search.getSavedSearchName());
-        mPropertyType.setText(search.getPostingType());
-        new DownloadImageTask(mSavedSearchImageView).execute("" +
-                "http://ec2-52-36-142-168.us-west-2.compute.amazonaws.com:5000/drawable?filename=p1.jpg");
-        
-        mCity.setText(search.getCity());
-        mRent.setText(search.getMinRent() + "-" + search.getMaxRent());
-        mKeyword.setText(search.getKeyword());
-        mZipcode.setText(search.getZipcode());
+        if(search.getMapURL().equals("")){
+            new DownloadImageTask(mSavedSearchImageView).execute("" +
+                    "http://ec2-52-36-142-168.us-west-2.compute.amazonaws.com:5000/drawable?filename=p1.jpg");
+        }else{
+            new DownloadImageTask(mSavedSearchImageView).execute(search.getMapURL());
+        }
 
+        mSavedSearchcriteria.setText(formCriteriaText(search));
+
+    }
+
+    public String formCriteriaText(SavedSearch search) {
+        StringBuilder searchCriteria=new StringBuilder();
+        boolean isFirstElementSet = false;
+        boolean isLastElement;
+
+        if(search.hasKeyword()){
+            searchCriteria.append(search.getKeyword());
+            isFirstElementSet=true;
+        }
+
+        if(search.hasCity() && isFirstElementSet){
+            searchCriteria.append(", "+search.getCity());
+        }else if(search.hasCity()){
+            searchCriteria.append(search.getCity());
+            isFirstElementSet=true;
+        }
+
+        if(search.hasZipcode() && isFirstElementSet){
+            searchCriteria.append(", Property Type : "+search.getZipcode());
+        }else if(search.hasZipcode()){
+            searchCriteria.append(search.getZipcode());
+            isFirstElementSet=true;
+        }
+
+        if(search.hasPostingType() && isFirstElementSet){
+            searchCriteria.append(", "+search.getPostingType());
+        }else if(search.hasPostingType()){
+            searchCriteria.append("Property Type : "+search.getPostingType());
+            isFirstElementSet=true;
+        }
+
+        if(isFirstElementSet && (search.hasMinRent() || search.hasMaxRent())){
+            searchCriteria.append(", ");
+        }
+
+        if(search.hasMinRent() && search.hasMaxRent()){
+            searchCriteria.append("Price Range : $"+search.getMinRent()+"-"+search.getMaxRent());
+        }else if(search.hasMinRent()){
+            searchCriteria.append("Price Range : >= $"+search.getMinRent());
+        }else if(search.hasMaxRent()){
+            searchCriteria.append("Price Range : <= $"+search.getMaxRent());
+        }
+
+        return searchCriteria.toString();
     }
 
     @Override
     public void onClick(View v) {
-        Log.d("MyPostingHolder", "Pager activity starting");
+//        Log.d("SavedSearchHolder", "Pager activity starting");
 //        Intent intent = PostedPropertyPagerActivity.newIntent(mActivity, mSavedSearch.getId());
 //        mActivity.startActivity(intent);
     }

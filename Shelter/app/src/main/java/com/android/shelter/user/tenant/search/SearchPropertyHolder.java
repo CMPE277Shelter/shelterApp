@@ -32,7 +32,6 @@ public class SearchPropertyHolder extends RecyclerView.ViewHolder
     private TextView mBeds;
     private TextView mFloorArea;
     private TextView mRent;
-    private ToggleButton mFavToggleButton;
     private Property mProperty;
 
     private Activity mActivity;
@@ -54,7 +53,6 @@ public class SearchPropertyHolder extends RecyclerView.ViewHolder
         mBaths = (TextView) itemView.findViewById(R.id.baths);
         mBeds =(TextView)itemView.findViewById(R.id.beds);
         mFloorArea = (TextView)itemView.findViewById(R.id.floorArea);
-        mFavToggleButton = (ToggleButton)itemView.findViewById(R.id.fav_toggle_button);
     }
 
     /**
@@ -73,67 +71,6 @@ public class SearchPropertyHolder extends RecyclerView.ViewHolder
         mBaths.setText(property.getDisplayBath());
         mBeds.setText(property.getDisplayRoom());
         mFloorArea.setText(property.getDisplayFloorArea());
-        mFavToggleButton.setChecked(mProperty.isFavorite());
-
-        mFavToggleButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                FavoriteCriteria criteria = new FavoriteCriteria();
-                criteria.setUser(UserSessionManager.get(mActivity).getOwnerId());
-                criteria.setOwner_id(mProperty.getOwnerId());
-                criteria.setProperty_id(mProperty.getId().toString());
-                if(mFavToggleButton.isChecked()){
-                    new ShelterFavoriteTask(mActivity.getApplicationContext(), "addfavourite", "POST",
-                            true, criteria, new FragmentCallback() {
-                        @Override
-                        public void onTaskDone() {
-                            Log.d("SearchPropertyHolder", "On taskdone");
-                            mProperty.setFavorite(true);
-                        }
-                    }).execute();
-                }else{
-                    new ShelterFavoriteTask(mActivity.getApplicationContext(), "removefavourite", "DELETE",
-                            true, criteria, new FragmentCallback() {
-                        @Override
-                        public void onTaskDone() {
-                            Log.d("SearchPropertyHolder", "On taskdone");
-                            mProperty.setFavorite(false);
-                        }
-                    }).execute();
-                }
-//                if (property.isFavorite()) {
-//                    property.setFavorite(false);
-//                    mProperty = property;
-//                    FavoriteCriteria criteria = new FavoriteCriteria();
-//                    criteria.setUser(UserSessionManager.get(mActivity).getOwnerId());
-//                    criteria.setOwner_id(mProperty.getOwnerId());
-//                    criteria.setProperty_id(mProperty.getId().toString());
-//                    new ShelterFavoriteTask(mActivity.getApplicationContext(), "removefavourite", "DELETE",
-//                            true, criteria, new FragmentCallback() {
-//                        @Override
-//                        public void onTaskDone() {
-//
-//                        }
-//                    }).execute();
-//                } else {
-//                    property.setFavorite(true);
-//                    mProperty = property;
-//                    FavoriteCriteria criteria = new FavoriteCriteria();
-//                    SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(mActivity.getApplicationContext());
-//                    criteria.setUser(preferences.getString(
-//                            ShelterConstants.SHARED_PREFERENCE_OWNER_ID, ShelterConstants.DEFAULT_STRING));
-//                    criteria.setOwner_id(mProperty.getOwnerId());
-//                    criteria.setProperty_id(mProperty.getId().toString());
-//                    new ShelterFavoriteTask(mActivity.getApplicationContext(), "addfavourite", "POST",
-//                            true, criteria, new FragmentCallback() {
-//                        @Override
-//                        public void onTaskDone() {
-//
-//                        }
-//                    }).execute();
-//                }
-            }
-        });
     }
 
     @Override

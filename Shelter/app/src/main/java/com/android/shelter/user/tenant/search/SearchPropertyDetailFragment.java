@@ -65,8 +65,6 @@ public class SearchPropertyDetailFragment extends Fragment  {
         UUID id = (UUID) getArguments().getSerializable(ARG_PROPERTY_ID);
         mProperty = PropertyLab.get(getContext()).getProperty(id);
 
-        // Increments page views
-        // TODO How it undestands which property?
         new IncrementViewCountTask().execute("http://ec2-52-36-142-168.us-west-2.compute.amazonaws.com:5000/" +
                 "incrementViewCount/",id.toString(),mProperty.getOwnerId());
     }

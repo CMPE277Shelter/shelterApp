@@ -19,20 +19,6 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:layout_below="@+id/thumbnail">
-            <ToggleButton
-                android:id="@+id/fav_toggle_button"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:focusableInTouchMode="false"
-                android:background="@drawable/check"
-                android:layout_weight="1"
-                android:focusable="false"
-                android:paddingRight="8dp"
-                android:paddingTop="3dp"
-                android:layout_alignParentRight="true"
-                android:layout_alignParentTop="true"
-                android:textOff=""
-                android:textOn=""/>
             <TextView
                 android:id="@+id/name"
                 android:layout_width="wrap_content"
