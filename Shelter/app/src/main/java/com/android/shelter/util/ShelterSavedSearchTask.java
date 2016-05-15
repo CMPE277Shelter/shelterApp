@@ -199,7 +199,7 @@ public class ShelterSavedSearchTask extends AsyncTask<Void, Void, String>{
                             savedSearch.setHasPostingType(false);
                         }
 
-                        savedSearch.setPhotoId(getPic());
+                        savedSearch.setMapURL(jsonObj.getString("staticmapurl"));
                         SavedSearchesLab.get(context).addSavedSearch(savedSearch);
 //                        Log.d("Object-" + i + ":", jsonObj.toString());
 
