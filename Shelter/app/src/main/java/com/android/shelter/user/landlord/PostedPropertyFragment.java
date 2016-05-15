@@ -22,6 +22,7 @@ import com.android.shelter.R;
 import com.android.shelter.helper.PropertyImage;
 import com.android.shelter.property.Property;
 import com.android.shelter.property.PropertyLab;
+import com.android.shelter.util.DownloadImageTask;
 import com.android.shelter.util.RentedOrCancelTask;
 import com.android.shelter.util.ShelterConstants;
 
@@ -87,8 +88,11 @@ public class PostedPropertyFragment extends Fragment {
         ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle(mProperty.getName());
 
         mImage = (ImageView) v.findViewById(R.id.posted_property_image);
-        mImage.setImageResource(R.drawable.header);
-
+        if(mPropertyImage.getImageResourceId() == 0){
+            new DownloadImageTask(mImage).execute(mPropertyImage.getImagePath());
+        } else {
+            mImage.setBackgroundResource(mPropertyImage.getImageResourceId());
+        }
 
         mPropertyName = (TextView) v.findViewById(R.id.posted_property_name);
         mPropertyName.setText(mProperty.getName());
@@ -144,6 +148,7 @@ public class PostedPropertyFragment extends Fragment {
         mImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                PropertyLab.get(getContext()).updateImageList(mProperty.getPropertyImages());
                 Intent intent = ImagePagerActivity.newIntent(getActivity(), mPropertyImage.getId());
                 getActivity().startActivity(intent);
             }

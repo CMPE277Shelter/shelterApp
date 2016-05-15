@@ -16,9 +16,11 @@ public class PropertyImage {
     private Bitmap mImageBitMap;
     private String mImagePath;
     private String imageName;
+    private int imageResourceId;
 
     public PropertyImage(){
         mId = UUID.randomUUID();
+        imageResourceId = 0;
     }
 
     public UUID getId(){
@@ -46,5 +48,13 @@ public class PropertyImage {
 
     public void setImageName(String imageName) {
         this.imageName = imageName;
+    }
+
+    public int getImageResourceId() {
+        return imageResourceId;
+    }
+
+    public void setImageResourceId(int imageResourceId) {
+        this.imageResourceId = imageResourceId;
     }
 }
