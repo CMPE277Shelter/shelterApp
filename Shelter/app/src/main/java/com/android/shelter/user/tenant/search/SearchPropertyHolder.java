@@ -87,6 +87,7 @@ public class SearchPropertyHolder extends RecyclerView.ViewHolder
                             true, criteria, new FragmentCallback() {
                         @Override
                         public void onTaskDone() {
+                            Log.d("SearchPropertyHolder", "On taskdone");
                             mProperty.setFavorite(true);
                         }
                     }).execute();
@@ -95,6 +96,7 @@ public class SearchPropertyHolder extends RecyclerView.ViewHolder
                             true, criteria, new FragmentCallback() {
                         @Override
                         public void onTaskDone() {
+                            Log.d("SearchPropertyHolder", "On taskdone");
                             mProperty.setFavorite(false);
                         }
                     }).execute();

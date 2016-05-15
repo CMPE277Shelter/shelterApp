@@ -70,11 +70,16 @@ public class MyPostingHolder extends RecyclerView.ViewHolder
         mPropertyType.setText(property.getType());
 //        mPropertyImageView.setImageResource(property.getPhotoId());
         mPropertyImage = new PropertyImage();
-        if(mProperty.getPropertyImages().size() > 0){
+        if(mPropertyImage != null){
             mPropertyImage = mProperty.getPropertyImages().get(0);
-            new DownloadImageTask(mPropertyImageView).
-                    execute(mPropertyImage.getImagePath());
+            if(mPropertyImage.getImageResourceId() == 0){
+                new DownloadImageTask(mPropertyImageView).
+                        execute(mPropertyImage.getImagePath());
+            }else {
+                mPropertyImageView.setBackgroundResource(mPropertyImage.getImageResourceId());
+            }
         }
+
         mAddress.setText(property.getAddress());
         mRent.setText(property.getRent());
         mBath.setText(property.getBath());
