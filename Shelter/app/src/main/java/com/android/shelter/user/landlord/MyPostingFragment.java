@@ -52,7 +52,7 @@ public class MyPostingFragment extends Fragment {
         setupAdapter();
 
         String ownerId = UserSessionManager.get(getContext()).getOwnerId();
-        new ShelterPropertyTask(getActivity().getApplicationContext(), "postings", true,
+        new ShelterPropertyTask(getActivity().getApplicationContext(), "ownerpostings", true,
                 ownerId, null, null, null, null, null, null, null,
                 new FragmentCallback() {
                     @Override
@@ -70,6 +70,7 @@ public class MyPostingFragment extends Fragment {
         switch (item.getItemId()) {
             case android.R.id.home:
                 Log.d(TAG, "Home clicked");
+
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

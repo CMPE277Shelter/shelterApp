@@ -150,14 +150,14 @@ public class PostPropertyFragment extends Fragment {
         StaggeredGridLayoutManager gridLayoutManager =
                 new StaggeredGridLayoutManager(3, StaggeredGridLayoutManager.VERTICAL);
         mImageRecyclerView.setLayoutManager(gridLayoutManager);
-        setupAdapter();
 
         mSelectPictureButton = (Button) view.findViewById(R.id.select_picture);
         mSelectPictureButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent selectedIntent = ImagePicker.getPickImageIntent(getActivity());
-                startActivityForResult(selectedIntent, REQUEST_ADD_IMAGE);
+                Intent selectedIntent = ImagePicker.getGalleryImagePickIntent(getActivity());
+                //startActivityForResult(selectedIntent, REQUEST_ADD_IMAGE);
+                startActivityForResult(Intent.createChooser(selectedIntent, "Select picture"), REQUEST_ADD_IMAGE);
 
             }
         });
@@ -196,25 +196,12 @@ public class PostPropertyFragment extends Fragment {
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                Log.d(TAG, "Home clicked");
-                if (NavUtils.getParentActivityIntent(getActivity()) != null) {
-                    NavUtils.navigateUpFromSameTask(getActivity());
-                }
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-    }
-
-    @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        Log.d(TAG, "On activity result called");
         if (resultCode == getActivity().RESULT_OK){
             switch(requestCode) {
                 case REQUEST_ADD_IMAGE:
-                    if (resultCode == getActivity().RESULT_OK && null != data) {
+                    if (null != data) {
                         Log.d(TAG, "Image selected ");
                         mImageList.add(ImagePicker.get(getContext()).getPropertyImage(getContext(), data));
                         setupAdapter();
@@ -245,9 +232,8 @@ public class PostPropertyFragment extends Fragment {
      * Method to compose email and call {@link SendEmail} to send the email to user in Asynctask
      */
     public void composeEmail() {
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        String email = preferences.getString(ShelterConstants.SHARED_PREFERENCE_EMAIL, null);
-        String userName = preferences.getString(ShelterConstants.SHARED_PREFERENCE_USER_NAME, null);
+        String email = UserSessionManager.get(getContext()).getUserEmail();
+        String userName = UserSessionManager.get(getContext()).getUserName();
         String subject = "Thank you!";
         String message = "Hello "+ userName + " We will keep you udpated.";
 

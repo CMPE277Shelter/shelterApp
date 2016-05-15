@@ -2,6 +2,7 @@ package com.android.shelter.helper;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.media.ThumbnailUtils;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.RecyclerView;
@@ -10,6 +11,8 @@ import android.widget.ImageView;
 
 import com.android.shelter.user.landlord.ImagePagerActivity;
 import com.android.shelter.R;
+import com.android.shelter.util.DownloadImageTask;
+import com.android.shelter.util.ImagePicker;
 
 
 /**
@@ -47,7 +50,15 @@ public class PropertyImageHolder extends RecyclerView.ViewHolder
      */
     public void bindImage(PropertyImage aImage) {
         mPropertyImage = aImage;
-        mPropertyImageView.setImageBitmap(ThumbnailUtils.extractThumbnail(mPropertyImage.getImageBitMap(), 180, 100));
+        if(mPropertyImage.getImageBitMap() == null){
+            if(mPropertyImage.getImageResourceId() == 0){
+                new DownloadImageTask(mPropertyImageView).execute(mPropertyImage.getImagePath());
+            }else {
+                mPropertyImageView.setBackgroundResource(mPropertyImage.getImageResourceId());
+            }
+        } else {
+            mPropertyImageView.setImageBitmap(ThumbnailUtils.extractThumbnail(mPropertyImage.getImageBitMap(), 180, 100));
+        }
     }
 
     @Override

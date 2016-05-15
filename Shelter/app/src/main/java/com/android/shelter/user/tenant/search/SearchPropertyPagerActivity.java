@@ -9,6 +9,7 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.MenuItem;
 
 import com.android.shelter.R;
 import com.android.shelter.property.Property;
@@ -70,6 +71,27 @@ public class SearchPropertyPagerActivity extends AppCompatActivity {
                 mViewPager.setCurrentItem(i);
                 break;
             }
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        if(getFragmentManager().getBackStackEntryCount() > 0){
+            getFragmentManager().popBackStack();
+        }else {
+            super.onBackPressed();
+        }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                Log.d(TAG, "Home clicked");
+                onBackPressed();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
     }
 }
