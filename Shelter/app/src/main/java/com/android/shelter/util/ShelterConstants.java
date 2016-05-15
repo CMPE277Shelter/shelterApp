@@ -5,6 +5,7 @@ package com.android.shelter.util;
  */
 public class ShelterConstants {
 
+    public static final String BASE_URL = "http://ec2-52-36-142-168.us-west-2.compute.amazonaws.com:5000/";
     public static final String DEFAULT_STRING = "NONE";
     public static final String DEFAULT_INT_STRING = "0";
 
@@ -46,7 +47,8 @@ public class ShelterConstants {
     public static final String IS_RENTED_OR_CANCEL = "is_rented_or_cancel";
 
     public static final String FILENAME = "filename";
-    public static final String IMAGE_STRING64 = "strByte";
+    public static final String STR_BYTE = "strByte";
+    public static final String PROPERTY_IMAGES = "images";
 
 }
 

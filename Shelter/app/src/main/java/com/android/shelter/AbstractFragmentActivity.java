@@ -22,7 +22,7 @@ public abstract class AbstractFragmentActivity extends AppCompatActivity {
         if (fragment == null) {
             fragment = createFragment();
             fm.beginTransaction()
-                    .add(R.id.fragment_container, fragment,HomeActivity.HOME_FRAGMENT_TAG)
+                    .add(R.id.fragment_container, fragment, HomeActivity.HOME_FRAGMENT_TAG)
                     .commit();
         }
     }

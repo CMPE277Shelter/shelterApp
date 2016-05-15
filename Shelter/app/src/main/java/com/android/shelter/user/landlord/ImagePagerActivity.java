@@ -11,6 +11,7 @@ import android.support.v7.app.AppCompatActivity;
 
 import com.android.shelter.R;
 import com.android.shelter.helper.PropertyImage;
+import com.android.shelter.property.PropertyLab;
 import com.android.shelter.util.ImagePicker;
 
 import java.util.List;
@@ -43,7 +44,7 @@ public class ImagePagerActivity extends AppCompatActivity {
 
         mViewPager = (ViewPager) findViewById(R.id.property_image_pager);
 
-        mPropertyImagesList = ImagePicker.get(getApplicationContext()).getPropertyImages();
+        mPropertyImagesList = PropertyLab.get(getApplicationContext()).getPropertyImages();
         FragmentManager fragmentManager = getSupportFragmentManager();
         mViewPager.setAdapter(new FragmentStatePagerAdapter(fragmentManager) {
             @Override

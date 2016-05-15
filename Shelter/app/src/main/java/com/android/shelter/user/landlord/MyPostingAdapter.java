@@ -32,7 +32,6 @@ public class MyPostingAdapter extends RecyclerView.Adapter<MyPostingHolder> {
     public MyPostingAdapter(List<Property> propertyList, Activity activity, FragmentManager fragmentManager) {
         mPropertyList = propertyList;
         mActivity = activity;
-        //mIconDownloader = iconDownloader;
         mFragmentManager = fragmentManager;
     }
 

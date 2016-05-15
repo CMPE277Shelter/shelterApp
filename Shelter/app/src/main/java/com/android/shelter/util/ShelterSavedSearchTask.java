@@ -32,7 +32,6 @@ import cz.msebera.android.httpclient.protocol.HttpContext;
  * Created by Prasanna on 5/12/16.
  */
 public class ShelterSavedSearchTask extends AsyncTask<Void, Void, String>{
-    private final String BASE_URL="http://ec2-52-36-142-168.us-west-2.compute.amazonaws.com:5000/";
     private final static String TAG = "ShelterSavedSearchTask";
     private String absoluteURL;
     private Context context;
@@ -59,7 +58,7 @@ public class ShelterSavedSearchTask extends AsyncTask<Void, Void, String>{
     }
 
     private String getAbsoluteURL(){
-        absoluteURL=BASE_URL+endpoint;
+        absoluteURL=ShelterConstants.BASE_URL+endpoint;
         if(requestType.equals("POST")){
             Log.d("URLL-POST:",absoluteURL);
             return absoluteURL;
