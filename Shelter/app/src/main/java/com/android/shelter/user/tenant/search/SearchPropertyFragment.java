@@ -33,6 +33,7 @@ import com.android.shelter.FragmentCallback;
 import com.android.shelter.property.PropertyLab;
 import com.android.shelter.user.Location;
 import com.android.shelter.R;
+import com.android.shelter.user.UserSessionManager;
 import com.android.shelter.user.tenant.savedsearch.SavedSearch;
 import com.android.shelter.util.ShelterConstants;
 import com.android.shelter.util.ShelterPropertyTask;
@@ -149,8 +150,9 @@ public class SearchPropertyFragment extends Fragment {
         layoutManager.scrollToPosition(0);
         mPostingRecyclerView.setLayoutManager(layoutManager);
 
+        String ownerId = UserSessionManager.get(getContext()).getOwnerId();
         new ShelterPropertyTask(getActivity().getApplicationContext(), "postings", true,
-                null, null, criteria.getKeyword(), criteria.getCity(), null,
+                ownerId, null, criteria.getKeyword(), criteria.getCity(), null,
                 criteria.getMinRent(), criteria.getMaxRent(), criteria.getApartmentType(),
                 new FragmentCallback() {
                     @Override
@@ -228,8 +230,9 @@ public class SearchPropertyFragment extends Fragment {
             if(resultCode == Activity.RESULT_OK){
                 criteria = (SearchPropertyFilterCriteria)
                         data.getSerializableExtra(SearchPropertyFilterFragment.EXTRA_OPTION);
+                String ownerId = UserSessionManager.get(getContext()).getOwnerId();
                 new ShelterPropertyTask(getActivity().getApplicationContext(), "postings", true,
-                        null, null, criteria.getKeyword(), criteria.getCity(), criteria.getZipcode(),
+                        ownerId, null, criteria.getKeyword(), criteria.getCity(), criteria.getZipcode(),
                         criteria.getMinRent(), criteria.getMaxRent(), criteria.getApartmentType(),
                         new FragmentCallback() {
                     @Override
@@ -269,8 +272,9 @@ public class SearchPropertyFragment extends Fragment {
                     criteria.setZipcode(appLocation.getPostalCode());
                     criteria.setMapUrl(appLocation.getStaticMapUrl());
 
+                    String ownerId = UserSessionManager.get(getContext()).getOwnerId();
                     new ShelterPropertyTask(getActivity().getApplicationContext(), "postings", true,
-                            null, null, criteria.getKeyword(), criteria.getCity(), null,
+                            ownerId, null, criteria.getKeyword(), criteria.getCity(), null,
                             criteria.getMinRent(), criteria.getMaxRent(), criteria.getApartmentType(),
                             new FragmentCallback() {
                                 @Override

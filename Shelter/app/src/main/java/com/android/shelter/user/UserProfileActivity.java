@@ -65,27 +65,7 @@ public class UserProfileActivity extends AppCompatActivity implements GoogleApiC
             public void onClick(View v) {
                 final SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
 
-                Log.d(TAG, "Facebook logged out "+ preferences.getString(ShelterConstants.SHARED_PREFERENCE_TYPE, ShelterConstants.DEFAULT_STRING));
-                if(preferences.getString(ShelterConstants.SHARED_PREFERENCE_TYPE, ShelterConstants.DEFAULT_STRING).equalsIgnoreCase(ShelterConstants.FACEBOOK_TYPE)){
-                    LoginManager.getInstance().logOut();
 
-                    SharedPreferences.Editor editor = preferences.edit();
-                    editor.clear().commit();
-                    Log.d(TAG, "Facebook logged out");
-                    finishActivity();
-                }else {
-                    Auth.GoogleSignInApi.signOut(mGoogleApiClient).setResultCallback(
-                            new ResultCallback<Status>() {
-                                @Override
-                                public void onResult(Status status) {
-                                    SharedPreferences.Editor editor = preferences.edit();
-                                    editor.clear();
-                                    editor.commit();
-                                    Log.d(TAG, "Google logged out");
-                                    finishActivity();
-                                }
-                            });
-                }
             }
         });
     }

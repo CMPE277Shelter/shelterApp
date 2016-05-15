@@ -15,7 +15,7 @@
     <RelativeLayout android:id="@+id/before_signin"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="visible">
+        android:visibility="gone">
         <ImageView
             android:layout_width="80dp"
             android:layout_height="80dp"
@@ -23,53 +23,35 @@
             android:layout_centerHorizontal="true"
             android:id="@+id/app_logo_n_name"
             android:src="@drawable/icon"/>
-        <Button android:id="@+id/login_button"
-            android:layout_below="@+id/app_logo_n_name"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@color/success"
-            android:text="Remove this Login button"
-            android:layout_centerInParent="true"
-            >
-        </Button>
-
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="@color/white"
-            android:layout_gravity="center"
-            android:padding="10dp"
-            android:layout_centerInParent="true"
-            android:lines="2"
-            android:id="@+id/username"/>
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Post, find, get alerts"
-            android:textColor="@color/white"
-            android:layout_gravity="center"
-            android:padding="10dp"
-            android:layout_below="@+id/login_button"
-            android:layout_centerInParent="true"
-            android:lines="2"
-            />
     </RelativeLayout>
-    <!--TODO Add code in the LoginActivity to hide/show on signin  -->
-    <LinearLayout android:id="@+id/after_signin"
+
+    <RelativeLayout android:id="@+id/after_signin"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:visibility="gone">
+        android:layout_height="match_parent"
+        android:visibility="visible">
         <ImageView
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            android:background="@drawable/propic"/>
-        <TextView android:id="@+id/user_name"
-            android:layout_width="wrap_content"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentRight="true"
+            android:src="@drawable/icon"/>
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="20dp"
-            android:padding="15dp"
-            android:text="User Name"/>
-    </LinearLayout>
+            android:orientation="horizontal"
+            android:layout_alignParentBottom="true"
+            android:visibility="visible">
+            <ImageView android:id="@+id/user_profile_picture"
+                android:layout_width="90dp"
+                android:layout_height="90dp"
+                android:background="@drawable/propic"/>
+            <TextView android:id="@+id/user_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="20dp"
+                android:padding="15dp"
+                android:text="User Name"/>
+        </LinearLayout>
+    </RelativeLayout>
+
 </RelativeLayout>

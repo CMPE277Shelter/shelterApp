@@ -14,7 +14,8 @@ public class ShelterConstants {
     public static final String SHARED_PREFERENCE_USER_NAME = "userName";
     public static final String SHARED_PREFERENCE_SIGNED_IN = "signedIn";
     public static final String SHARED_PREFERENCE_EMAIL = "email";
-    public static final String SHARED_PREFERENCE_TYPE = "type";
+    public static final String SHARED_PREFERENCE_LOGIN_TYPE = "loginType";
+    public static final String SHARED_PREFERENCE_PROFILE_PIC = "profilePicture";
 
     public static final String OWNER_ID = "owner_id";
     public static final String PROPERTY_ID = "property_id";
@@ -43,6 +44,9 @@ public class ShelterConstants {
 
     public static final String IS_FAVORITE = "is_favorite";
     public static final String IS_RENTED_OR_CANCEL = "is_rented_or_cancel";
+
+    public static final String FILENAME = "filename";
+    public static final String IMAGE_STRING64 = "strByte";
 
 }
 
