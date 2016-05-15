@@ -23,7 +23,6 @@ import java.util.UUID;
 
 /**
  * Display fragment to show the complete/full image when user clicks on the thumbnails while posting a property.
- * TODO Can be reused for all cases?
  * Created by rishi on 5/6/16.
  */
 public class ImageDisplayFragment extends Fragment {
@@ -87,6 +86,7 @@ public class ImageDisplayFragment extends Fragment {
         switch (item.getItemId()){
             case android.R.id.home:
                 Log.d(TAG, "Home clicked");
+                getActivity().finish();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

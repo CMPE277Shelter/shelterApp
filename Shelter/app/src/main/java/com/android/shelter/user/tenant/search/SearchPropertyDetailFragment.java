@@ -1,5 +1,6 @@
 package com.android.shelter.user.tenant.search;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
@@ -13,9 +14,11 @@ import android.widget.ToggleButton;
 
 import com.android.shelter.FragmentCallback;
 import com.android.shelter.R;
+import com.android.shelter.helper.PropertyImage;
 import com.android.shelter.property.Property;
 import com.android.shelter.property.PropertyLab;
 import com.android.shelter.user.UserSessionManager;
+import com.android.shelter.user.landlord.ImagePagerActivity;
 import com.android.shelter.user.tenant.favorite.FavoriteCriteria;
 import com.android.shelter.util.DownloadImageTask;
 import com.android.shelter.util.IncrementViewCountTask;
@@ -45,6 +48,8 @@ public class SearchPropertyDetailFragment extends Fragment  {
     private Toolbar mToolbar;
     private ToggleButton mFavToggleButton;
 
+    private PropertyImage mPropertyImage;
+
     public SearchPropertyDetailFragment() {
         // Required empty public constructor
     }
@@ -64,6 +69,9 @@ public class SearchPropertyDetailFragment extends Fragment  {
         setHasOptionsMenu(true);
         UUID id = (UUID) getArguments().getSerializable(ARG_PROPERTY_ID);
         mProperty = PropertyLab.get(getContext()).getProperty(id);
+        if(mProperty.getPropertyImages().size() > 0){
+            mPropertyImage = mProperty.getPropertyImages().get(0);
+        }
 
         new IncrementViewCountTask().execute("http://ec2-52-36-142-168.us-west-2.compute.amazonaws.com:5000/" +
                 "incrementViewCount/",id.toString(),mProperty.getOwnerId());
@@ -84,7 +92,11 @@ public class SearchPropertyDetailFragment extends Fragment  {
 
 
         mImage = (ImageView) v.findViewById(R.id.detail_thumbnail);
-        new DownloadImageTask(mImage).execute("http://ec2-52-36-142-168.us-west-2.compute.amazonaws.com:5000/drawable?filename=p1.jpg");
+        if(mPropertyImage.getImageResourceId() == 0){
+            new DownloadImageTask(mImage).execute(mPropertyImage.getImagePath());
+        } else {
+            mImage.setBackgroundResource(mPropertyImage.getImageResourceId());
+        }
 
         mPropertyName = (TextView) v.findViewById(R.id.detail_name);
         mPropertyName.setText(mProperty.getName());
@@ -139,6 +151,15 @@ public class SearchPropertyDetailFragment extends Fragment  {
                         }
                     }).execute();
                 }
+            }
+        });
+
+        mImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                PropertyLab.get(getContext()).updateImageList(mProperty.getPropertyImages());
+                Intent intent = ImagePagerActivity.newIntent(getActivity(), mPropertyImage.getId());
+                getActivity().startActivity(intent);
             }
         });
         return v;

@@ -48,7 +48,6 @@ public class PostedPropertyFragment extends Fragment {
     private TextView mRent;
     private TextView mBath;
     private TextView mFloorArea;
-    private TextView mContactName;
     private TextView mContactPhone;
     private TextView mContactEmail;
     private TextView mDesc;
@@ -111,8 +110,6 @@ public class PostedPropertyFragment extends Fragment {
         mPageViews = (TextView) v.findViewById(R.id.page_reviews);
         mPageViews.setText(mProperty.getDisplayPageViews());
 
-        mContactName = (TextView) v.findViewById(R.id.posted_property_contact_name);
-        mContactName.setText(mProperty.getContactName());
         mContactPhone = (TextView) v.findViewById(R.id.posted_property_contact_phone);
         mContactPhone.setText(mProperty.getPhoneNumber());
         mContactEmail = (TextView) v.findViewById(R.id.posted_property_contact_email);
@@ -164,12 +161,6 @@ public class PostedPropertyFragment extends Fragment {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
-            case android.R.id.home:
-                Log.d(TAG, "Home clicked");
-                if (NavUtils.getParentActivityIntent(getActivity()) != null) {
-                    NavUtils.navigateUpFromSameTask(getActivity());
-                }
-                return true;
             case R.id.edit_property:
                 Log.d(TAG, "Edit clicked restart the PostPropertyActivity");
                 Intent postPropertyActivity = PostPropertyActivity.newIntent(getContext(), mProperty.getId());
@@ -179,6 +170,7 @@ public class PostedPropertyFragment extends Fragment {
                 return super.onOptionsItemSelected(item);
         }
     }
+
 }
 
 
