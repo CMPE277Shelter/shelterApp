@@ -190,6 +190,9 @@ public class ShelterPropertyTask  extends AsyncTask<Void, Void, String> {
 
                     property.setPhotoId(getPic());
 
+                    JSONArray imageULRs = jsonObj.getJSONArray("images");
+                    Log.d("ShelterPropertyTask", "Image urls  === "+ imageULRs);
+
                     PropertyLab.get(context).addProperty(property);
 //                    Log.d("Object-" + i + ":", jsonObj.toString());
                 }

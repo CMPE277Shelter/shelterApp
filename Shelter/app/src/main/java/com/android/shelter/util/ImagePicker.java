@@ -114,9 +114,20 @@ public class ImagePicker {
         cursor.moveToFirst();
         int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
         String picturePath = cursor.getString(columnIndex);
+        Log.d(TAG, "Image name "+ picturePath);
         cursor.close();
 
+        String[] imageNameString = {MediaStore.Images.Media.DISPLAY_NAME};
+        Cursor imageNameCursor = context.getContentResolver()
+                .query(selectedImage, imageNameString, null, null,
+                        null);
+        imageNameCursor.moveToFirst();
+        String imageName = imageNameCursor.getString(imageNameCursor.getColumnIndex(imageNameString[0]));
+        Log.d(TAG, "Image name "+ imageName);
+        imageNameCursor.close();
+
         PropertyImage image = new PropertyImage();
+        image.setImageName(imageName);
         image.setImagePath(picturePath);
         if(capturedImage != null){
             image.setImageBitMap(capturedImage);

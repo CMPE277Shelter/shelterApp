@@ -1,34 +1,35 @@
 package com.android.shelter;
 
+import android.app.Activity;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
-import android.widget.LinearLayout;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.android.shelter.user.IUserSessionUpdate;
 import com.android.shelter.user.LoginActivity;
+import com.android.shelter.user.UserSessionManager;
 import com.android.shelter.user.landlord.MyPostingFragment;
 import com.android.shelter.user.landlord.PostPropertyActivity;
 import com.android.shelter.user.tenant.favorite.FavoriteFragment;
 import com.android.shelter.user.tenant.savedsearch.SavedSearchFragment;
 import com.android.shelter.user.tenant.search.SearchPropertyFragment;
 import com.android.shelter.user.UserProfileActivity;
-import com.android.shelter.util.ShelterConstants;
+import com.android.shelter.util.DownloadImageTask;
 
 /**
  * Landing screen or home activity for the application.
@@ -41,6 +42,7 @@ public class HomeActivity extends AbstractFragmentActivity
     public static final int REQUEST_USER_PROFILE = 3;
     public static final String EXTRA_FRAGMENT_ID = "com.android.shelter.fragment_id";
     public static final String EXTRA_IS_LOGGED_OUT = "com.android.shelter.is_logged_out";
+    public static final String EXTRA_SHOW_POST_PROPERTY = "com.android.shelter.show_post_property";
     public static final int HOME_FRAGMENT_ID = 2;
     public static final int MY_POSTING_FRAGMENT_ID = 3;
     public static final int MY_SAVED_SEARCH_FRAGMENT_ID = 4;
@@ -54,11 +56,11 @@ public class HomeActivity extends AbstractFragmentActivity
     public static final String MY_FAVORITES_FRAGMENT_TAG = "MyFavoritesFragment";
 
     private static final String TAG = "HomeActivity";
+    private Menu mNavigationMenu;
     private DrawerLayout mDrawer;
-    private RelativeLayout mBeforeSigninLayout;
-    private LinearLayout mAfterSigninLayout;
-
-
+    private RelativeLayout mBeforeSignInLayout;
+    private RelativeLayout mAfterSignInLayout;
+    private UserSessionManager mUserSessionManager;
 
     @Override
     public Fragment createFragment(){
@@ -69,41 +71,48 @@ public class HomeActivity extends AbstractFragmentActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d(TAG, "Now creating the fragment");
+        mUserSessionManager = UserSessionManager.get(getApplicationContext());
+        mUserSessionManager.registerUserUpdateCallbacks(this, new IUserSessionUpdate() {
+            @Override
+            public void signInSuccessfull() {
+                Log.d(TAG, "Sign in success");
+            }
+
+            @Override
+            public void signOutSuccessfull() {
+                Log.d(TAG, "User successfully logged out");
+                toggleUserProfileLayout();
+            }
+        });
+
         setContentView(R.layout.activity_home);
-
-        int id = getResources().getIdentifier("com.android.shelter:drawable/" , null, null);
-
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close){
+            @Override
+            public void onDrawerOpened(View drawerView) {
+                super.onDrawerOpened(drawerView);
+                toggleUserProfileLayout();
+            }
+        };
         drawer.setDrawerListener(toggle);
         toggle.syncState();
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
+        mNavigationMenu = navigationView.getMenu();
         mDrawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         View navHeaderView = navigationView.getHeaderView(0);
-        mAfterSigninLayout = (LinearLayout) navHeaderView.findViewById(R.id.after_signin);
-        mAfterSigninLayout.setOnClickListener(new ProfileClickListener());
-        mBeforeSigninLayout = (RelativeLayout) navHeaderView.findViewById(R.id.before_signin);
+        mAfterSignInLayout = (RelativeLayout) navHeaderView.findViewById(R.id.after_signin);
+        mAfterSignInLayout.setOnClickListener(new ProfileClickListener());
+        mBeforeSignInLayout = (RelativeLayout) navHeaderView.findViewById(R.id.before_signin);
 
         toggleUserProfileLayout();
 
-        Button loginButton = (Button) navHeaderView.findViewById(R.id.login_button);
-        loginButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.d(TAG, "Login button clicked");
-                if (mDrawer.isDrawerOpen(GravityCompat.START)) {
-                    mDrawer.closeDrawer(GravityCompat.START);
-                }
-                new StartLoginProcess().execute();
-            }
-        });
     }
 
     @Override
@@ -113,6 +122,14 @@ public class HomeActivity extends AbstractFragmentActivity
         } else {
             super.onBackPressed();
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Log.d(TAG, "Inside on resume");
+        toggleUserProfileLayout();
+        mUserSessionManager.getGoogleApiClient().connect();
     }
 
     @SuppressWarnings("StatementWithEmptyBody")
@@ -129,6 +146,12 @@ public class HomeActivity extends AbstractFragmentActivity
             updateFragment(new FavoriteFragment(), MY_FAVORITES_FRAGMENT_TAG);
         } else if (id == R.id.nav_saved_searches) {
             updateFragment(new SavedSearchFragment(), MY_SAVED_SEARCH_FRAGMENT_TAG);
+        } else if(id == R.id.nav_login) {
+            Log.d(TAG, "Login button clicked");
+            new StartLoginProcess().execute(false);
+        } else if(id == R.id.nav_logout) {
+            Log.d(TAG, "Login button clicked");
+            startLogoutProcess();
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -148,11 +171,11 @@ public class HomeActivity extends AbstractFragmentActivity
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.post_new_property:
-                if(isUserLoggedIn()){
+                if(mUserSessionManager.isUserSignedIn()){
                     Intent postProperty = PostPropertyActivity.newIntent(getApplicationContext(), null);
                     startActivityForResult(postProperty, REQUEST_FRAGMENT);
                 }else{
-                    new StartLoginProcess().execute();
+                    new StartLoginProcess().execute(true);
                 }
             default:
                 return super.onOptionsItemSelected(item);
@@ -175,31 +198,28 @@ public class HomeActivity extends AbstractFragmentActivity
             }else{
                 updateFragment(new HomeFragment(), HOME_FRAGMENT_TAG);
             }
-        }else if(requestCode == REQUEST_LOGIN){
-            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-            if(preferences.getBoolean(ShelterConstants.SHARED_PREFERENCE_SIGNED_IN, false)){
-                Log.d(TAG, preferences.getString("email", "none"));
-                toggleUserProfileLayout();
-            }
-        }else if(requestCode == REQUEST_USER_PROFILE && data != null && data.hasExtra(EXTRA_IS_LOGGED_OUT)){
+        } else if(requestCode == REQUEST_LOGIN){
             toggleUserProfileLayout();
         }
     }
 
-    private boolean isUserLoggedIn(){
-        return PreferenceManager.getDefaultSharedPreferences(this).getBoolean(ShelterConstants.SHARED_PREFERENCE_SIGNED_IN, false);
-    }
-
     private void toggleUserProfileLayout(){
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-        if(isUserLoggedIn()){
-            mBeforeSigninLayout.setVisibility(View.GONE);
-            mAfterSigninLayout.setVisibility(View.VISIBLE);
-            TextView userName = (TextView) mAfterSigninLayout.findViewById(R.id.user_name);
-            userName.setText(preferences.getString(ShelterConstants.SHARED_PREFERENCE_USER_NAME, ShelterConstants.DEFAULT_STRING));
+        if(mUserSessionManager.isUserSignedIn()){
+            mNavigationMenu.findItem(R.id.nav_logout).setVisible(true);
+            mNavigationMenu.findItem(R.id.nav_login).setVisible(false);
+
+            mBeforeSignInLayout.setVisibility(View.GONE);
+            mAfterSignInLayout.setVisibility(View.VISIBLE);
+
+            TextView userName = (TextView) mAfterSignInLayout.findViewById(R.id.user_name);
+            userName.setText(mUserSessionManager.getUserName());
+            ImageView profilePicture = (ImageView) mAfterSignInLayout.findViewById(R.id.user_profile_picture);
+            new DownloadImageTask(profilePicture).execute(mUserSessionManager.getPictureURL());
         }else {
-            mBeforeSigninLayout.setVisibility(View.VISIBLE);
-            mAfterSigninLayout.setVisibility(View.GONE);
+            mNavigationMenu.findItem(R.id.nav_logout).setVisible(false);
+            mNavigationMenu.findItem(R.id.nav_login).setVisible(true);
+            mBeforeSignInLayout.setVisibility(View.VISIBLE);
+            mAfterSignInLayout.setVisibility(View.GONE);
         }
     }
 
@@ -208,7 +228,7 @@ public class HomeActivity extends AbstractFragmentActivity
         super.updateFragment(fragment, fragmentTag);
     }
 
-    private class StartLoginProcess extends AsyncTask<Void, Void, Void> {
+    private class StartLoginProcess extends AsyncTask<Boolean, Void, Void> {
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
@@ -216,11 +236,28 @@ public class HomeActivity extends AbstractFragmentActivity
         }
 
         @Override
-        protected Void doInBackground(Void... params) {
+        protected Void doInBackground(Boolean... params) {
             Intent intent = new Intent(HomeActivity.this, LoginActivity.class);
+            intent.putExtra(EXTRA_SHOW_POST_PROPERTY, params[0]);
             startActivityForResult(intent, REQUEST_LOGIN);
             return null;
         }
+    }
+
+    public void startLogoutProcess() {
+        new AsyncTask<Void, Void, Void>(){
+            @Override
+            protected void onPostExecute(Void aVoid) {
+                super.onPostExecute(aVoid);
+                Log.d(TAG, "Successfully logged out");
+            }
+
+            @Override
+            protected Void doInBackground(Void... params) {
+                mUserSessionManager.signOutUser();
+                return null;
+            }
+        }.execute();
     }
 
     private class ProfileClickListener implements View.OnClickListener {

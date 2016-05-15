@@ -17,6 +17,7 @@ public class PostPropertyActivity extends AbstractFragmentActivity {
 
     public static final String EXTRA_PROPERTY_ID =
             "com.android.shelter.post_property_activity.property_id";
+    public static final String EXTRA_IS_UPDATE = "com.android.shelter.post_property_activity.update";
 
     public static Intent newIntent(Context packageContext, UUID propertyId) {
         Intent intent = new Intent(packageContext, PostPropertyActivity.class);

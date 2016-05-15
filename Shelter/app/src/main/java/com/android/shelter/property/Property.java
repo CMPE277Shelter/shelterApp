@@ -60,15 +60,8 @@ public class Property {
 
 
     public Property() {
-        id = UUID.randomUUID();
         isFavorite = false;
         isRentedOrCancel = false;
-    }
-
-    Property(String name, String type, int photoId) {
-        this.name = name;
-        this.type = type;
-        this.photoId = photoId;
     }
 
     public UUID getId(){
