@@ -126,7 +126,7 @@ public class ShelterPropertyTask  extends AsyncTask<Void, Void, String> {
             case 2:
                 return R.drawable.p2;
             case 3:
-                return R.drawable.p3;
+                return R.drawable.place_holder;
             case 4:
                 return R.drawable.p4;
             default:
@@ -193,10 +193,17 @@ public class ShelterPropertyTask  extends AsyncTask<Void, Void, String> {
 
                     List<PropertyImage> propertyImageList = new ArrayList<>();
                     JSONArray imageULRs = jsonObj.getJSONArray(ShelterConstants.PROPERTY_IMAGES);
-                    for(int j=0; j<imageULRs.length(); j++){
-                        PropertyImage image = new PropertyImage();
-                        image.setImagePath(imageULRs.getString(j));
-                        propertyImageList.add(image);
+
+                    if(imageULRs.length() > 0){
+                        for(int j=0; j<imageULRs.length(); j++){
+                            PropertyImage image = new PropertyImage();
+                            image.setImagePath(imageULRs.getString(j));
+                            propertyImageList.add(image);
+                        }
+                    }else{
+                        PropertyImage placeHolderImage = new PropertyImage();
+                        placeHolderImage.setImageResourceId(R.drawable.place_holder);
+                        propertyImageList.add(placeHolderImage);
                     }
                     property.setPropertyImages(propertyImageList);
                     Log.d("ShelterPropertyTask", "Image urls  === "+ imageULRs);

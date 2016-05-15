@@ -71,34 +71,6 @@ public class SearchPropertyHolder extends RecyclerView.ViewHolder
         mBaths.setText(property.getDisplayBath());
         mBeds.setText(property.getDisplayRoom());
         mFloorArea.setText(property.getDisplayFloorArea());
-//        mFavToggleButton.setChecked(mProperty.isFavorite());
-//
-//        mFavToggleButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                FavoriteCriteria criteria = new FavoriteCriteria();
-//                criteria.setUser(UserSessionManager.get(mActivity).getOwnerId());
-//                criteria.setOwner_id(mProperty.getOwnerId());
-//                criteria.setProperty_id(mProperty.getId().toString());
-//                if(mFavToggleButton.isChecked()){
-//                    new ShelterFavoriteTask(mActivity.getApplicationContext(), "addfavourite", "POST",
-//                            true, criteria, new FragmentCallback() {
-//                        @Override
-//                        public void onTaskDone() {
-//                            mProperty.setFavorite(true);
-//                        }
-//                    }).execute();
-//                }else{
-//                    new ShelterFavoriteTask(mActivity.getApplicationContext(), "removefavourite", "DELETE",
-//                            true, criteria, new FragmentCallback() {
-//                        @Override
-//                        public void onTaskDone() {
-//                            mProperty.setFavorite(false);
-//                        }
-//                    }).execute();
-//                }
-//            }
-//        });
     }
 
     @Override

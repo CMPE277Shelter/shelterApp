@@ -15,6 +15,7 @@ import android.widget.ImageView;
 import com.android.shelter.R;
 import com.android.shelter.helper.PropertyImage;
 import com.android.shelter.property.PropertyLab;
+import com.android.shelter.util.DownloadImageTask;
 import com.android.shelter.util.ImagePicker;
 import com.android.shelter.util.ImageResizer;
 
@@ -66,8 +67,17 @@ public class ImageDisplayFragment extends Fragment {
         }
         int width = size.x;
         int height = size.y;
-        mImage.setImageBitmap(ImageResizer
-                .decodeSampledBitmapFromFile(mPropertyImage.getImagePath(), width, height));
+
+        if(mPropertyImage.getImageBitMap() == null){
+            if(mPropertyImage.getImageResourceId() == 0){
+                new DownloadImageTask(mImage).execute(mPropertyImage.getImagePath());
+            }else{
+                mImage.setBackgroundResource(mPropertyImage.getImageResourceId());
+            }
+        }else {
+            mImage.setImageBitmap(ImageResizer
+                    .decodeSampledBitmapFromFile(mPropertyImage.getImagePath(), width, height));
+        }
 
         return v;
     }

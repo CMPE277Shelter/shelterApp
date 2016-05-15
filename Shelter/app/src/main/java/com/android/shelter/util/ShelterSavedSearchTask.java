@@ -99,7 +99,7 @@ public class ShelterSavedSearchTask extends AsyncTask<Void, Void, String>{
             case 2:
                 return R.drawable.p2;
             case 3:
-                return R.drawable.p3;
+                return R.drawable.place_holder;
             case 4:
                 return R.drawable.p4;
             default:
