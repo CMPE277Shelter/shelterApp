@@ -9,6 +9,7 @@ import com.android.shelter.R;
 import com.android.shelter.property.Property;
 import com.android.shelter.property.PropertyLab;
 import com.android.shelter.user.tenant.favorite.FavoriteCriteria;
+;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -114,10 +115,11 @@ public class ShelterFavoriteTask extends AsyncTask<Void, Void, String> {
                         Property property = new Property();
                         Log.d("ShelterPropertyTask", "Property ID " + jsonObj.getString(ShelterConstants.PROPERTY_ID));
                         property.setId(jsonObj.getString(ShelterConstants.PROPERTY_ID));
+                        property.setOwnerId(jsonObj.getString(ShelterConstants.OWNER_ID));
                         property.setName(jsonObj.getString(ShelterConstants.PROPERTY_NAME));
                         property.setType(jsonObj.getString(ShelterConstants.PROPERTY_TYPE));
                         property.setDescription(jsonObj.getString(ShelterConstants.DESCRIPTION));
-                        property.setFavorite(jsonObj.getBoolean(ShelterConstants.IS_FAVORITE));
+                        property.setFavorite(true);
                         property.setRentedOrCancel(jsonObj.getBoolean(ShelterConstants.IS_RENTED_OR_CANCEL));
                         property.setPageReviews(jsonObj.getString(ShelterConstants.VIEW_COUNT));
 
@@ -173,23 +175,18 @@ public class ShelterFavoriteTask extends AsyncTask<Void, Void, String> {
         absoluteURL=BASE_URL+endpoint;
         if(requestType.equals("POST")){
             Log.d("URLL-POST:",absoluteURL);
-            return absoluteURL+"/";
+            return absoluteURL+"/".trim().replace(" ","%20");
+
         }else if(requestType.equals("GET")){
 
             if(hasParams){
                 absoluteURL+="?execute=1";
                 if(mFavoriteCriteria.getUser()!=null && !mFavoriteCriteria.getUser().equals("")){
-                    absoluteURL+="&user_id"+mFavoriteCriteria.getUser();
-                }
-                if(mFavoriteCriteria.getProperty_id()!=null && !mFavoriteCriteria.getProperty_id().equals("")){
-                    absoluteURL+="/"+mFavoriteCriteria.getProperty_id();
-                }
-                if(mFavoriteCriteria.getOwner_id()!=null && !mFavoriteCriteria.getOwner_id().equals("")){
-                    absoluteURL+="/"+mFavoriteCriteria.getOwner_id();
+                    absoluteURL+="&user_id="+mFavoriteCriteria.getUser();
                 }
             }
-            Log.d("URLL-GET:",absoluteURL);
-            return absoluteURL;
+            Log.d("URL-GET:",absoluteURL);
+            return absoluteURL.trim().replace(" ", "%20");
 
         } else{
             if(hasParams){

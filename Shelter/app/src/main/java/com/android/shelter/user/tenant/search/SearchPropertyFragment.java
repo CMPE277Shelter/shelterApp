@@ -30,12 +30,11 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.android.shelter.FragmentCallback;
-import com.android.shelter.user.Location;
 import com.android.shelter.property.PropertyLab;
+import com.android.shelter.user.Location;
 import com.android.shelter.R;
 import com.android.shelter.user.UserSessionManager;
 import com.android.shelter.user.tenant.savedsearch.SavedSearch;
-import com.android.shelter.user.landlord.MyPostingAdapter;
 import com.android.shelter.util.ShelterConstants;
 import com.android.shelter.util.ShelterPropertyTask;
 import com.android.shelter.util.ShelterSavedSearchTask;
@@ -142,8 +141,6 @@ public class SearchPropertyFragment extends Fragment {
         criteria.setCity(appLocation.getCityName());
         criteria.setZipcode(appLocation.getPostalCode());
         criteria.setMapUrl(appLocation.getStaticMapUrl());
-
-//        Log.d("criteria", criteria.getCity()+criteria.getZipcode()+criteria.getMapUrl());
 
         searchToBeSaved = new SavedSearch();
 

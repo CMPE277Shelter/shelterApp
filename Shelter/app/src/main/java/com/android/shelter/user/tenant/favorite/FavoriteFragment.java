@@ -2,41 +2,24 @@ package com.android.shelter.user.tenant.favorite;
 
 
 import android.content.SharedPreferences;
-import android.location.Address;
-import android.location.Geocoder;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 
 import com.android.shelter.FragmentCallback;
 import com.android.shelter.R;
 import com.android.shelter.property.PropertyLab;
-import com.android.shelter.user.Location;
-import com.android.shelter.user.landlord.MyPostingAdapter;
-import com.android.shelter.user.tenant.savedsearch.SavedSearch;
 import com.android.shelter.user.tenant.search.SearchPropertyAdapter;
-import com.android.shelter.user.tenant.search.SearchPropertyFilterCriteria;
-import com.android.shelter.user.tenant.search.SearchPropertyFilterFragment;
-import com.android.shelter.user.tenant.search.SearchPropertySaveSearchFragment;
 import com.android.shelter.util.ShelterConstants;
 import com.android.shelter.util.ShelterFavoriteTask;
-import com.android.shelter.util.ShelterPropertyTask;
-import com.google.android.gms.maps.model.LatLng;
-
-import java.io.IOException;
-import java.util.List;
-import java.util.Locale;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -83,10 +66,10 @@ public class FavoriteFragment extends Fragment {
 
         mFavoriteCriteria=new FavoriteCriteria();
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        mFavoriteCriteria.setUser(preferences.getString(ShelterConstants.SHARED_PREFERENCE_USER_NAME
+        mFavoriteCriteria.setUser(preferences.getString(ShelterConstants.SHARED_PREFERENCE_OWNER_ID
                 ,ShelterConstants.DEFAULT_STRING));
 
-        new ShelterFavoriteTask(getActivity().getApplicationContext(), "GET","favorites", true, mFavoriteCriteria,
+        new ShelterFavoriteTask(getActivity().getApplicationContext(), "favorites", "GET",true, mFavoriteCriteria,
                 new FragmentCallback() {
             @Override
             public void onTaskDone() {
