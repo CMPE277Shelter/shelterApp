@@ -97,11 +97,11 @@ public class UserSessionManager implements GoogleApiClient.OnConnectionFailedLis
                             @Override
                             public void onCompleted(JSONObject object, GraphResponse response) {
                                 Log.v("LoginActivity Response ", response.toString());
+                                String id = null;
+                                String emailId = null;
+                                String userName = null;
+                                String pictureURL = null;
                                 try {
-                                    String id = null;
-                                    String emailId = null;
-                                    String userName = null;
-                                    String pictureURL = null;
                                     if(object.has(FACEBOOK_USER_NAME)){
                                         userName = object.getString(FACEBOOK_USER_NAME);
                                         Log.d(TAG, "Username = "+ userName);
@@ -112,12 +112,15 @@ public class UserSessionManager implements GoogleApiClient.OnConnectionFailedLis
                                     if(object.has(FACEBOOK_USER_EMAIL)){
                                         emailId = object.getString(FACEBOOK_USER_EMAIL);
                                     }
-                                    if(object.has(FACEBOOK_PICTURE) && object.getJSONObject(FACEBOOK_PICTURE_DATA).has(FACEBOOK_PICTURE_URL)){
-                                        pictureURL = object.getJSONObject(FACEBOOK_PICTURE_DATA).getString(FACEBOOK_PICTURE_URL);
+                                    if(object.has(FACEBOOK_PICTURE)){
+                                        // && object.getJSONObject(FACEBOOK_PICTURE_DATA).has(FACEBOOK_PICTURE_URL)){
+                                        JSONObject pictureJson = object.getJSONObject(FACEBOOK_PICTURE);
+                                        pictureURL = pictureJson.getJSONObject(FACEBOOK_PICTURE_DATA).getString(FACEBOOK_PICTURE_URL);
                                     }
-                                    loginSuccessfull(ShelterConstants.FACEBOOK_TYPE, id, emailId, userName, pictureURL);
                                 } catch (JSONException e) {
                                     e.printStackTrace();
+                                } finally {
+                                    loginSuccessfull(ShelterConstants.FACEBOOK_TYPE, id, emailId, userName, pictureURL);
                                 }
                             }
                         });
