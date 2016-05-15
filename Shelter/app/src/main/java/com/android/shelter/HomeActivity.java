@@ -1,6 +1,5 @@
 package com.android.shelter;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -9,7 +8,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
@@ -28,7 +26,6 @@ import com.android.shelter.user.landlord.PostPropertyActivity;
 import com.android.shelter.user.tenant.favorite.FavoriteFragment;
 import com.android.shelter.user.tenant.savedsearch.SavedSearchFragment;
 import com.android.shelter.user.tenant.search.SearchPropertyFragment;
-import com.android.shelter.user.UserProfileActivity;
 import com.android.shelter.util.DownloadImageTask;
 
 /**
@@ -39,15 +36,13 @@ public class HomeActivity extends AbstractFragmentActivity
 
     public static final int REQUEST_FRAGMENT = 1;
     public static final int REQUEST_LOGIN = 2;
-    public static final int REQUEST_USER_PROFILE = 3;
+    public static final int HOME_FRAGMENT_ID = 3;
+    public static final int MY_POSTING_FRAGMENT_ID = 4;
+    public static final int MY_SAVED_SEARCH_FRAGMENT_ID = 5;
+    public static final int MY_SEARCH_FRAGMENT_ID = 6;
+    public static final int MY_FAVORITES_FRAGMENT_ID = 7;
     public static final String EXTRA_FRAGMENT_ID = "com.android.shelter.fragment_id";
-    public static final String EXTRA_IS_LOGGED_OUT = "com.android.shelter.is_logged_out";
     public static final String EXTRA_SHOW_POST_PROPERTY = "com.android.shelter.show_post_property";
-    public static final int HOME_FRAGMENT_ID = 2;
-    public static final int MY_POSTING_FRAGMENT_ID = 3;
-    public static final int MY_SAVED_SEARCH_FRAGMENT_ID = 4;
-    public static final int MY_SEARCH_FRAGMENT_ID = 5;
-    public static final int MY_FAVORITES_FRAGMENT_ID = 6;
 
     public static final String HOME_FRAGMENT_TAG = "HomeFragment";
     public static final String MY_POSTING_FRAGMENT_TAG = "MyPostingFragment";
@@ -108,7 +103,6 @@ public class HomeActivity extends AbstractFragmentActivity
         mDrawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         View navHeaderView = navigationView.getHeaderView(0);
         mAfterSignInLayout = (RelativeLayout) navHeaderView.findViewById(R.id.after_signin);
-        mAfterSignInLayout.setOnClickListener(new ProfileClickListener());
         mBeforeSignInLayout = (RelativeLayout) navHeaderView.findViewById(R.id.before_signin);
 
         toggleUserProfileLayout();
@@ -187,18 +181,19 @@ public class HomeActivity extends AbstractFragmentActivity
         super.onActivityResult(requestCode, resultCode, data);
         if(requestCode == REQUEST_FRAGMENT && data != null && data.hasExtra(EXTRA_FRAGMENT_ID)){
             Log.d(TAG, "Back in Home activity " + data.getIntExtra(EXTRA_FRAGMENT_ID, 1));
-            if(data.getIntExtra(EXTRA_FRAGMENT_ID, 1) == MY_POSTING_FRAGMENT_ID){
+            if(data.getIntExtra(EXTRA_FRAGMENT_ID, HOME_FRAGMENT_ID) == MY_POSTING_FRAGMENT_ID){
                 updateFragment(new MyPostingFragment(), MY_POSTING_FRAGMENT_TAG);
-            }else if(data.getIntExtra(EXTRA_FRAGMENT_ID, 1) == MY_SEARCH_FRAGMENT_ID){
+            }else if(data.getIntExtra(EXTRA_FRAGMENT_ID, HOME_FRAGMENT_ID) == MY_SEARCH_FRAGMENT_ID){
                 updateFragment(new SearchPropertyFragment(), MY_SEARCH_FRAGMENT_TAG);
-            }else if(data.getIntExtra(EXTRA_FRAGMENT_ID, 1) == MY_SAVED_SEARCH_FRAGMENT_ID){
+            }else if(data.getIntExtra(EXTRA_FRAGMENT_ID, HOME_FRAGMENT_ID) == MY_SAVED_SEARCH_FRAGMENT_ID){
                 updateFragment(new SavedSearchFragment(), MY_SAVED_SEARCH_FRAGMENT_TAG);
-            }else if(data.getIntExtra(EXTRA_FRAGMENT_ID, 1) == MY_FAVORITES_FRAGMENT_ID){
+            }else if(data.getIntExtra(EXTRA_FRAGMENT_ID, HOME_FRAGMENT_ID) == MY_FAVORITES_FRAGMENT_ID){
                 updateFragment(new SavedSearchFragment(), MY_FAVORITES_FRAGMENT_TAG);
             }else{
                 updateFragment(new HomeFragment(), HOME_FRAGMENT_TAG);
             }
         } else if(requestCode == REQUEST_LOGIN){
+            Log.d(TAG, "On Activity result changing layout");
             toggleUserProfileLayout();
         }
     }
@@ -258,13 +253,5 @@ public class HomeActivity extends AbstractFragmentActivity
                 return null;
             }
         }.execute();
-    }
-
-    private class ProfileClickListener implements View.OnClickListener {
-        @Override
-        public void onClick(View v) {
-            Intent userProfile = new Intent(HomeActivity.this, UserProfileActivity.class);
-            startActivityForResult(userProfile, REQUEST_USER_PROFILE);
-        }
     }
 }

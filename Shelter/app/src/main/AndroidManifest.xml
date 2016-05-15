@@ -32,7 +32,6 @@
             android:name=".HomeActivity"
             android:configChanges="orientation|screenSize"
             android:label="@string/app_name"
-            android:launchMode="singleInstance"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
@@ -89,13 +88,6 @@
             <!--android:label="@string/title_activity_property_pager"-->
             <!--android:theme="@style/AppTheme.NoActionBar">-->
         <!--</activity>-->
-        <activity
-            android:name=".user.UserProfileActivity"
-            android:theme="@style/AppTheme">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".HomeActivity"/>
-        </activity>
         <activity android:name=".user.tenant.search.SearchPropertyPagerActivity"
                   android:theme="@style/AppTheme.NoActionBar">
             <meta-data

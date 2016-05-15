@@ -6,6 +6,7 @@ import android.util.Log;
 
 import com.android.shelter.FragmentCallback;
 import com.android.shelter.R;
+import com.android.shelter.helper.PropertyImage;
 import com.android.shelter.property.Property;
 import com.android.shelter.property.PropertyLab;
 
@@ -15,6 +16,8 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 import cz.msebera.android.httpclient.HttpEntity;
@@ -29,7 +32,6 @@ import cz.msebera.android.httpclient.protocol.HttpContext;
  * Created by Prasanna on 5/6/16.
  */
 public class ShelterPropertyTask  extends AsyncTask<Void, Void, String> {
-    private final String BASE_URL="http://ec2-52-36-142-168.us-west-2.compute.amazonaws.com:5000/";
     private String absoluteURL;
     private Context context;
     private String owner_id;
@@ -68,7 +70,7 @@ public class ShelterPropertyTask  extends AsyncTask<Void, Void, String> {
     }
 
     private String getAbsoluteURL(){
-        absoluteURL=BASE_URL+endpoint;
+        absoluteURL=ShelterConstants.BASE_URL+endpoint;
         if(hasParams){
             absoluteURL+="?execute=1";
             if(owner_id !=null && !owner_id.equals("")){
@@ -154,6 +156,7 @@ public class ShelterPropertyTask  extends AsyncTask<Void, Void, String> {
 
     protected void onPostExecute(String results) {
         PropertyLab.get(context).clearPropertyList();
+        PropertyLab.get(context).clearPropertyImageList();
         if (results!=null) {
             try {
                 JSONArray jsonArray = new JSONArray(results);
@@ -188,9 +191,14 @@ public class ShelterPropertyTask  extends AsyncTask<Void, Void, String> {
                     property.setPhoneNumber(ownerContactInfo.getString(ShelterConstants.PHONE_NUMBER));
                     property.setEmail(ownerContactInfo.getString(ShelterConstants.EMAIL));
 
-                    property.setPhotoId(getPic());
-
-                    JSONArray imageULRs = jsonObj.getJSONArray("images");
+                    List<PropertyImage> propertyImageList = new ArrayList<>();
+                    JSONArray imageULRs = jsonObj.getJSONArray(ShelterConstants.PROPERTY_IMAGES);
+                    for(int j=0; j<imageULRs.length(); j++){
+                        PropertyImage image = new PropertyImage();
+                        image.setImagePath(imageULRs.getString(j));
+                        propertyImageList.add(image);
+                    }
+                    property.setPropertyImages(propertyImageList);
                     Log.d("ShelterPropertyTask", "Image urls  === "+ imageULRs);
 
                     PropertyLab.get(context).addProperty(property);

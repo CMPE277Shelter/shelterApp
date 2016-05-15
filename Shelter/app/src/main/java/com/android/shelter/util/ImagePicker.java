@@ -38,7 +38,6 @@ import java.util.UUID;
 public class ImagePicker {
     private static final String TAG = "ImagePicker";
 
-    public List<PropertyImage> mPropertyImages = new ArrayList<>();
     private static ImagePicker sImagePicker;
 
 
@@ -134,66 +133,15 @@ public class ImagePicker {
         }else {
             image.setImageBitMap(BitmapFactory.decodeFile(picturePath));
         }
-        //image.setImageString64(getImageString64(image.getImageBitMap()));
+        //image.setImageString64(getImageBytes(image.getImageBitMap()));
         return image;
     }
 
-    /**
-     * Keeps the updated property image list
-     * @param imageList
-     */
-    public void updateImageList(List<PropertyImage> imageList){
-        mPropertyImages = new ArrayList<>();
-        mPropertyImages = imageList;
-    }
-
-    /**
-     * Returns entire property image list
-     * @return
-     */
-    public List<PropertyImage> getPropertyImages(){
-        return mPropertyImages;
-    }
-
-    public PropertyImage getPropertyImage(UUID id){
-        for(PropertyImage image : mPropertyImages){
-            if(image.getId().equals(id)){
-                return image;
-            }
-        }
-        return null;
-    }
-
-    public byte[] getImageString64(Bitmap image){
+    public byte[] getImageBytes(Bitmap image){
         // convert bitmap to byte
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
         image.compress(Bitmap.CompressFormat.PNG, 100, stream);
         byte[] imageInByte = stream.toByteArray();
-//        try{
-//            System.gc();
-//            return Base64.encodeToString(imageInByte, Base64.NO_WRAP);
-//        }catch (OutOfMemoryError ex){
-//            stream = new ByteArrayOutputStream();
-//            image.compress(Bitmap.CompressFormat.PNG, 50, stream);
-//            imageInByte = stream.toByteArray();
-//
-//            return Base64.encodeToString(imageInByte, Base64.NO_WRAP);
-//        } catch (Exception ex){
-//            Log.d(TAG, ex.toString());
-//        }
         return imageInByte;
     }
-
-    public List<String> getPropertyImageString64(){
-        List<String> imageStrings = new ArrayList<>();
-        for (PropertyImage image : mPropertyImages){
-            // convert bitmap to byte
-            ByteArrayOutputStream stream = new ByteArrayOutputStream();
-            image.getImageBitMap().compress(Bitmap.CompressFormat.PNG, 100, stream);
-            byte imageInByte[] = stream.toByteArray();
-            imageStrings.add(Base64.encodeToString(imageInByte, Base64.NO_WRAP));
-        }
-        return imageStrings;
-    }
-
 }

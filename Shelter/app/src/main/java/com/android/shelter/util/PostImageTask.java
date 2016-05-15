@@ -3,6 +3,9 @@ package com.android.shelter.util;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
+
+import com.android.shelter.FragmentCallback;
+
 import org.json.JSONObject;
 import java.io.IOException;
 import java.io.InputStream;
@@ -22,7 +25,6 @@ import cz.msebera.android.httpclient.protocol.HttpContext;
 public class PostImageTask extends AsyncTask<Void, Void, String> {
 
     private final static String TAG = "PostImageTask";
-    private final String BASE_URL="http://ec2-52-36-142-168.us-west-2.compute.amazonaws.com:5000/";
     private String absoluteURL;
     private Context context;
     private boolean hasParams;
@@ -33,18 +35,20 @@ public class PostImageTask extends AsyncTask<Void, Void, String> {
     private String imageString64;
     private byte[] imageInByte;
     private JSONObject mJSONObject;
+    private FragmentCallback fragmentCallback;
 
 
 
-    public PostImageTask(Context context, String endpoint, boolean hasParams, JSONObject jsonObject){
+    public PostImageTask(Context context, String endpoint, boolean hasParams, JSONObject jsonObject, FragmentCallback fragmentCallback){
         this.context=context;
         this.hasParams=hasParams;
         this.endpoint=endpoint;
         this.mJSONObject = jsonObject;
+        this.fragmentCallback = fragmentCallback;
     }
 
     private String getAbsoluteURL(){
-        absoluteURL=BASE_URL+endpoint;
+        absoluteURL=ShelterConstants.BASE_URL+endpoint;
         return absoluteURL;
     }
 
@@ -84,5 +88,6 @@ public class PostImageTask extends AsyncTask<Void, Void, String> {
         Log.d(TAG, "Image posted successfully......." + results);
         if (results!=null) {
         }
+        fragmentCallback.onTaskDone();
     }
 }

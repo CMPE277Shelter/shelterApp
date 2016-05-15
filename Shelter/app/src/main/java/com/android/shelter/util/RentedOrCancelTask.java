@@ -25,7 +25,6 @@ import cz.msebera.android.httpclient.protocol.HttpContext;
 
 public class RentedOrCancelTask extends AsyncTask<Void, Void, String>{
     private final static String TAG = "RentedOrCancelTask";
-    private final String BASE_URL="http://ec2-52-36-142-168.us-west-2.compute.amazonaws.com:5000/";
     private String absoluteURL;
     private Context context;
     private String endpoint;
@@ -38,7 +37,7 @@ public class RentedOrCancelTask extends AsyncTask<Void, Void, String>{
     }
 
     private String getAbsoluteURL(){
-        absoluteURL=BASE_URL+endpoint;
+        absoluteURL=ShelterConstants.BASE_URL+endpoint;
         return absoluteURL;
     }
 
