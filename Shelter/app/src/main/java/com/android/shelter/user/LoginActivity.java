@@ -9,6 +9,7 @@ import android.view.View;
 
 import com.android.shelter.HomeActivity;
 import com.android.shelter.R;
+import com.android.shelter.user.landlord.PostPropertyActivity;
 import com.facebook.login.widget.LoginButton;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.common.SignInButton;
@@ -28,6 +29,11 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             @Override
             public void signInSuccessfull() {
                 Log.d(TAG, "Sign in successfull finsihing the activity");
+                Intent intent = getIntent();
+                if(intent.hasExtra(HomeActivity.EXTRA_SHOW_POST_PROPERTY) && intent.getBooleanExtra(HomeActivity.EXTRA_SHOW_POST_PROPERTY, false)){
+                    Intent postProperty = PostPropertyActivity.newIntent(getApplicationContext(), null);
+                    startActivityForResult(postProperty, HomeActivity.REQUEST_FRAGMENT);
+                }
                 setResult(HomeActivity.REQUEST_LOGIN);
                 finish();
             }

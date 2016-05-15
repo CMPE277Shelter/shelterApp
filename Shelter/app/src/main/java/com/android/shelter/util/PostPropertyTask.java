@@ -3,7 +3,13 @@ package com.android.shelter.util;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
+
+import com.android.shelter.FragmentCallback;
 import com.android.shelter.helper.PropertyImage;
+import com.android.shelter.user.UserSessionManager;
+
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 import java.io.IOException;
 import java.io.InputStream;
@@ -12,6 +18,7 @@ import cz.msebera.android.httpclient.HttpResponse;
 import cz.msebera.android.httpclient.client.HttpClient;
 import cz.msebera.android.httpclient.client.methods.HttpPost;
 import cz.msebera.android.httpclient.entity.StringEntity;
+import cz.msebera.android.httpclient.extras.Base64;
 import cz.msebera.android.httpclient.impl.client.DefaultHttpClient;
 import cz.msebera.android.httpclient.protocol.BasicHttpContext;
 import cz.msebera.android.httpclient.protocol.HttpContext;
@@ -22,18 +29,20 @@ import cz.msebera.android.httpclient.protocol.HttpContext;
 public class PostPropertyTask extends AsyncTask<Void, Void, String> {
 
     private final static String TAG = "PostPropertyTask";
-    private final String BASE_URL="http://ec2-52-33-84-233.us-west-2.compute.amazonaws.com:5000/";
+    private final String BASE_URL="http://ec2-52-36-142-168.us-west-2.compute.amazonaws.com:5000/";
     private String absoluteURL;
     private Context context;
     private boolean hasParams;
     private String endpoint;
     private JSONObject jsonObject;
+    private FragmentCallback fragmentCallback;
 
-    public PostPropertyTask(Context context,String endpoint, boolean hasParams, JSONObject jsonObject){
+    public PostPropertyTask(Context context,String endpoint, boolean hasParams, JSONObject jsonObject, FragmentCallback fragmentCallback){
         this.context=context;
         this.hasParams=hasParams;
         this.endpoint=endpoint;
         this.jsonObject = jsonObject;
+        this.fragmentCallback = fragmentCallback;
     }
 
     private String getAbsoluteURL(){
@@ -76,14 +85,31 @@ public class PostPropertyTask extends AsyncTask<Void, Void, String> {
     protected void onPostExecute(String results) {
         Log.d(TAG, "Property posted successfully......." + results);
         if (results!=null) {
+            String propertyId = null;
+            try {
+                JSONArray jsonArray = new JSONArray(results);
+                for (int i = 0; i < jsonArray.length(); i++) {
+                    JSONObject jsonObj = jsonArray.getJSONObject(i);
+                    if(jsonObj.has(ShelterConstants.PROPERTY_ID)){
+                        propertyId = jsonObj.getString(ShelterConstants.PROPERTY_ID);
+                    }
+                }
+                for (PropertyImage images : ImagePicker.get(context).getPropertyImages()) {
+                    Log.d(TAG, "Image getting uploaded ==== " + images.getImagePath());
+                    JSONObject imageData = new JSONObject();
+                    imageData.put(ShelterConstants.PROPERTY_ID, propertyId);
+                    imageData.put(ShelterConstants.OWNER_ID, UserSessionManager.get(context).getOwnerId());
+                    imageData.put(ShelterConstants.FILENAME, images.getImageName());
+                    byte[] imageByte = ImagePicker.get(context).getImageString64(images.getImageBitMap());
+                    imageData.put(ShelterConstants.IMAGE_STRING64, Base64.encodeToString(imageByte, 0));
 
+                    new PostImageTask(context, "image", true, imageData).execute();
+                }
+            }catch (JSONException ex){
+                Log.d(TAG, ex.getStackTrace().toString());
+            }
         }
-        String propertyId = "";
-        String ownerId = "";
-        for(PropertyImage images : ImagePicker.get(context).getPropertyImages()){
-            Log.d(TAG, "Image getting uploaded ==== " + images.getImagePath());
-            new PostImageTask(context, "image", true, propertyId, ownerId, images.getImagePath(),
-                    ImagePicker.get(context).getImageString64(images.getImageBitMap())).execute();
-        }
+
+        fragmentCallback.onTaskDone();
     }
 }

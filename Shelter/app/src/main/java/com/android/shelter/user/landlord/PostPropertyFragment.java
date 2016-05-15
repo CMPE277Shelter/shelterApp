@@ -24,13 +24,16 @@ import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
+import com.android.shelter.FragmentCallback;
 import com.android.shelter.HomeActivity;
 import com.android.shelter.property.Property;
 import com.android.shelter.property.PropertyLab;
 import com.android.shelter.R;
 import com.android.shelter.helper.PropertyImage;
 import com.android.shelter.helper.PropertyImageAdapter;
+import com.android.shelter.user.UserSessionManager;
 import com.android.shelter.util.ImagePicker;
+import com.android.shelter.util.PostImageTask;
 import com.android.shelter.util.PostPropertyTask;
 import com.android.shelter.util.SendEmail;
 import com.android.shelter.util.ShelterConstants;
@@ -42,6 +45,8 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+
+import cz.msebera.android.httpclient.extras.Base64;
 
 /**
  * Fragment for handling operations for posting new property.
@@ -78,9 +83,10 @@ public class PostPropertyFragment extends Fragment {
     private EditText mContactPhone;
 
     private EditText mPropertyDescription;
+    private Button mFinishButton;
 
     private Property mPropertyToPost;
-    private Button mFinishButton;
+    private Button mSelectPictureButton;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -130,13 +136,6 @@ public class PostPropertyFragment extends Fragment {
 
         mPropertyDescription = (EditText) view.findViewById(R.id.description);
 
-        if(mPropertyToPost == null){
-            mPropertyToPost = new Property();
-        }else{
-            populateFields();
-        }
-
-
         RadioGroup propertyTypes = (RadioGroup) view.findViewById(R.id.property_type);
         propertyTypes.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
@@ -151,8 +150,8 @@ public class PostPropertyFragment extends Fragment {
         mImageRecyclerView.setLayoutManager(gridLayoutManager);
         setupAdapter();
 
-        mFinishButton = (Button) view.findViewById(R.id.select_picture);
-        mFinishButton.setOnClickListener(new View.OnClickListener() {
+        mSelectPictureButton = (Button) view.findViewById(R.id.select_picture);
+        mSelectPictureButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent selectedIntent = ImagePicker.getPickImageIntent(getActivity());
@@ -163,12 +162,11 @@ public class PostPropertyFragment extends Fragment {
 
         mPhotoLayout = (RelativeLayout) view.findViewById(R.id.pictures_layout);
 
-        Button finish = (Button) view.findViewById(R.id.finish_button);
-        finish.setOnClickListener(new View.OnClickListener() {
+        mFinishButton = (Button) view.findViewById(R.id.finish_button);
+        mFinishButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 //TODO Add code to send data to DB and move to next activity My Postings
-
                 try{
                     if(isFormValid()){
                         populatePropertyToPost();
@@ -185,6 +183,14 @@ public class PostPropertyFragment extends Fragment {
                 }
             }
         });
+
+        if(mPropertyToPost == null){
+            mPropertyToPost = new Property();
+        }else{
+            mFinishButton.setText("Update");
+            populateFields();
+        }
+
 
         return view;
     }
@@ -205,22 +211,20 @@ public class PostPropertyFragment extends Fragment {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (resultCode != getActivity().RESULT_OK)
-            return;
-        switch(requestCode) {
-            case REQUEST_ADD_IMAGE:
-                if (resultCode == getActivity().RESULT_OK && null != data) {
-
-                    mImageList.add(ImagePicker.get(getContext()).getPropertyImage(getContext(), data));
-                    setupAdapter();
-                }
-                break;
-
-            default:
-                super.onActivityResult(requestCode, resultCode, data);
-                break;
+        if (resultCode == getActivity().RESULT_OK){
+            switch(requestCode) {
+                case REQUEST_ADD_IMAGE:
+                    if (resultCode == getActivity().RESULT_OK && null != data) {
+                        Log.d(TAG, "Image selected ");
+                        mImageList.add(ImagePicker.get(getContext()).getPropertyImage(getContext(), data));
+                        setupAdapter();
+                    }
+                    break;
+                default:
+                    super.onActivityResult(requestCode, resultCode, data);
+                    break;
+            }
         }
-
     }
 
     /**
@@ -319,7 +323,7 @@ public class PostPropertyFragment extends Fragment {
 
         mPropertyDescription.setText(mPropertyToPost.getDescription());
 
-        mFinishButton.setText("Update");
+        mSelectPictureButton.setText("Update");
     }
 
     private void showMyPostings(){
@@ -440,9 +444,15 @@ public class PostPropertyFragment extends Fragment {
         moreInfo.put(moreObject);
         jsonObject.put(ShelterConstants.MORE, moreInfo);
 
+        jsonObject.put("images", new ArrayList<String>());
         Log.d(TAG, jsonObject.toString());
 
-        new PostPropertyTask(getContext(), "postings/", true, jsonObject).execute();
+        new PostPropertyTask(getContext(), "postings/", true, jsonObject, new FragmentCallback(){
+            @Override
+            public void onTaskDone() {
+                Log.d(TAG, "Property posting done.....");
+            }
+        }).execute();
     }
 }
 

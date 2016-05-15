@@ -34,9 +34,10 @@ import java.util.UUID;
 /**
  * Shows detail view of posted property which are posted by landlord
  */
-public class PostedPropertyFragment extends Fragment implements OnScrollChangedCallback{
+public class PostedPropertyFragment extends Fragment {
     private static final String TAG = "PostedPropertyFragment";
     private static final String ARG_PROPERTY_ID = "property_id";
+    public static final int REQUEST_EDIT = 1;
 
     private Property mProperty;
     private ImageView mImage;
@@ -75,21 +76,16 @@ public class PostedPropertyFragment extends Fragment implements OnScrollChangedC
         setHasOptionsMenu(true);
         UUID id = (UUID) getArguments().getSerializable(ARG_PROPERTY_ID);
         mProperty = PropertyLab.get(getContext()).getProperty(id);
-
-        // Increments page views
-        // TODO How it undestands which property?
-        //new IncrementViewCount().execute("http://ec2-52-33-84-233.us-west-2.compute.amazonaws.com:5000/incrementViewCount/");
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_posted_property_detail, container, false);
 
-        mToolbar = (Toolbar) v.findViewById(R.id.posted_property_toolbar);
-        ((AppCompatActivity)getActivity()).setSupportActionBar(mToolbar);
         ((AppCompatActivity)getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         ((AppCompatActivity)getActivity()).getSupportActionBar().setDisplayShowHomeEnabled(true);
         ((AppCompatActivity)getActivity()).getSupportActionBar().setDisplayShowTitleEnabled(false);
+        ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle(mProperty.getName());
 
         mImage = (ImageView) v.findViewById(R.id.posted_property_image);
         mImage.setImageResource(R.drawable.header);
@@ -145,12 +141,6 @@ public class PostedPropertyFragment extends Fragment implements OnScrollChangedC
 
             }
         });
-
-
-        ObservableScrollable scrollView = (ObservableScrollable) v.findViewById(R.id.posted_property_scrollview);
-        scrollView.setOnScrollChangedCallback(this);
-
-        onScroll(-1, 0);
         return v;
     }
 
@@ -168,7 +158,7 @@ public class PostedPropertyFragment extends Fragment implements OnScrollChangedC
                     NavUtils.navigateUpFromSameTask(getActivity());
                 }
                 return true;
-            case android.R.id.edit:
+            case R.id.edit_property:
                 Log.d(TAG, "Edit clicked restart the PostPropertyActivity");
                 Intent postPropertyActivity = PostPropertyActivity.newIntent(getContext(), mProperty.getId());
                 startActivity(postPropertyActivity);
@@ -179,38 +169,10 @@ public class PostedPropertyFragment extends Fragment implements OnScrollChangedC
     }
 
     @Override
-    public void onScroll(int l, int scrollPosition) {
-        int headerHeight = mImage.getHeight() - mToolbar.getHeight();
-        float ratio = 0;
-        if (scrollPosition > 0 && headerHeight > 0) {
-            ratio = (float) Math.min(Math.max(scrollPosition, 0), headerHeight) / headerHeight;
-        }
-        updateActionBarTransparency(ratio);
-        updateParallaxEffect(scrollPosition);
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
     }
-
-    /**
-     * Updates alpha for toolbar.
-     * @param scrollRatio
-     */
-    private void updateActionBarTransparency(float scrollRatio) {
-        int newAlpha = (int) (scrollRatio * 255);
-        mToolbar.getBackground().setAlpha(newAlpha);
-    }
-
-    /**
-     * Scrolling effect
-     * @param scrollPosition
-     */
-    private void updateParallaxEffect(int scrollPosition) {
-        float damping = 0.5f;
-        int dampedScroll = (int) (scrollPosition * damping);
-        int offset = mLastDampedScroll - dampedScroll;
-        mImage.offsetTopAndBottom(-offset);
-
-        mLastDampedScroll = dampedScroll;
-    }
-
 }
 
 

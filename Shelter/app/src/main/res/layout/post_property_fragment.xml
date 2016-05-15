@@ -235,6 +235,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Add photo"
+                android:textColor="@color/white"
                 android:background="@color/colorPrimary"
                 android:layout_alignParentBottom="true"/>
         </RelativeLayout>
@@ -271,7 +272,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Finish"
-        android:background="@color/success"
+        android:textColor="@color/white"
+        android:background="@color/colorPrimary"
         android:layout_alignParentBottom="true"/>
 </LinearLayout>
 

@@ -122,7 +122,7 @@ public class UserSessionManager implements GoogleApiClient.OnConnectionFailedLis
                             }
                         });
                 Bundle parameters = new Bundle();
-                parameters.putString("fields", "id,name,email");
+                parameters.putString("fields", "id, name, email, picture");
                 request.setParameters(parameters);
                 request.executeAsync();
             }
@@ -165,11 +165,6 @@ public class UserSessionManager implements GoogleApiClient.OnConnectionFailedLis
         return  mGoogleApiClient;
     }
 
-    @Override
-    public void onConnectionFailed(ConnectionResult connectionResult) {
-
-    }
-
     private void loginSuccessfull(final String type, final String ownerId, final String emailId, final String userName, final String profilePic){
 
         new AsyncTask<Void, Void, Boolean>(){
@@ -201,16 +196,26 @@ public class UserSessionManager implements GoogleApiClient.OnConnectionFailedLis
             mUserSessionUpdate.signOutSuccessfull();
             Log.d(TAG, "Facebook logged out");
         }else {
-            Auth.GoogleSignInApi.signOut(mGoogleApiClient).setResultCallback(
-                    new ResultCallback<Status>() {
-                        @Override
-                        public void onResult(Status status) {
-                            clearUserData();
-                            mUserSessionUpdate.signOutSuccessfull();
-                            Log.d(TAG, "Google logged out");
-                        }
-                    });
+            if(mGoogleApiClient.isConnected()){
+                Auth.GoogleSignInApi.signOut(mGoogleApiClient).setResultCallback(
+                        new ResultCallback<Status>() {
+                            @Override
+                            public void onResult(Status status) {
+                                clearUserData();
+                                mUserSessionUpdate.signOutSuccessfull();
+                                Log.d(TAG, "Google logged out");
+                            }
+                        });
+            }else{
+                mGoogleApiClient.connect();
+            }
+
         }
+    }
+
+    @Override
+    public void onConnectionFailed(ConnectionResult connectionResult) {
+        Log.d(TAG, "Connection failed listenere");
     }
 
     private void clearUserData(){

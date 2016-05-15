@@ -25,6 +25,7 @@ import com.android.shelter.user.LoginActivity;
 import com.android.shelter.user.UserSessionManager;
 import com.android.shelter.user.landlord.MyPostingFragment;
 import com.android.shelter.user.landlord.PostPropertyActivity;
+import com.android.shelter.user.tenant.favorite.FavoriteFragment;
 import com.android.shelter.user.tenant.savedsearch.SavedSearchFragment;
 import com.android.shelter.user.tenant.search.SearchPropertyFragment;
 import com.android.shelter.user.UserProfileActivity;
@@ -41,15 +42,18 @@ public class HomeActivity extends AbstractFragmentActivity
     public static final int REQUEST_USER_PROFILE = 3;
     public static final String EXTRA_FRAGMENT_ID = "com.android.shelter.fragment_id";
     public static final String EXTRA_IS_LOGGED_OUT = "com.android.shelter.is_logged_out";
+    public static final String EXTRA_SHOW_POST_PROPERTY = "com.android.shelter.show_post_property";
     public static final int HOME_FRAGMENT_ID = 2;
     public static final int MY_POSTING_FRAGMENT_ID = 3;
     public static final int MY_SAVED_SEARCH_FRAGMENT_ID = 4;
     public static final int MY_SEARCH_FRAGMENT_ID = 5;
+    public static final int MY_FAVORITES_FRAGMENT_ID = 6;
 
     public static final String HOME_FRAGMENT_TAG = "HomeFragment";
     public static final String MY_POSTING_FRAGMENT_TAG = "MyPostingFragment";
     public static final String MY_SEARCH_FRAGMENT_TAG = "MySearchFragment";
     public static final String MY_SAVED_SEARCH_FRAGMENT_TAG = "MySavedSearchFragment";
+    public static final String MY_FAVORITES_FRAGMENT_TAG = "MyFavoritesFragment";
 
     private static final String TAG = "HomeActivity";
     private Menu mNavigationMenu;
@@ -57,7 +61,6 @@ public class HomeActivity extends AbstractFragmentActivity
     private RelativeLayout mBeforeSignInLayout;
     private RelativeLayout mAfterSignInLayout;
     private UserSessionManager mUserSessionManager;
-
 
     @Override
     public Fragment createFragment(){
@@ -88,7 +91,13 @@ public class HomeActivity extends AbstractFragmentActivity
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close){
+            @Override
+            public void onDrawerOpened(View drawerView) {
+                super.onDrawerOpened(drawerView);
+                toggleUserProfileLayout();
+            }
+        };
         drawer.setDrawerListener(toggle);
         toggle.syncState();
 
@@ -115,6 +124,14 @@ public class HomeActivity extends AbstractFragmentActivity
         }
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Log.d(TAG, "Inside on resume");
+        toggleUserProfileLayout();
+        mUserSessionManager.getGoogleApiClient().connect();
+    }
+
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
@@ -126,12 +143,12 @@ public class HomeActivity extends AbstractFragmentActivity
         } else if (id == R.id.nav_properties) {
             updateFragment(new MyPostingFragment(), MY_POSTING_FRAGMENT_TAG);
         } else if (id == R.id.nav_favorites) {
-
+            updateFragment(new FavoriteFragment(), MY_FAVORITES_FRAGMENT_TAG);
         } else if (id == R.id.nav_saved_searches) {
             updateFragment(new SavedSearchFragment(), MY_SAVED_SEARCH_FRAGMENT_TAG);
         } else if(id == R.id.nav_login) {
             Log.d(TAG, "Login button clicked");
-            new StartLoginProcess().execute();
+            new StartLoginProcess().execute(false);
         } else if(id == R.id.nav_logout) {
             Log.d(TAG, "Login button clicked");
             startLogoutProcess();
@@ -158,7 +175,7 @@ public class HomeActivity extends AbstractFragmentActivity
                     Intent postProperty = PostPropertyActivity.newIntent(getApplicationContext(), null);
                     startActivityForResult(postProperty, REQUEST_FRAGMENT);
                 }else{
-                    new StartLoginProcess().execute();
+                    new StartLoginProcess().execute(true);
                 }
             default:
                 return super.onOptionsItemSelected(item);
@@ -168,24 +185,21 @@ public class HomeActivity extends AbstractFragmentActivity
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if(resultCode == RESULT_OK){
-            if(requestCode == REQUEST_FRAGMENT && data != null && data.hasExtra(EXTRA_FRAGMENT_ID)){
-                Log.d(TAG, "Back in Home activity " + data.getIntExtra(EXTRA_FRAGMENT_ID, 1));
-                if(data.getIntExtra(EXTRA_FRAGMENT_ID, 1) == MY_POSTING_FRAGMENT_ID){
-                    updateFragment(new MyPostingFragment(), MY_POSTING_FRAGMENT_TAG);
-                }else if(data.getIntExtra(EXTRA_FRAGMENT_ID, 1) == MY_SEARCH_FRAGMENT_ID){
-                    updateFragment(new SearchPropertyFragment(), MY_SEARCH_FRAGMENT_TAG);
-                }else if(data.getIntExtra(EXTRA_FRAGMENT_ID, 1) == MY_SAVED_SEARCH_FRAGMENT_ID){
-                    updateFragment(new SavedSearchFragment(), MY_SAVED_SEARCH_FRAGMENT_TAG);
-                } else if(requestCode == REQUEST_LOGIN){
-                    toggleUserProfileLayout();
-                }
-                else{
-                    updateFragment(new HomeFragment(), HOME_FRAGMENT_TAG);
-                }
-            }else if(requestCode == REQUEST_USER_PROFILE && data != null && data.hasExtra(EXTRA_IS_LOGGED_OUT)){
-                toggleUserProfileLayout();
+        if(requestCode == REQUEST_FRAGMENT && data != null && data.hasExtra(EXTRA_FRAGMENT_ID)){
+            Log.d(TAG, "Back in Home activity " + data.getIntExtra(EXTRA_FRAGMENT_ID, 1));
+            if(data.getIntExtra(EXTRA_FRAGMENT_ID, 1) == MY_POSTING_FRAGMENT_ID){
+                updateFragment(new MyPostingFragment(), MY_POSTING_FRAGMENT_TAG);
+            }else if(data.getIntExtra(EXTRA_FRAGMENT_ID, 1) == MY_SEARCH_FRAGMENT_ID){
+                updateFragment(new SearchPropertyFragment(), MY_SEARCH_FRAGMENT_TAG);
+            }else if(data.getIntExtra(EXTRA_FRAGMENT_ID, 1) == MY_SAVED_SEARCH_FRAGMENT_ID){
+                updateFragment(new SavedSearchFragment(), MY_SAVED_SEARCH_FRAGMENT_TAG);
+            }else if(data.getIntExtra(EXTRA_FRAGMENT_ID, 1) == MY_FAVORITES_FRAGMENT_ID){
+                updateFragment(new SavedSearchFragment(), MY_FAVORITES_FRAGMENT_TAG);
+            }else{
+                updateFragment(new HomeFragment(), HOME_FRAGMENT_TAG);
             }
+        } else if(requestCode == REQUEST_LOGIN){
+            toggleUserProfileLayout();
         }
     }
 
@@ -214,7 +228,7 @@ public class HomeActivity extends AbstractFragmentActivity
         super.updateFragment(fragment, fragmentTag);
     }
 
-    private class StartLoginProcess extends AsyncTask<Void, Void, Void> {
+    private class StartLoginProcess extends AsyncTask<Boolean, Void, Void> {
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
@@ -222,8 +236,9 @@ public class HomeActivity extends AbstractFragmentActivity
         }
 
         @Override
-        protected Void doInBackground(Void... params) {
+        protected Void doInBackground(Boolean... params) {
             Intent intent = new Intent(HomeActivity.this, LoginActivity.class);
+            intent.putExtra(EXTRA_SHOW_POST_PROPERTY, params[0]);
             startActivityForResult(intent, REQUEST_LOGIN);
             return null;
         }

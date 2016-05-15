@@ -45,5 +45,8 @@ public class ShelterConstants {
     public static final String IS_FAVORITE = "is_favorite";
     public static final String IS_RENTED_OR_CANCEL = "is_rented_or_cancel";
 
+    public static final String FILENAME = "filename";
+    public static final String IMAGE_STRING64 = "strByte";
+
 }
 

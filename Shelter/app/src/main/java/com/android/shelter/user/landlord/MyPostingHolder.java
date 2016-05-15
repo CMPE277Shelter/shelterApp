@@ -23,9 +23,10 @@ public class MyPostingHolder extends RecyclerView.ViewHolder
     private TextView mPropertyName;
     private TextView mAddress;
     private TextView mPropertyType;
-    private ImageView mFavImageView;
     private TextView mRent;
-    private ToggleButton mFavToggleButton;
+    private TextView mBath;
+    private TextView mRooms;
+    private TextView mFloorArea;
 
     private Property mProperty;
 
@@ -51,6 +52,10 @@ public class MyPostingHolder extends RecyclerView.ViewHolder
         mPropertyType = (TextView) itemView.findViewById(R.id.my_property_type);
         mAddress = (TextView) itemView.findViewById(R.id.my_property_address);
         mRent = (TextView) itemView.findViewById(R.id.my_property_rent);
+        mBath = (TextView) itemView.findViewById(R.id.my_property_bath);
+        mBath = (TextView) itemView.findViewById(R.id.my_property_bath);
+        mRooms = (TextView) itemView.findViewById(R.id.my_property_room);
+        mFloorArea = (TextView) itemView.findViewById(R.id.my_property_floor);
     }
 
     /**
@@ -62,10 +67,13 @@ public class MyPostingHolder extends RecyclerView.ViewHolder
         mPropertyName.setText(property.getName());
         mPropertyType.setText(property.getType());
 //        mPropertyImageView.setImageResource(property.getPhotoId());
-        new DownloadImageTask(mPropertyImageView).execute("" +
-                "http://ec2-52-33-84-233.us-west-2.compute.amazonaws.com:5000/drawable?filename=p1.jpg");
+        new DownloadImageTask(mPropertyImageView).
+                execute("http://ec2-52-36-142-168.us-west-2.compute.amazonaws.com:5000/drawable?filename=p2.jpg");
         mAddress.setText(property.getAddress());
         mRent.setText(property.getRent());
+        mBath.setText(property.getBath());
+        mFloorArea.setText(property.getFloorArea());
+        mRooms.setText(property.getRooms());
     }
 
     @Override

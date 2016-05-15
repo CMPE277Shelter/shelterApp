@@ -18,6 +18,7 @@ public class PropertyImage {
     private String ownerId;
     private String propertyId;
     private String imageString64;
+    private String imageName;
 
     public PropertyImage(){
         mId = UUID.randomUUID();
@@ -64,5 +65,13 @@ public class PropertyImage {
 
     public void setImageString64(String imageString64) {
         this.imageString64 = imageString64;
+    }
+
+    public String getImageName() {
+        return imageName;
+    }
+
+    public void setImageName(String imageName) {
+        this.imageName = imageName;
     }
 }

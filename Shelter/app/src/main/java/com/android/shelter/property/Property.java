@@ -29,17 +29,39 @@ public class Property {
     private boolean isRentedOrCancel;
     private String description;
 
-
-    public Property() {
-        id = UUID.randomUUID();
-        isFavorite = false;
-        isRentedOrCancel = false;
+    public String getOwnerId() {
+        return ownerId;
     }
 
-    Property(String name, String type, int photoId) {
-        this.name = name;
-        this.type = type;
-        this.photoId = photoId;
+    public void setOwnerId(String ownerId) {
+        this.ownerId = ownerId;
+    }
+
+    private String ownerId;
+
+    public String getPrimaryImageURL() {
+        return primaryImageURL;
+    }
+
+    public void setPrimaryImageURL(String primaryImageURL) {
+        this.primaryImageURL = primaryImageURL;
+    }
+
+    public String[] getImageURLs() {
+        return imageURLs;
+    }
+
+    public void setImageURLs(String[] imageURLs) {
+        this.imageURLs = imageURLs;
+    }
+
+    private String primaryImageURL;
+    private String[] imageURLs;
+
+
+    public Property() {
+        isFavorite = false;
+        isRentedOrCancel = false;
     }
 
     public UUID getId(){

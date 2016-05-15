@@ -21,7 +21,7 @@ import com.android.shelter.util.ShelterSavedSearchTask;
  * Created by Prasanna on 5/10/16.
  */
 public class SavedSearchFragment extends Fragment {
-    private static final String TAG = "MySearchesFragment";
+    private static final String TAG = "MySavedSearchFragment";
 
     private RecyclerView mSearchesRecyclerView;
     private SavedSearch mSavedSearch;

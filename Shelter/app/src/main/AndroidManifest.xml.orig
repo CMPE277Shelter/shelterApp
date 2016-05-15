@@ -43,6 +43,7 @@
         <activity
             android:name=".user.landlord.PostPropertyActivity"
             android:label="@string/title_activity_post_property"
+            android:launchMode="singleInstance"
             android:theme="@style/AppTheme">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -64,7 +65,11 @@
         <activity
             android:name=".user.LoginActivity"
             android:label="@string/title_activity_login"
+<<<<<<< HEAD
             android:theme="@style/AppTheme">
+=======
+            android:theme="@style/AppTheme.NoActionBar">
+>>>>>>> 91e1b47c39c6e41d3355d5ec3faea4e9fcca91b9
             <intent-filter>
                 <action android:name="android.intent.action.VIEW"/>
 
@@ -79,16 +84,19 @@
         </activity>
         <activity
             android:name=".user.landlord.PostedPropertyPagerActivity"
-            android:theme="@style/AppTheme">
+            android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".HomeActivity"/>
         </activity>
+<<<<<<< HEAD
         <!--<activity-->
             <!--android:name=".user.tenant.PropertyPagerActivity"-->
             <!--android:label="@string/title_activity_property_pager"-->
             <!--android:theme="@style/AppTheme.NoActionBar">-->
         <!--</activity>-->
+=======
+>>>>>>> 91e1b47c39c6e41d3355d5ec3faea4e9fcca91b9
         <activity
             android:name=".user.UserProfileActivity"
             android:theme="@style/AppTheme">

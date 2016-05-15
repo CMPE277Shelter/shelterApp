@@ -6,19 +6,17 @@
     android:layout_height="match_parent"
     android:background="@null"
     tools:context=".user.landlord.PostedPropertyPagerActivity">
-    <com.manuelpeinado.fadingactionbar.view.ObservableScrollView
-        android:id="@+id/posted_property_scrollview"
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:fillViewport="true">
+        android:layout_height="wrap_content">
         <LinearLayout
             android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="5dp">
+            >
             <ImageView android:id="@+id/posted_property_image"
                 android:layout_width="match_parent"
-                android:layout_height="300dp"
+                android:layout_height="150dp"
                 android:adjustViewBounds="true"
                 android:background="@drawable/header"/>
             <android.support.v7.widget.CardView
@@ -156,13 +154,5 @@
                 </LinearLayout>
             </android.support.v7.widget.CardView>
         </LinearLayout>
-    </com.manuelpeinado.fadingactionbar.view.ObservableScrollView>
-    <android.support.v7.widget.Toolbar
-        android:id="@+id/posted_property_toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:background="?attr/colorPrimary"
-        app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-        app:popupTheme="@style/AppTheme.PopupOverlay">
-    </android.support.v7.widget.Toolbar>
+    </ScrollView>
 </FrameLayout>

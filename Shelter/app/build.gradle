@@ -51,6 +51,5 @@ dependencies {
     compile 'com.google.android.gms:play-services-fitness:8.3.0'
     compile 'com.google.android.gms:play-services-wearable:8.3.0'
     compile 'org.apache.directory.studio:org.apache.commons.io:2.4'
-
-
+    compile 'com.android.support:support-v4:23.3.0'
 }

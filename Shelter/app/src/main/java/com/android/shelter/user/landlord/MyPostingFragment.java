@@ -16,6 +16,7 @@ import android.view.ViewGroup;
 import com.android.shelter.FragmentCallback;
 import com.android.shelter.R;
 import com.android.shelter.property.PropertyLab;
+import com.android.shelter.user.UserSessionManager;
 import com.android.shelter.util.ShelterConstants;
 import com.android.shelter.util.ShelterPropertyTask;
 
@@ -24,7 +25,7 @@ import com.android.shelter.util.ShelterPropertyTask;
  * Created by rishi on 5/7/16.
  */
 public class MyPostingFragment extends Fragment {
-    private static final String TAG = "MyPostingsFragment";
+    private static final String TAG = "MyPostingFragment";
     private RecyclerView mPostingRecyclerView;
 
     @Override
@@ -50,8 +51,7 @@ public class MyPostingFragment extends Fragment {
         mPostingRecyclerView.setLayoutManager(layoutManager);
         setupAdapter();
 
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getContext());
-        String ownerId = preferences.getString(ShelterConstants.SHARED_PREFERENCE_OWNER_ID, ShelterConstants.DEFAULT_INT_STRING);
+        String ownerId = UserSessionManager.get(getContext()).getOwnerId();
         new ShelterPropertyTask(getActivity().getApplicationContext(), "postings", true,
                 ownerId, null, null, null, null, null, null, null,
                 new FragmentCallback() {
