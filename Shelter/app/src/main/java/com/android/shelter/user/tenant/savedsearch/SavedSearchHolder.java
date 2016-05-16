@@ -85,7 +85,7 @@ public class SavedSearchHolder extends RecyclerView.ViewHolder
         }
 
         if(search.hasPostingType() && isFirstElementSet){
-            searchCriteria.append(", "+search.getPostingType());
+            searchCriteria.append(", Property Type : "+search.getPostingType());
         }else if(search.hasPostingType()){
             searchCriteria.append("Property Type : "+search.getPostingType());
             isFirstElementSet=true;
