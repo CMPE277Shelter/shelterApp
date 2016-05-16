@@ -1,5 +1,6 @@
 package com.android.shelter.user;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -27,6 +28,7 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.Scopes;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.OptionalPendingResult;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Scope;
 import com.google.android.gms.common.api.Status;
@@ -55,6 +57,8 @@ public class UserSessionManager implements GoogleApiClient.OnConnectionFailedLis
     private GoogleApiClient mGoogleApiClient;
     private GoogleSignInOptions mGoogleSignInOptions;
     private IUserSessionUpdate mUserSessionUpdate;
+
+    //private ProgressDialog mProgressDialog;
 
     public static UserSessionManager get(Context context){
         if(sUserSessionManager == null){
@@ -142,6 +146,28 @@ public class UserSessionManager implements GoogleApiClient.OnConnectionFailedLis
         });
     }
 
+    public void onStartUpInitialization(){
+        OptionalPendingResult<GoogleSignInResult> opr = Auth.GoogleSignInApi.silentSignIn(mGoogleApiClient);
+                if (opr.isDone()) {
+                    // If the user's cached credentials are valid, the OptionalPendingResult will be "done"
+                    // and the GoogleSignInResult will be available instantly.
+                    GoogleSignInResult result = opr.get();
+                    handleSignInResult(result);
+                } else {
+                    // If the user has not previously signed in on this device or the sign-in has expired,
+                    // this asynchronous branch will attempt to sign in the user silently.  Cross-device
+                    // single sign-on will occur in this branch.
+                    //showProgressDialog();
+                    opr.setResultCallback(new ResultCallback<GoogleSignInResult>() {
+                        @Override
+                        public void onResult(GoogleSignInResult googleSignInResult) {
+                            //hideProgressDialog();
+                            handleSignInResult(googleSignInResult);
+                        }
+                    });
+                }
+    }
+
     public void callFacebookOnActivityResult(int requestCode, int resultCode, Intent data){
         callbackManager.onActivityResult(requestCode, resultCode, data);
     }
@@ -150,14 +176,17 @@ public class UserSessionManager implements GoogleApiClient.OnConnectionFailedLis
         signInButton.setScopes(mGoogleSignInOptions.getScopeArray());
     }
 
-    public void handleSignInResult(Intent data) {
-        GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
+    public void handleSignInResult(GoogleSignInResult result) {
         Log.d(TAG, "handleSignInResult:" + result.isSuccess());
         if (result.isSuccess()) {
             // Signed in successfully, show authenticated UI.
             GoogleSignInAccount acct = result.getSignInAccount();
             if (acct != null) {
-                loginSuccessfull(ShelterConstants.GOOGLE_TYPE, acct.getId(), acct.getEmail(), acct.getDisplayName(), acct.getPhotoUrl().toString());
+                String photoUrl = null;
+                if(acct.getPhotoUrl() != null){
+                    photoUrl = acct.getPhotoUrl().toString();
+                }
+                loginSuccessfull(ShelterConstants.GOOGLE_TYPE, acct.getId(), acct.getEmail(), acct.getDisplayName(), photoUrl);
             }
         } else {
             // Signed out, show unauthenticated UI.
@@ -166,6 +195,11 @@ public class UserSessionManager implements GoogleApiClient.OnConnectionFailedLis
 
     public GoogleApiClient getGoogleApiClient(){
         return  mGoogleApiClient;
+    }
+
+    public void connectGoogleClient(){
+        Log.d(TAG, "Connecting google client");
+        mGoogleApiClient.connect();
     }
 
     private void loginSuccessfull(final String type, final String ownerId, final String emailId, final String userName, final String profilePic){
@@ -199,6 +233,7 @@ public class UserSessionManager implements GoogleApiClient.OnConnectionFailedLis
             mUserSessionUpdate.signOutSuccessfull();
             Log.d(TAG, "Facebook logged out");
         }else {
+            Log.d(TAG, "Google client connected "+ mGoogleApiClient.isConnected());
             if(mGoogleApiClient.isConnected()){
                 Auth.GoogleSignInApi.signOut(mGoogleApiClient).setResultCallback(
                         new ResultCallback<Status>() {
@@ -210,7 +245,7 @@ public class UserSessionManager implements GoogleApiClient.OnConnectionFailedLis
                             }
                         });
             }else{
-                mGoogleApiClient.connect();
+                connectGoogleClient();
             }
 
         }
@@ -221,7 +256,7 @@ public class UserSessionManager implements GoogleApiClient.OnConnectionFailedLis
         Log.d(TAG, "Connection failed listenere");
     }
 
-    private void clearUserData(){
+    public void clearUserData(){
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(mContext);
         SharedPreferences.Editor editor = preferences.edit();
         editor.clear();
@@ -257,6 +292,21 @@ public class UserSessionManager implements GoogleApiClient.OnConnectionFailedLis
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(mContext);
         return preferences.getString(ShelterConstants.SHARED_PREFERENCE_PROFILE_PIC, ShelterConstants.DEFAULT_STRING);
     }
+
+//    private void showProgressDialog(){
+//        if(mProgressDialog == null){
+//            mProgressDialog = new ProgressDialog(mContext);
+//            mProgressDialog.setMessage("Loading...");
+//            mProgressDialog.setIndeterminate(true);
+//        }
+//        mProgressDialog.show();
+//    }
+//
+//    private void hideProgressDialog(){
+//        if(mProgressDialog != null && mProgressDialog.isShowing()){
+//            mProgressDialog.hide();
+//        }
+//    }
 }
 
 

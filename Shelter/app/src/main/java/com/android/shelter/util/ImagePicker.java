@@ -11,6 +11,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.media.ExifInterface;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.provider.MediaStore;
@@ -24,6 +25,8 @@ import com.android.shelter.helper.PropertyImage;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.InputStream;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -39,6 +42,7 @@ public class ImagePicker {
     private static final String TAG = "ImagePicker";
 
     private static ImagePicker sImagePicker;
+    private Bitmap imageBitmap;
 
 
     public static ImagePicker get(Context context) {
@@ -144,10 +148,36 @@ public class ImagePicker {
         return image;
     }
 
-    public byte[] getImageBytes(Bitmap image){
+    public byte[] getImageBytes(PropertyImage propertyImage){
         // convert bitmap to byte
+        imageBitmap = null;
+        if(propertyImage.getImageBitMap() == null){
+            new AsyncTask<String, Void, Bitmap>(){
+                @Override
+                protected void onPostExecute(Bitmap bitmap) {
+                    Log.d(TAG, "Image downloaded");
+                    imageBitmap = bitmap;
+                }
+
+                @Override
+                protected Bitmap doInBackground(String... params) {
+                    String urlOfImage = params[0];
+                    Bitmap logo = null;
+                    try {
+                        InputStream is = new URL(urlOfImage).openStream();
+                        logo = BitmapFactory.decodeStream(is);
+                    } catch (Exception e) { // Catch the download exception
+                        e.printStackTrace();
+                    }
+                    return logo;
+                }
+            }.execute();
+
+        }else {
+            imageBitmap = propertyImage.getImageBitMap();
+        }
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        image.compress(Bitmap.CompressFormat.PNG, 100, stream);
+        imageBitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
         byte[] imageInByte = stream.toByteArray();
         return imageInByte;
     }

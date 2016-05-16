@@ -3,19 +3,17 @@ package com.android.shelter.user.landlord;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.text.TextUtils;
 import android.util.Log;
+import android.util.Patterns;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -27,14 +25,13 @@ import android.widget.Toast;
 
 import com.android.shelter.FragmentCallback;
 import com.android.shelter.HomeActivity;
-import com.android.shelter.property.Property;
-import com.android.shelter.property.PropertyLab;
 import com.android.shelter.R;
 import com.android.shelter.helper.PropertyImage;
 import com.android.shelter.helper.PropertyImageAdapter;
+import com.android.shelter.property.Property;
+import com.android.shelter.property.PropertyLab;
 import com.android.shelter.user.UserSessionManager;
 import com.android.shelter.util.ImagePicker;
-import com.android.shelter.util.PostImageTask;
 import com.android.shelter.util.PostPropertyTask;
 import com.android.shelter.util.SendEmail;
 import com.android.shelter.util.ShelterConstants;
@@ -46,8 +43,6 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-
-import cz.msebera.android.httpclient.extras.Base64;
 
 /**
  * Fragment for handling operations for posting new property.
@@ -89,6 +84,7 @@ public class PostPropertyFragment extends Fragment {
     private Button mSelectPictureButton;
 
     private ProgressDialog mProgressDialog;
+    private boolean isNewProperty;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -185,14 +181,24 @@ public class PostPropertyFragment extends Fragment {
         });
 
         if(mPropertyToPost == null){
+            isNewProperty = true;
             mPropertyToPost = new Property();
         }else{
+            isNewProperty = false;
             mFinishButton.setText("Update");
             populateFields();
         }
 
 
         return view;
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if ( mProgressDialog != null && mProgressDialog.isShowing() ){
+            mProgressDialog.dismiss();
+        }
     }
 
     @Override
@@ -234,8 +240,17 @@ public class PostPropertyFragment extends Fragment {
     public void composeEmail() {
         String email = UserSessionManager.get(getContext()).getUserEmail();
         String userName = UserSessionManager.get(getContext()).getUserName();
-        String subject = "Thank you!";
-        String message = "Hello "+ userName + " We will keep you udpated.";
+        String subject = "";
+        String message = "";
+        if(isNewProperty){
+            subject = "Thank you!";
+            message = "Hello "+ userName + "<br>" +
+                    "You have posted a new property, we will keep you updated.";
+        }else {
+            subject = "Property updated";
+            message = "Hello "+ userName + "<br>" +
+                    "You property "+ mPropertyToPost.getName() + " is updated.";
+        }
 
         //Creating SendMail object and executing to send email
         if(email != null && userName != null){
@@ -314,7 +329,12 @@ public class PostPropertyFragment extends Fragment {
 
         mPropertyDescription.setText(mPropertyToPost.getDescription());
 
-        mImageList = mPropertyToPost.getPropertyImages();
+        //mImageList = mPropertyToPost.getPropertyImages();
+        for(PropertyImage propertyImage : mPropertyToPost.getPropertyImages()){
+            if(propertyImage.getImageResourceId() == 0){
+                mImageList.add(propertyImage);
+            }
+        }
         setupAdapter();
 
         mSelectPictureButton.setText("Update");
@@ -382,6 +402,20 @@ public class PostPropertyFragment extends Fragment {
             mContactEmail.setError(getString(R.string.blank_error_msg));
             isValid = false;
         }
+        if(!TextUtils.isEmpty(mContactEmail.getText())){
+            if(Patterns.EMAIL_ADDRESS.matcher(mContactEmail.getText()).matches()){
+                mContactEmail.setError("Invalid email");
+            }
+        }
+        if(!TextUtils.isEmpty(mContactPhone.getText())){
+            if(Patterns.PHONE.matcher(mContactPhone.getText()).matches()){
+                mContactPhone.setError("Invalid phone number");
+            }
+        }
+
+        if(!isValid){
+            Toast.makeText(getContext(), "Something is wrong, please fill details properly", Toast.LENGTH_LONG).show();
+        }
         return isValid;
     }
 
@@ -390,6 +424,7 @@ public class PostPropertyFragment extends Fragment {
         JSONObject jsonObject = new JSONObject();
 
         jsonObject.put(ShelterConstants.PROPERTY_ID, mPropertyToPost.getId());
+        Log.d(TAG, "Property ID for "+ mPropertyToPost.getId());
         String ownerId = PreferenceManager.getDefaultSharedPreferences(getActivity()).getString(ShelterConstants.SHARED_PREFERENCE_OWNER_ID, ShelterConstants.DEFAULT_INT_STRING);
         jsonObject.put(ShelterConstants.OWNER_ID, ownerId);
 
@@ -463,7 +498,7 @@ public class PostPropertyFragment extends Fragment {
     }
 
     private void hideProgressDialog(){
-        if(mProgressDialog != null && mProgressDialog.isShowing()){
+        if(mProgressDialog != null){
             mProgressDialog.hide();
         }
     }

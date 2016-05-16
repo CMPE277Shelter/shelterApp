@@ -1,5 +1,6 @@
 package com.android.shelter.user.landlord;
 
+import android.app.ProgressDialog;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -12,6 +13,7 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.android.shelter.FragmentCallback;
 import com.android.shelter.R;
@@ -27,6 +29,8 @@ import com.android.shelter.util.ShelterPropertyTask;
 public class MyPostingFragment extends Fragment {
     private static final String TAG = "MyPostingFragment";
     private RecyclerView mPostingRecyclerView;
+    private ProgressDialog mProgressDialog;
+    private TextView mEmptyTextView;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -49,19 +53,25 @@ public class MyPostingFragment extends Fragment {
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         layoutManager.scrollToPosition(0);
         mPostingRecyclerView.setLayoutManager(layoutManager);
-        setupAdapter();
+        //setupAdapter();
+        mEmptyTextView = (TextView) view.findViewById(R.id.text_empty);
+        mEmptyTextView.setVisibility(View.GONE);
 
-        String ownerId = UserSessionManager.get(getContext()).getOwnerId();
-        new ShelterPropertyTask(getActivity().getApplicationContext(), "ownerpostings", true,
-                ownerId, null, null, null, null, null, null, null,
-                new FragmentCallback() {
-                    @Override
-                    public void onTaskDone() {
-                        setupAdapter();
-                    }
-                }).execute();
-
-
+        if(UserSessionManager.get(getContext()).isUserSignedIn()){
+            showProgressDialog();
+            String ownerId = UserSessionManager.get(getContext()).getOwnerId();
+            new ShelterPropertyTask(getActivity().getApplicationContext(), "ownerpostings", true,
+                    ownerId, null, null, null, null, null, null, null,
+                    new FragmentCallback() {
+                        @Override
+                        public void onTaskDone() {
+                            setupAdapter();
+                            hideProgressDialog();
+                        }
+                    }).execute();
+        }else {
+            mEmptyTextView.setVisibility(View.VISIBLE);
+        }
         return view;
     }
 
@@ -77,6 +87,14 @@ public class MyPostingFragment extends Fragment {
         }
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if(mProgressDialog != null){
+            mProgressDialog.dismiss();
+        }
+    }
+
     /**
      * Set list in the property list adapter
      */
@@ -84,6 +102,22 @@ public class MyPostingFragment extends Fragment {
         if (isAdded()) {
             Log.d(TAG, "Setting adapter for view");
             mPostingRecyclerView.setAdapter(new MyPostingAdapter(PropertyLab.get(getContext()).getProperties(), getActivity(), getActivity().getSupportFragmentManager()));
+        }
+    }
+
+
+    private void showProgressDialog(){
+        if(mProgressDialog == null){
+            mProgressDialog = new ProgressDialog(getContext());
+            mProgressDialog.setMessage("Loading properties...");
+            mProgressDialog.setIndeterminate(true);
+        }
+        mProgressDialog.show();
+    }
+
+    private void hideProgressDialog(){
+        if(mProgressDialog != null && mProgressDialog.isShowing()){
+            mProgressDialog.hide();
         }
     }
 }
