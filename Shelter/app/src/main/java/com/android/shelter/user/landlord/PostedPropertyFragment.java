@@ -38,6 +38,7 @@ public class PostedPropertyFragment extends Fragment {
     private static final String TAG = "PostedPropertyFragment";
     private static final String ARG_PROPERTY_ID = "property_id";
     public static final int REQUEST_EDIT = 1;
+    public static final String EXTRA_IS_UPDATED = "extra_is_updated";
 
     private Property mProperty;
     private ImageView mImage;
@@ -70,20 +71,21 @@ public class PostedPropertyFragment extends Fragment {
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
         setHasOptionsMenu(true);
-        UUID id = (UUID) getArguments().getSerializable(ARG_PROPERTY_ID);
-        mProperty = PropertyLab.get(getContext()).getProperty(id);
-        if(mProperty.getPropertyImages().size() > 0){
-            mPropertyImage = mProperty.getPropertyImages().get(0);
-        }
+
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_posted_property_detail, container, false);
 
+        UUID id = (UUID) getArguments().getSerializable(ARG_PROPERTY_ID);
+        mProperty = PropertyLab.get(getContext()).getProperty(id);
+        if(mProperty.getPropertyImages().size() > 0){
+            mPropertyImage = mProperty.getPropertyImages().get(0);
+        }
+
         ((AppCompatActivity)getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         ((AppCompatActivity)getActivity()).getSupportActionBar().setDisplayShowHomeEnabled(true);
-        ((AppCompatActivity)getActivity()).getSupportActionBar().setDisplayShowTitleEnabled(false);
         ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle(mProperty.getName());
 
         mImage = (ImageView) v.findViewById(R.id.posted_property_image);
@@ -164,13 +166,24 @@ public class PostedPropertyFragment extends Fragment {
             case R.id.edit_property:
                 Log.d(TAG, "Edit clicked restart the PostPropertyActivity");
                 Intent postPropertyActivity = PostPropertyActivity.newIntent(getContext(), mProperty.getId());
-                startActivity(postPropertyActivity);
+                startActivityForResult(postPropertyActivity, REQUEST_EDIT);
+                //getActivity().finish();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
     }
 
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == getActivity().RESULT_OK){
+            if(requestCode == REQUEST_EDIT && data.hasExtra(EXTRA_IS_UPDATED) && data.getBooleanExtra(EXTRA_IS_UPDATED, false)){
+                getActivity().finish();
+            }
+        }
+    }
 }
 
 

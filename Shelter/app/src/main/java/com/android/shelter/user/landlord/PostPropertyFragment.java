@@ -92,16 +92,16 @@ public class PostPropertyFragment extends Fragment {
         setRetainInstance(true);
         setHasOptionsMenu(true);
         Log.d(TAG, "On create called");
-
-        UUID propertyId = (UUID) getActivity().getIntent().getSerializableExtra(PostPropertyActivity.EXTRA_PROPERTY_ID);
-        mPropertyToPost = PropertyLab.get(getContext()).getProperty(propertyId);
-
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         Log.d(TAG, "On create view");
+
+        UUID propertyId = (UUID) getActivity().getIntent().getSerializableExtra(PostPropertyActivity.EXTRA_PROPERTY_ID);
+        mPropertyToPost = PropertyLab.get(getContext()).getProperty(propertyId);
+
         View view = inflater.inflate(R.layout.post_property_fragment, container, false);
 
         ((AppCompatActivity)getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -340,6 +340,7 @@ public class PostPropertyFragment extends Fragment {
         Log.d(TAG, "Finishing the activity");
         Intent intent = new Intent();
         intent.putExtra(HomeActivity.EXTRA_FRAGMENT_ID, HomeActivity.MY_POSTING_FRAGMENT_ID);
+        intent.putExtra(PostedPropertyFragment.EXTRA_IS_UPDATED, true);
         getActivity().setResult(Activity.RESULT_OK, intent);
         getActivity().finish();
     }

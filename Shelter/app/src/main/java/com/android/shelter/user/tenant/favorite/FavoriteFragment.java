@@ -88,13 +88,14 @@ public class FavoriteFragment extends Fragment {
                             hideProgressDialog();
                         }
                     }).execute();
-        }else {
             mFavEmtpyTextView.setVisibility(View.GONE);
+        }else {
+            mFavEmtpyTextView.setVisibility(View.VISIBLE);
         }
-
-        mPostingAdapter = new SearchPropertyAdapter(PropertyLab.get(getContext()).getProperties(),
-                getActivity(), getActivity().getSupportFragmentManager());
-        mPostingRecyclerView.setAdapter(mPostingAdapter);
+//
+//        mPostingAdapter = new SearchPropertyAdapter(PropertyLab.get(getContext()).getProperties(),
+//                getActivity(), getActivity().getSupportFragmentManager());
+//        mPostingRecyclerView.setAdapter(mPostingAdapter);
         return rootView;
     }
 

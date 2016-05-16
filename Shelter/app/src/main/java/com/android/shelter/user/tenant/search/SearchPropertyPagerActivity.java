@@ -69,15 +69,35 @@ public class SearchPropertyPagerActivity extends AppCompatActivity {
         for (int i = 0; i < mPropertyList.size(); i++) {
             if (mPropertyList.get(i).getId().equals(imageId)) {
                 mViewPager.setCurrentItem(i);
+                getSupportActionBar().setTitle(PropertyLab.get(getApplicationContext()).getProperty(imageId).getName());
                 break;
             }
         }
+
+        mViewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                getSupportActionBar().setTitle(PropertyLab.get(getApplicationContext()).getProperty(position).getName());
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
     }
+
+
 
     @Override
     public void onBackPressed() {
-        if(getFragmentManager().getBackStackEntryCount() > 0){
-            getFragmentManager().popBackStack();
+        if(getSupportFragmentManager().getBackStackEntryCount() > 0){
+            getSupportFragmentManager().popBackStack();
         }else {
             super.onBackPressed();
         }

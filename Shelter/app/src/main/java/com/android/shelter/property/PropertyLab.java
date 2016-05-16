@@ -46,6 +46,16 @@ public class PropertyLab {
         return mProperties;
     }
 
+    public Property getProperty(int id) {
+        for(int i=0; i<mProperties.size(); i++){
+            if(i == id){
+                Property property = mProperties.get(id);
+                return property;
+            }
+        }
+        return null;
+    }
+
     public Property getProperty(UUID id) {
         for(Property property : mProperties){
             if(property.getId().equals(id)){
