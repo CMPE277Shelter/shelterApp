@@ -1,6 +1,7 @@
 package com.android.shelter.user.tenant.favorite;
 
 
+import android.app.ProgressDialog;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -13,10 +14,12 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.android.shelter.FragmentCallback;
 import com.android.shelter.R;
 import com.android.shelter.property.PropertyLab;
+import com.android.shelter.user.UserSessionManager;
 import com.android.shelter.user.tenant.search.SearchPropertyAdapter;
 import com.android.shelter.util.ShelterConstants;
 import com.android.shelter.util.ShelterFavoriteTask;
@@ -29,6 +32,8 @@ public class FavoriteFragment extends Fragment {
     private RecyclerView mPostingRecyclerView;
     private SearchPropertyAdapter mPostingAdapter;
     private FavoriteCriteria mFavoriteCriteria;
+    private TextView mFavEmtpyTextView;
+    private ProgressDialog mProgressDialog;
 
 
     @Override
@@ -69,20 +74,51 @@ public class FavoriteFragment extends Fragment {
         mFavoriteCriteria.setUser(preferences.getString(ShelterConstants.SHARED_PREFERENCE_OWNER_ID
                 ,ShelterConstants.DEFAULT_STRING));
 
-        new ShelterFavoriteTask(getActivity().getApplicationContext(), "favorites", "GET", true, mFavoriteCriteria,
-                new FragmentCallback() {
-            @Override
-            public void onTaskDone() {
-                mPostingAdapter = new SearchPropertyAdapter(PropertyLab.get(getContext()).getProperties(),
-                        getActivity(), getActivity().getSupportFragmentManager());
-                mPostingRecyclerView.setAdapter(mPostingAdapter);
-            }
-        }).execute();
+        mFavEmtpyTextView = (TextView) rootView.findViewById(R.id.fav_text_empty);
+        mFavEmtpyTextView.setVisibility(View.GONE);
+        if(UserSessionManager.get(getContext()).isUserSignedIn()){
+            showProgressDialog("Loading favorites...");
+            new ShelterFavoriteTask(getActivity().getApplicationContext(), "favorites", "GET", true, mFavoriteCriteria,
+                    new FragmentCallback() {
+                        @Override
+                        public void onTaskDone() {
+                            mPostingAdapter = new SearchPropertyAdapter(PropertyLab.get(getContext()).getProperties(),
+                                    getActivity(), getActivity().getSupportFragmentManager());
+                            mPostingRecyclerView.setAdapter(mPostingAdapter);
+                            hideProgressDialog();
+                        }
+                    }).execute();
+        }else {
+            mFavEmtpyTextView.setVisibility(View.GONE);
+        }
 
         mPostingAdapter = new SearchPropertyAdapter(PropertyLab.get(getContext()).getProperties(),
                 getActivity(), getActivity().getSupportFragmentManager());
         mPostingRecyclerView.setAdapter(mPostingAdapter);
         return rootView;
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if(mProgressDialog != null){
+            mProgressDialog.dismiss();
+        }
+    }
+
+    private void showProgressDialog(String message){
+        if(mProgressDialog == null){
+            mProgressDialog = new ProgressDialog(getContext());
+            mProgressDialog.setMessage(message);
+            mProgressDialog.setIndeterminate(true);
+        }
+        mProgressDialog.show();
+    }
+
+    private void hideProgressDialog(){
+        if(mProgressDialog != null && mProgressDialog.isShowing()){
+            mProgressDialog.hide();
+        }
     }
 
 }

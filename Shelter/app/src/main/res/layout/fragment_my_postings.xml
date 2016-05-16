@@ -18,6 +18,13 @@
                 android:layout_height="match_parent"
                 android:scrollbars="vertical"
                 />
+            <TextView android:id="@+id/text_empty"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="No properties to show, please sign in!"
+                android:textSize="15dp"
+                android:gravity="center"
+                android:visibility="gone"/>
         </LinearLayout>
     </ScrollView>
 

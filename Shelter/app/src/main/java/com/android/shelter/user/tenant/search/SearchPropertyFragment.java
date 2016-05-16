@@ -3,7 +3,9 @@ package com.android.shelter.user.tenant.search;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -16,6 +18,7 @@ import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -74,6 +77,8 @@ public class SearchPropertyFragment extends Fragment {
     Button btnFilter;
     Button btnSaveSearch;
 
+    private ProgressDialog mProgressDialog;
+
     public SearchPropertyFragment() {
         // Required empty public constructor
     }
@@ -112,10 +117,30 @@ public class SearchPropertyFragment extends Fragment {
         btnSaveSearch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-                SearchPropertySaveSearchFragment dialog = SearchPropertySaveSearchFragment.newInstance(searchToBeSaved,criteria);
-                dialog.setTargetFragment(SearchPropertyFragment.this, REQUEST_SAVE_SEARCH_OPTION);
-                dialog.show(fragmentManager, DIALOG_SAVE_SEARCH);
+                if(UserSessionManager.get(getContext()).isUserSignedIn()){
+                    FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+                    SearchPropertySaveSearchFragment dialog = SearchPropertySaveSearchFragment.newInstance(searchToBeSaved,criteria);
+                    dialog.setTargetFragment(SearchPropertyFragment.this, REQUEST_SAVE_SEARCH_OPTION);
+                    dialog.show(fragmentManager, DIALOG_SAVE_SEARCH);
+                }else {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(
+                            getContext());
+                    builder.setCancelable(true);
+                    builder.setTitle(R.string.app_name);
+                    builder.setIcon(R.drawable.icon);
+                    builder.setMessage("Please sign in to Save Search");
+                    builder.setPositiveButton("Ok",
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog,
+                                                    int which) {
+                                    dialog.dismiss();
+                                }
+                            });
+                    AlertDialog alert = builder.create();
+                    alert.show();
+                }
+
             }
         });
 
@@ -150,6 +175,7 @@ public class SearchPropertyFragment extends Fragment {
         layoutManager.scrollToPosition(0);
         mPostingRecyclerView.setLayoutManager(layoutManager);
 
+        showProgressDialog("Searching properties...");
         String ownerId = UserSessionManager.get(getContext()).getOwnerId();
         new ShelterPropertyTask(getActivity().getApplicationContext(), "postings", true,
                 ownerId, null, criteria.getKeyword(), criteria.getCity(), null,
@@ -160,6 +186,7 @@ public class SearchPropertyFragment extends Fragment {
                         mPostingAdapter = new SearchPropertyAdapter(PropertyLab.get(getContext()).getProperties(),
                                 getActivity(), getActivity().getSupportFragmentManager());
                         mPostingRecyclerView.setAdapter(mPostingAdapter);
+                        hideProgressDialog();
                     }
                 }).execute();
 
@@ -224,12 +251,22 @@ public class SearchPropertyFragment extends Fragment {
     }
 
     @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if(mProgressDialog != null){
+            mProgressDialog.dismiss();
+        }
+    }
+
+    @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if(requestCode == REQUEST_FILTER_OPTION){
             if(resultCode == Activity.RESULT_OK){
                 criteria = (SearchPropertyFilterCriteria)
                         data.getSerializableExtra(SearchPropertyFilterFragment.EXTRA_OPTION);
+
+                showProgressDialog("Filtering properties...");
                 String ownerId = UserSessionManager.get(getContext()).getOwnerId();
                 new ShelterPropertyTask(getActivity().getApplicationContext(), "postings", true,
                         ownerId, null, criteria.getKeyword(), criteria.getCity(), criteria.getZipcode(),
@@ -240,6 +277,7 @@ public class SearchPropertyFragment extends Fragment {
                         mPostingAdapter = new SearchPropertyAdapter(PropertyLab.get(getContext()).getProperties(),
                         getActivity(), getActivity().getSupportFragmentManager());
                         mPostingRecyclerView.setAdapter(mPostingAdapter);
+                        hideProgressDialog();
                     }
                 }).execute();
             }
@@ -320,11 +358,12 @@ public class SearchPropertyFragment extends Fragment {
 
 
 //        Log.d(TAG, jsonObject.toString());
-
+        showProgressDialog("Saving your search...");
         new ShelterSavedSearchTask(getContext(), "savesearch/", "POST", true, jsonObject,
                 searchToBeSaved, new FragmentCallback() {
             @Override
             public void onTaskDone() {
+                hideProgressDialog();
                 Toast.makeText(getActivity() , "Search saved successfully!", Toast.LENGTH_LONG).show();
             }
         }).execute();
@@ -348,5 +387,20 @@ public class SearchPropertyFragment extends Fragment {
         }
         LatLng userLocation = new LatLng(location.getLatitude(), location.getLongitude());
         return userLocation;
+    }
+
+    private void showProgressDialog(String message){
+        if(mProgressDialog == null){
+            mProgressDialog = new ProgressDialog(getContext());
+            mProgressDialog.setMessage(message);
+            mProgressDialog.setIndeterminate(true);
+        }
+        mProgressDialog.show();
+    }
+
+    private void hideProgressDialog(){
+        if(mProgressDialog != null && mProgressDialog.isShowing()){
+            mProgressDialog.hide();
+        }
     }
 }

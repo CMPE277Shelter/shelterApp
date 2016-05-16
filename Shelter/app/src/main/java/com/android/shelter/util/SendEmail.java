@@ -6,6 +6,7 @@ import android.widget.Toast;
 
 import com.android.shelter.config.Config;
 
+import java.util.Date;
 import java.util.Properties;
 
 import javax.mail.Message;
@@ -78,7 +79,8 @@ public class SendEmail extends AsyncTask<Void, Void, Void> {
             mm.setFrom(new InternetAddress(Config.SENDER_EMAIL));
             mm.addRecipient(Message.RecipientType.TO, new InternetAddress(email));
             mm.setSubject(subject);
-            mm.setText(message);
+            mm.setSentDate(new Date());
+            mm.setContent(message, "text/html");
 
             Transport.send(mm);
 

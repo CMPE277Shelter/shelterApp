@@ -94,17 +94,22 @@ public class PostPropertyTask extends AsyncTask<Void, Void, String> {
                         propertyId = jsonObj.getString(ShelterConstants.PROPERTY_ID);
                     }
                 }
-                for (PropertyImage images : PropertyLab.get(context).getPropertyImages()) {
-                    Log.d(TAG, "Image getting uploaded ==== " + images.getImagePath());
-                    JSONObject imageData = new JSONObject();
-                    imageData.put(ShelterConstants.PROPERTY_ID, propertyId);
-                    imageData.put(ShelterConstants.OWNER_ID, UserSessionManager.get(context).getOwnerId());
-                    imageData.put(ShelterConstants.FILENAME, images.getImageName());
-                    byte[] imageByte = ImagePicker.get(context).getImageBytes(images.getImageBitMap());
-                    imageData.put(ShelterConstants.STR_BYTE, Base64.encodeToString(imageByte, 0));
+                if(PropertyLab.get(context).getPropertyImages().size() > 0){
+                    for (PropertyImage images : PropertyLab.get(context).getPropertyImages()) {
+                        Log.d(TAG, "Image getting uploaded ==== " + images.getImagePath());
+                        JSONObject imageData = new JSONObject();
+                        imageData.put(ShelterConstants.PROPERTY_ID, propertyId);
+                        imageData.put(ShelterConstants.OWNER_ID, UserSessionManager.get(context).getOwnerId());
+                        imageData.put(ShelterConstants.FILENAME, images.getImageName());
+                        byte[] imageByte = ImagePicker.get(context).getImageBytes(images);
+                        imageData.put(ShelterConstants.STR_BYTE, Base64.encodeToString(imageByte, 0));
 
-                    new PostImageTask(context, "image", true, imageData, fragmentCallback).execute();
+                        new PostImageTask(context, "image", true, imageData, fragmentCallback).execute();
+                    }
+                }else{
+                    fragmentCallback.onTaskDone();
                 }
+
             }catch (JSONException ex){
                 Log.d(TAG, ex.getStackTrace().toString());
             }

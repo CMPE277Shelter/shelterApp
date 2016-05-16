@@ -35,7 +35,7 @@
                     android:layout_width="40dp"
                     android:layout_height="40dp"
                     android:focusableInTouchMode="false"
-                    android:background="@drawable/check"
+                    android:background="@drawable/ic_favorite_border_white_48dp"
                     android:layout_weight="1"
                     android:focusable="false"
                     android:paddingRight="8dp"
