@@ -126,9 +126,9 @@ public class HomeActivity extends AbstractFragmentActivity
                 if(intent.getAction().equals(GCMRegistrationIntentService.REGISTRATION_SUCCESS)){
                     String token = intent.getStringExtra("token");
                     Log.e("Token : ",token);
-                    Toast.makeText(HomeActivity.this, "token" + token, Toast.LENGTH_SHORT).show();
+                   // Toast.makeText(HomeActivity.this, "token" + token, Toast.LENGTH_SHORT).show();
                 }else if(intent.getAction().equals(GCMRegistrationIntentService.REGISTRATION_ERROR)){
-                    Toast.makeText(HomeActivity.this, "Error", Toast.LENGTH_SHORT).show();
+                   // Toast.makeText(HomeActivity.this, "Error", Toast.LENGTH_SHORT).show();
                 }else{
 
                 }

@@ -8,8 +8,11 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 import com.android.shelter.R;
+import com.android.shelter.user.UserSessionManager;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.google.android.gms.iid.InstanceID;
+
+import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -45,7 +48,11 @@ public class GCMRegistrationIntentService extends IntentService {
             InstanceID instanceID = InstanceID.getInstance(getApplicationContext());
             token = instanceID.getToken(getString(R.string.gcm_defaultSenderId), GoogleCloudMessaging.INSTANCE_ID_SCOPE,null);
             Log.e("GCM", "token" + token);
-            new UpdateTokenTask().execute("http://ec2-52-33-84-233.us-west-2.compute.amazonaws.com:5000/updatetoken/token"+token);
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("user_id",UserSessionManager.get(getApplicationContext()).getOwnerId());
+            jsonObject.put("tokenId","token"+token);
+
+            new UpdateTokenTask(jsonObject).execute();
             registrationComplete =  new Intent(REGISTRATION_SUCCESS);
             registrationComplete.putExtra("token",token);
             String oldToken = sharedPreferences.getString(TAG, "");//Return "" when error or key not exists
