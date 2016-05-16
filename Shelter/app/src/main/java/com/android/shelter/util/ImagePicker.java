@@ -184,8 +184,12 @@ public class ImagePicker {
 
     public static Bitmap scaleToFitWidth(Bitmap b, int width)
     {
-        float factor = width / (float) b.getWidth();
-        return Bitmap.createScaledBitmap(b, width, (int) (b.getHeight() * factor), true);
+        if(width != 0){
+            float factor = width / (float) b.getWidth();
+            return Bitmap.createScaledBitmap(b, width, (int) (b.getHeight() * factor), true);
+        }else {
+            return b;
+        }
     }
 
     public static Bitmap scaleToFitHeight(Bitmap b, int height)

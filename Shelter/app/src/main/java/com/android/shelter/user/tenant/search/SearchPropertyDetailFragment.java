@@ -47,7 +47,6 @@ public class SearchPropertyDetailFragment extends Fragment  {
     private TextView mContactPhone;
     private TextView mContactEmail;
     private TextView mDesc;
-    private Toolbar mToolbar;
     private ToggleButton mFavToggleButton;
 
     private PropertyImage mPropertyImage;
@@ -84,13 +83,10 @@ public class SearchPropertyDetailFragment extends Fragment  {
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_search_property_detail, container, false);
 
-        mToolbar = (Toolbar) v.findViewById(R.id.search_property_toolbar);
-        ((AppCompatActivity)getActivity()).setSupportActionBar(mToolbar);
         ((AppCompatActivity)getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         ((AppCompatActivity)getActivity()).getSupportActionBar().setDisplayShowHomeEnabled(true);
-        ((AppCompatActivity)getActivity()).getSupportActionBar().setDisplayShowTitleEnabled(false);
         ((AppCompatActivity)getActivity()).getSupportActionBar().setDisplayShowTitleEnabled(true);
-        ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle(mProperty.getName());
+        //((AppCompatActivity)getActivity()).getSupportActionBar().setTitle(mProperty.getName());
 
 
         mImage = (ImageView) v.findViewById(R.id.detail_thumbnail);

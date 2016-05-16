@@ -181,16 +181,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/contact_info"/>
-            <EditText android:id="@+id/person_name"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:ems="13"
-                android:hint="Name"
-                android:inputType="textPersonName|textCapWords"
-                android:layout_below="@id/contact_info_label"
-                android:layout_centerHorizontal="true"
-                android:layout_marginTop="25dp"
-                android:imeOptions="actionNext"/>
 
             <EditText android:id="@+id/email"
                 android:layout_width="wrap_content"
@@ -198,7 +188,7 @@
                 android:ems="13"
                 android:hint="Email"
                 android:inputType="textEmailAddress"
-                android:layout_below="@id/person_name"
+                android:layout_below="@id/contact_info_label"
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="25dp"
                 android:imeOptions="actionNext"/>

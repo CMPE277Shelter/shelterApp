@@ -57,6 +57,13 @@ public class MyPostingFragment extends Fragment {
         mEmptyTextView = (TextView) view.findViewById(R.id.text_empty);
         mEmptyTextView.setVisibility(View.GONE);
 
+        return view;
+    }
+
+
+    @Override
+    public void onResume() {
+        super.onResume();
         if(UserSessionManager.get(getContext()).isUserSignedIn()){
             showProgressDialog();
             String ownerId = UserSessionManager.get(getContext()).getOwnerId();
@@ -72,7 +79,6 @@ public class MyPostingFragment extends Fragment {
         }else {
             mEmptyTextView.setVisibility(View.VISIBLE);
         }
-        return view;
     }
 
     @Override
