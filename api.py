@@ -348,67 +348,93 @@ def searchownerPosting():
                 
 	return dumps(alongWithImageURLs)
 
-
-
 @app.route('/postings/',methods=['POST'])
 def createPosting():
-	property_id =  getPropertyId()
-	posting={
-		"property_id":property_id,
-                "property_name":request.json['property_name'],
-		"owner_id":request.json['owner_id'],
-                "view_count":0,
-                "images":[],
-		"address":[
-			{
-				"street":request.json['address'][0]['street'],
-				"city":request.json['address'][0]['city'],
-				"state":request.json['address'][0]['state'],
-				"zipcode":int(request.json['address'][0]['zipcode'])
-			}
-		],
-		"property_type":request.json['property_type'],
-		"details":[
-			{
-				"rooms":int(request.json['details'][0]['rooms']),
-				"bath":int(request.json['details'][0]['bath']),
-				"floor_area":int(request.json['details'][0]['floor_area']),
-				"unit":"square feet",
-				"small_unit":"sq-ft"
-			}
-		],
-		"rent_details":[
-			{
-				"rent":int(request.json['rent_details'][0]['rent']),
-				"unit":"US dollar",
-				"small_unit":"USD"
-			}
-		],
-		"owner_contact_info":[
-			{
-				"phone_number":int(request.json['owner_contact_info'][0]['phone_number']),
-				"display_phone":request.json['owner_contact_info'][0]['display_phone'],
-				"email":request.json['owner_contact_info'][0]['email']
-			}
-		],
-                "is_favorite":False,
-                "is_rented_or_cancel":False,
-		"description":request.json['description'],
-		"more":[
-			{
-				"lease_type":request.json['more'][0]['lease_type'],
-				"deposit":int(request.json['more'][0]['deposit'])
-			}
-		]
-	}
-	
-	postings=getCollection('postings')
-	insertedId=postings.insert_one(posting)
-	if insertedId:
-		pushNotification(property_id,request.json['owner_id'])
-		return dumps([posting])
-	else:
-		return dumps([{"error":"Error Occured"}])
+        if 'property_id' in request.json:
+		print 'Updating'
+                property_id = request.json['property_id']
+                owner_id = request.json['owner_id']
+                property_name=request.json['property_name']
+                street=request.json['address'][0]['street']
+                city=request.json['address'][0]['city']
+                state=request.json['address'][0]['state']
+                zipcode=int(request.json['address'][0]['zipcode'])
+                property_type=request.json['property_type']
+                rooms=int(request.json['details'][0]['rooms'])
+                bath=int(request.json['details'][0]['bath'])
+                floor_area=int(request.json['details'][0]['floor_area'])
+                rent=int(request.json['rent_details'][0]['rent'])
+                phone_number=int(request.json['owner_contact_info'][0]['phone_number'])
+                display_phone=request.json['owner_contact_info'][0]['display_phone']
+                email=request.json['owner_contact_info'][0]['email']
+                description=request.json['description']
+                
+                postings=getCollection('postings')
+                updateId = postings.update_one({"property_id":property_id,"owner_id":owner_id},{"$set": {"property_name":property_name,"address.0.street":street,"address.0.city":city,"address.0.state":state,"address.0.zipcode":zipcode,"property_type":property_type,"details.0.rooms":rooms,"details.0.bath":bath,"details.0.floor_area":floor_area,"rent_details.0.rent":rent,"owner_contact_info.0.phone_number":phone_number,"owner_contact_info.0.display_phone":display_phone,"owner_contact_info.0.email":email,"description":description}})
+                
+                if updateId:
+                        return dumps([{"property_id":property_id}])
+                else:
+                        return dumps([{"error":"Error Occured"}])
+                
+        else:
+                property_id =  getPropertyId()
+                posting={
+                        "property_id":property_id,
+                        "property_name":request.json['property_name'],
+                        "owner_id":request.json['owner_id'],
+                        "view_count":0,
+                        "images":[],
+                        "address":[
+                                {
+                                        "street":request.json['address'][0]['street'],
+                                        "city":request.json['address'][0]['city'],
+                                        "state":request.json['address'][0]['state'],
+                                        "zipcode":int(request.json['address'][0]['zipcode'])
+                                }
+                        ],
+                        "property_type":request.json['property_type'],
+                        "details":[
+                                {
+                                        "rooms":int(request.json['details'][0]['rooms']),
+                                        "bath":int(request.json['details'][0]['bath']),
+                                        "floor_area":int(request.json['details'][0]['floor_area']),
+                                        "unit":"square feet",
+                                        "small_unit":"sq-ft"
+                                }
+                        ],
+                        "rent_details":[
+                                {
+                                        "rent":int(request.json['rent_details'][0]['rent']),
+                                        "unit":"US dollar",
+                                        "small_unit":"USD"
+                                }
+                        ],
+                        "owner_contact_info":[
+                                {
+                                        "phone_number":int(request.json['owner_contact_info'][0]['phone_number']),
+                                        "display_phone":request.json['owner_contact_info'][0]['display_phone'],
+                                        "email":request.json['owner_contact_info'][0]['email']
+                                }
+                        ],
+                        "is_favorite":False,
+                        "is_rented_or_cancel":False,
+                        "description":request.json['description'],
+                        "more":[
+                                {
+                                        "lease_type":request.json['more'][0]['lease_type'],
+                                        "deposit":int(request.json['more'][0]['deposit'])
+                                }
+                        ]
+                }
+                
+                postings=getCollection('postings')
+                insertedId=postings.insert_one(posting)
+                if insertedId:
+                        pushNotification(property_id,request.json['owner_id'])
+                        return dumps([posting])
+                else:
+                        return dumps([{"error":"Error Occured"}])
 
 def strToBool(val):
 	if val == 'True':
