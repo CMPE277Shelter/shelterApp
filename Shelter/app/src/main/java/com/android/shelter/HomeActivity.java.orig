@@ -31,18 +31,23 @@ import com.android.shelter.user.tenant.favorite.FavoriteFragment;
 import com.android.shelter.user.tenant.savedsearch.SavedSearchFragment;
 import com.android.shelter.user.tenant.search.SearchPropertyFragment;
 import com.android.shelter.util.DownloadImageTask;
-import com.android.shelter.util.GCMRegistrationIntentService;
+<<<<<<< HEAD
 import com.android.shelter.util.ShelterConstants;
 import com.facebook.login.LoginManager;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.Scopes;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Scope;
 import com.google.android.gms.common.api.Status;
+=======
+//import com.android.shelter.util.GCMRegistrationIntentService;
+import com.android.shelter.util.GCMRegistrationIntentService;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesUtil;
+>>>>>>> d0652eeb2abd98164750d803f01477893cb43ab5
 
 /**
  * Landing screen or home activity for the application.
@@ -71,8 +76,12 @@ public class HomeActivity extends AbstractFragmentActivity
     private DrawerLayout mDrawer;
     private RelativeLayout mBeforeSignInLayout;
     private RelativeLayout mAfterSignInLayout;
+<<<<<<< HEAD
     private GoogleApiClient mGoogleApiClient;
+=======
+    private UserSessionManager mUserSessionManager;
     private BroadcastReceiver mBroadCastReceiver;
+>>>>>>> d0652eeb2abd98164750d803f01477893cb43ab5
 
     @Override
     public Fragment createFragment(){
@@ -164,10 +173,15 @@ public class HomeActivity extends AbstractFragmentActivity
         super.onResume();
         Log.d(TAG, "Inside on resume");
         toggleUserProfileLayout();
+<<<<<<< HEAD
+=======
+        mUserSessionManager.getGoogleApiClient().connect();
         LocalBroadcastManager.getInstance(this).registerReceiver(mBroadCastReceiver,
                 new IntentFilter(GCMRegistrationIntentService.REGISTRATION_SUCCESS));
         LocalBroadcastManager.getInstance(this).registerReceiver(mBroadCastReceiver,
                 new IntentFilter(GCMRegistrationIntentService.REGISTRATION_ERROR));
+
+>>>>>>> d0652eeb2abd98164750d803f01477893cb43ab5
     }
 
     @SuppressWarnings("StatementWithEmptyBody")

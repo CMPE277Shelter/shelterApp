@@ -12,11 +12,12 @@ import com.android.shelter.R;
 import com.android.shelter.user.landlord.PostPropertyActivity;
 import com.facebook.login.widget.LoginButton;
 import com.google.android.gms.auth.api.Auth;
+import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.SignInButton;
 
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener{
 
-    private static final String TAG = "MainActivity";
+    private static final String TAG = "LoginActivity";
     private static final int RC_SIGN_IN = 9001;
     private UserSessionManager mUserSessionManager;
 
@@ -60,13 +61,20 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     }
 
     @Override
+    protected void onStart() {
+        super.onStart();
+        //mUserSessionManager.onStartUpInitialization();
+    }
+
+    @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
         mUserSessionManager.callFacebookOnActivityResult(requestCode, resultCode, data);
         Log.i(TAG, "OnActivityResult...");
         if (requestCode == RC_SIGN_IN) {
-            mUserSessionManager.handleSignInResult(data);
+            GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
+            mUserSessionManager.handleSignInResult(result);
         }
     }
 
