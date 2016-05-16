@@ -2,7 +2,9 @@ package com.android.shelter.user.landlord;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
@@ -90,8 +92,21 @@ public class MyPostingHolder extends RecyclerView.ViewHolder
     @Override
     public void onClick(View v) {
         Log.d("MyPostingHolder", "Pager activity starting");
-        Intent intent = PostedPropertyPagerActivity.newIntent(mActivity, mProperty.getId());
-        mActivity.startActivity(intent);
+        if(mActivity.findViewById(R.id.detail_fragment_container) == null){
+            Intent intent = PostedPropertyPagerActivity.newIntent(mActivity, mProperty.getId());
+            mActivity.startActivity(intent);
+        }else {
+            FragmentTransaction ft = mFragmentManager.beginTransaction();
+
+            Fragment oldDetail = mFragmentManager.findFragmentById(R.id.detail_fragment_container);
+            Fragment newDetail = PostedPropertyFragment.newInstance(mProperty.getId());
+
+            if (oldDetail != null) {
+                ft.remove(oldDetail);
+            }
+            ft.add(R.id.detail_fragment_container, newDetail);
+            ft.commit();
+        }
     }
 
 
