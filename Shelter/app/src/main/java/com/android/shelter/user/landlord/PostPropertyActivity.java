@@ -4,6 +4,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.NavUtils;
+import android.util.Log;
+import android.view.MenuItem;
 
 import com.android.shelter.AbstractFragmentActivity;
 import com.android.shelter.R;
@@ -15,6 +18,7 @@ import java.util.UUID;
  */
 public class PostPropertyActivity extends AbstractFragmentActivity {
 
+    private static final String TAG = "PostPropertyActivity";
     public static final String EXTRA_PROPERTY_ID =
             "com.android.shelter.post_property_activity.property_id";
 
@@ -42,4 +46,17 @@ public class PostPropertyActivity extends AbstractFragmentActivity {
             super.onBackPressed();
         }
     }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                Log.d(TAG, "Home clicked");
+                onBackPressed();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
 }

@@ -12,6 +12,7 @@ import android.widget.ToggleButton;
 
 import com.android.shelter.FragmentCallback;
 import com.android.shelter.R;
+import com.android.shelter.helper.PropertyImage;
 import com.android.shelter.property.Property;
 import com.android.shelter.property.PropertyLab;
 import com.android.shelter.user.UserSessionManager;
@@ -32,8 +33,8 @@ public class SearchPropertyHolder extends RecyclerView.ViewHolder
     private TextView mBeds;
     private TextView mFloorArea;
     private TextView mRent;
-    private ToggleButton mFavToggleButton;
     private Property mProperty;
+    private PropertyImage mPropertyImage;
 
     private Activity mActivity;
 
@@ -54,7 +55,6 @@ public class SearchPropertyHolder extends RecyclerView.ViewHolder
         mBaths = (TextView) itemView.findViewById(R.id.baths);
         mBeds =(TextView)itemView.findViewById(R.id.beds);
         mFloorArea = (TextView)itemView.findViewById(R.id.floorArea);
-        mFavToggleButton = (ToggleButton)itemView.findViewById(R.id.fav_toggle_button);
     }
 
     /**
@@ -66,74 +66,21 @@ public class SearchPropertyHolder extends RecyclerView.ViewHolder
         mPropertyName.setText(property.getName());
         mPropertyType.setText(property.getType());
 //        mPropertyImageView.setImageResource(property.getPhotoId());
-        new DownloadImageTask(mPropertyImageView).execute("" +
-                "http://ec2-52-36-142-168.us-west-2.compute.amazonaws.com:5000/drawable?filename=p1.jpg");
+        mPropertyImage = new PropertyImage();
+        if(mPropertyImage != null){
+            mPropertyImage = mProperty.getPropertyImages().get(0);
+            if(mPropertyImage.getImageResourceId() == 0){
+                new DownloadImageTask(mPropertyImageView).
+                        execute(mPropertyImage.getImagePath());
+            }else {
+                mPropertyImageView.setBackgroundResource(mPropertyImage.getImageResourceId());
+            }
+        }
         mAddress.setText(property.getAddress());
         mRent.setText(property.getDisplayRent());
         mBaths.setText(property.getDisplayBath());
         mBeds.setText(property.getDisplayRoom());
         mFloorArea.setText(property.getDisplayFloorArea());
-        mFavToggleButton.setChecked(mProperty.isFavorite());
-
-        mFavToggleButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                FavoriteCriteria criteria = new FavoriteCriteria();
-                criteria.setUser(UserSessionManager.get(mActivity).getOwnerId());
-                criteria.setOwner_id(mProperty.getOwnerId());
-                criteria.setProperty_id(mProperty.getId().toString());
-                if(mFavToggleButton.isChecked()){
-                    new ShelterFavoriteTask(mActivity.getApplicationContext(), "addfavourite", "POST",
-                            true, criteria, new FragmentCallback() {
-                        @Override
-                        public void onTaskDone() {
-                            Log.d("SearchPropertyHolder", "On taskdone");
-                            mProperty.setFavorite(true);
-                        }
-                    }).execute();
-                }else{
-                    new ShelterFavoriteTask(mActivity.getApplicationContext(), "removefavourite", "DELETE",
-                            true, criteria, new FragmentCallback() {
-                        @Override
-                        public void onTaskDone() {
-                            Log.d("SearchPropertyHolder", "On taskdone");
-                            mProperty.setFavorite(false);
-                        }
-                    }).execute();
-                }
-//                if (property.isFavorite()) {
-//                    property.setFavorite(false);
-//                    mProperty = property;
-//                    FavoriteCriteria criteria = new FavoriteCriteria();
-//                    criteria.setUser(UserSessionManager.get(mActivity).getOwnerId());
-//                    criteria.setOwner_id(mProperty.getOwnerId());
-//                    criteria.setProperty_id(mProperty.getId().toString());
-//                    new ShelterFavoriteTask(mActivity.getApplicationContext(), "removefavourite", "DELETE",
-//                            true, criteria, new FragmentCallback() {
-//                        @Override
-//                        public void onTaskDone() {
-//
-//                        }
-//                    }).execute();
-//                } else {
-//                    property.setFavorite(true);
-//                    mProperty = property;
-//                    FavoriteCriteria criteria = new FavoriteCriteria();
-//                    SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(mActivity.getApplicationContext());
-//                    criteria.setUser(preferences.getString(
-//                            ShelterConstants.SHARED_PREFERENCE_OWNER_ID, ShelterConstants.DEFAULT_STRING));
-//                    criteria.setOwner_id(mProperty.getOwnerId());
-//                    criteria.setProperty_id(mProperty.getId().toString());
-//                    new ShelterFavoriteTask(mActivity.getApplicationContext(), "addfavourite", "POST",
-//                            true, criteria, new FragmentCallback() {
-//                        @Override
-//                        public void onTaskDone() {
-//
-//                        }
-//                    }).execute();
-//                }
-            }
-        });
     }
 
     @Override

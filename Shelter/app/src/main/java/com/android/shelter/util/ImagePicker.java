@@ -49,6 +49,13 @@ public class ImagePicker {
     }
 
     private ImagePicker(Context context){}
+
+    public static Intent getGalleryImagePickIntent(Context context){
+        Intent selectPictureIntent = new Intent(Intent.ACTION_GET_CONTENT,
+                android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        selectPictureIntent.setType("image/*");
+        return  selectPictureIntent;
+    }
     /**
      * Shows choices for taking photos, all available options are shown.
      * @param context

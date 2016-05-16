@@ -8,6 +8,9 @@ import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.ImageView;
+
+import com.android.shelter.R;
+
 import java.io.InputStream;
 import java.net.URL;
 
@@ -32,7 +35,11 @@ public class DownloadImageTask extends AsyncTask<String,Void,Bitmap> {
 
     protected void onPostExecute(Bitmap result){
         Log.d("setting image"," now");
-        imageView.setImageBitmap(ImagePicker.scaleToFitWidth(result, imageView.getWidth()));
+        if(result != null){
+            imageView.setImageBitmap(ImagePicker.scaleToFitWidth(result, imageView.getWidth()));
+        }else {
+            imageView.setImageResource(R.drawable.place_holder);
+        }
     }
 
 }

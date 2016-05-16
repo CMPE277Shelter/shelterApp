@@ -146,13 +146,19 @@ public class ShelterFavoriteTask extends AsyncTask<Void, Void, String> {
 
                         List<PropertyImage> propertyImageList = new ArrayList<>();
                         JSONArray imageULRs = jsonObj.getJSONArray(ShelterConstants.PROPERTY_IMAGES);
-                        for(int j=0; j<imageULRs.length(); j++){
-                            PropertyImage image = new PropertyImage();
-                            image.setImagePath(imageULRs.getString(j));
-                            propertyImageList.add(image);
+
+                        if(imageULRs.length() > 0){
+                            for(int j=0; j<imageULRs.length(); j++){
+                                PropertyImage image = new PropertyImage();
+                                image.setImagePath(imageULRs.getString(j));
+                                propertyImageList.add(image);
+                            }
+                        }else {
+                            PropertyImage placeHolderImage = new PropertyImage();
+                            placeHolderImage.setImageResourceId(R.drawable.place_holder);
+                            propertyImageList.add(placeHolderImage);
                         }
                         property.setPropertyImages(propertyImageList);
-
                         Log.d("ShelterPropertyTask", "Image urls  === "+ imageULRs);
 
                         PropertyLab.get(context).addProperty(property);
