@@ -8,6 +8,7 @@ import android.util.Log;
 
 import com.android.shelter.FragmentCallback;
 import com.android.shelter.R;
+import com.android.shelter.user.UserSessionManager;
 import com.android.shelter.user.tenant.savedsearch.SavedSearch;
 import com.android.shelter.user.tenant.savedsearch.SavedSearchesLab;
 
@@ -51,7 +52,7 @@ public class ShelterSavedSearchTask extends AsyncTask<Void, Void, String>{
         this.jsonObject = jsonObject;
         this.requestType=requestType;
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        this.user = preferences.getString(ShelterConstants.SHARED_PREFERENCE_OWNER_ID, ShelterConstants.DEFAULT_INT_STRING);
+        this.user = UserSessionManager.get(context).getOwnerId();
 
         this.mSavedSearch=savedSearchObj;
         this.mFragmentCallback=fragmentCallback;
