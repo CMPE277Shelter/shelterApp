@@ -78,7 +78,7 @@ public class SavedSearchHolder extends RecyclerView.ViewHolder
         }
 
         if(search.hasZipcode() && isFirstElementSet){
-            searchCriteria.append(", Property Type : "+search.getZipcode());
+            searchCriteria.append(", "+search.getZipcode());
         }else if(search.hasZipcode()){
             searchCriteria.append(search.getZipcode());
             isFirstElementSet=true;

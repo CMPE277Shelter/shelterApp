@@ -121,32 +121,7 @@ public class HomeActivity extends AbstractFragmentActivity
 
         toggleUserProfileLayout();
 
-        mBroadCastReceiver = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                if(intent.getAction().equals(GCMRegistrationIntentService.REGISTRATION_SUCCESS)){
-                    String token = intent.getStringExtra("token");
-                    Log.e("Token : ",token);
-                   // Toast.makeText(HomeActivity.this, "token" + token, Toast.LENGTH_SHORT).show();
-                }else if(intent.getAction().equals(GCMRegistrationIntentService.REGISTRATION_ERROR)){
-                   // Toast.makeText(HomeActivity.this, "Error", Toast.LENGTH_SHORT).show();
-                }else{
 
-                }
-            }
-        };
-        int resultCode = GooglePlayServicesUtil.isGooglePlayServicesAvailable(getApplicationContext());
-        if(ConnectionResult.SUCCESS!=resultCode){
-            if(GooglePlayServicesUtil.isUserRecoverableError(resultCode)){
-                Toast.makeText(getApplicationContext(), "play services is not installed", Toast.LENGTH_SHORT).show();
-                GooglePlayServicesUtil.showErrorNotification(resultCode,getApplicationContext());
-            }else{
-                Toast.makeText(getApplicationContext(), "device doest not support", Toast.LENGTH_SHORT).show();
-            }
-        }else{
-            Intent intent = new Intent(this,GCMRegistrationIntentService.class);
-            startService(intent);
-        }
 
 
     }
@@ -245,6 +220,34 @@ public class HomeActivity extends AbstractFragmentActivity
 
     private void toggleUserProfileLayout(){
         if(UserSessionManager.get(getApplicationContext()).isUserSignedIn()){
+
+            mBroadCastReceiver = new BroadcastReceiver() {
+                @Override
+                public void onReceive(Context context, Intent intent) {
+                    if(intent.getAction().equals(GCMRegistrationIntentService.REGISTRATION_SUCCESS)){
+                        String token = intent.getStringExtra("token");
+                        Log.e("Token : ",token);
+                        // Toast.makeText(HomeActivity.this, "token" + token, Toast.LENGTH_SHORT).show();
+                    }else if(intent.getAction().equals(GCMRegistrationIntentService.REGISTRATION_ERROR)){
+                        // Toast.makeText(HomeActivity.this, "Error", Toast.LENGTH_SHORT).show();
+                    }else{
+
+                    }
+                }
+            };
+            int resultCode = GooglePlayServicesUtil.isGooglePlayServicesAvailable(getApplicationContext());
+            if(ConnectionResult.SUCCESS!=resultCode){
+                if(GooglePlayServicesUtil.isUserRecoverableError(resultCode)){
+                    Toast.makeText(getApplicationContext(), "play services is not installed", Toast.LENGTH_SHORT).show();
+                    GooglePlayServicesUtil.showErrorNotification(resultCode,getApplicationContext());
+                }else{
+                    Toast.makeText(getApplicationContext(), "device doest not support", Toast.LENGTH_SHORT).show();
+                }
+            }else{
+                Intent intent = new Intent(this,GCMRegistrationIntentService.class);
+                startService(intent);
+            }
+
             mNavigationMenu.findItem(R.id.nav_logout).setVisible(true);
             mNavigationMenu.findItem(R.id.nav_login).setVisible(false);
 
