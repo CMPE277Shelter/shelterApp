@@ -23,16 +23,15 @@ def getCollection(collectionName):
         return collection
         
 def notify(tokenId,count,search_name):
-        count =1
         gcm = GCM("AIzaSyBCVyH_fKL_rXaad0GJ-CfukwbX1X3JQOo")
         data = {"the_message": "We have "+str(count)+" new results for "+search_name}
-        client = MongoClient('127.0.0.1',27017)
-        db = client['Shelter']
-        collection = db['token']
-        results = collection.find({"key":"token"})
-        for record in results:
-                 tokenId = record['tokenId']
-                 print tokenId
+        #client = MongoClient('127.0.0.1',27017)
+        #db = client['Shelter']
+        #collection = db['token']
+        #results = collection.find({"key":"token"})
+        #for record in results:
+        #         tokenId = record['tokenId']
+        #         print tokenId
         #reg_id = 'e6LPXuJb0Fk:APA91bEwguI3nz9G_VVHtp3BlgI8cnl-3wA35VbjirdpGBBbAjUnCiHAD_dhvjTlxxTOREI-wbnjbbI-ZrX1P8CWmg0CaaL4Fk53bgtIeDp7xjG1OwPA894I5BMCjCI7WTIoZKfizBCG'
         #reg_id = 'tokenfEflMpztF6M:APA91bGXTK409MAf9xbrCuuMON23QyX17zxfnVmsVh_j2zul9_bK2NTpKjSpHK-Suq6QWT8mL0EFeAiFgm4QmF8sImUiDumoBtgqfvisCN0-iDYOleZc6ibuj96KlW6U7JLME__6Sprd'
         reg_id = tokenId
@@ -42,12 +41,13 @@ def pushNotification(property_id, owner_id):
 	print 'in push notification,'
         postings = getCollection('postings')
         searches = getCollection('searches')
-        for prop in postings.find_one({'property_id':property_id,'owner_id':owner_id},{'_id':False}):
+        for prop in postings.find({'property_id':property_id,'owner_id':owner_id},{'_id':False}):
                 properTy = prop
                 break
 	print properTy
         if properTy is not None:
 		print 'property not none'
+		print properTy
                 for indSearch in searches.find({'frequency':'Realtime'},{'_id':False}):
                         search_criteria = {}
                         shouldNotify = True
@@ -64,7 +64,9 @@ def pushNotification(property_id, owner_id):
 			print shouldNotify
 
                         if indSearch['hascity'] == True:
-                                if properTy['city'] == indSearch['city']:
+				propCity = properTy['address'][0]['city']
+				indCity = indSearch['city']
+                                if propCity == indCity:
                                         shouldNotify = shouldNotify and True
                                 else:
                                         shouldNotify = shouldNotify and False
@@ -72,7 +74,7 @@ def pushNotification(property_id, owner_id):
 			print shouldNotify
 
                         if indSearch['haszipcode'] == True:
-                                if properTy['zipcode'] == indSearch['zipcode']:
+                                if properTy['address'][0]['zipcode'] == indSearch['zipcode']:
                                         shouldNotify = shouldNotify and True
                                 else:
                                         shouldNotify = shouldNotify and False
@@ -84,19 +86,19 @@ def pushNotification(property_id, owner_id):
 			print indSearch['hasminrent']
 
                         if indSearch['hasminrent'] == True and indSearch['hasmaxrent']:
-                                if properTy['rent_details']['rent']>=indSearch['minrent'] and properTy['rent_details']['rent']>=indSearch['maxrent']:
+                                if properTy['rent_details'][0]['rent']>=indSearch['minrent'] and properTy['rent_details'][0]['rent']>=indSearch['maxrent']:
                                         shouldNotify = shouldNotify and True
                                 else:
                                         shouldNotify = shouldNotify and False
                                 # search_criteria['rent_details.rent']={"$gte":int(indSearch['minrent']),"$lte":int(indSearch['maxrent'])}
                         elif indSearch['hasminrent'] == True:
-                                if properTy['rent_details']['rent']>=indSearch['minrent']:
+                                if properTy['rent_details'][0]['rent']>=indSearch['minrent']:
                                         shouldNotify = shouldNotify and True
                                 else:
                                         shouldNotify = shouldNotify and False
                                 # search_criteria['rent_details.rent']={"$gte":int(indSearch['minrent'])}
                         elif indSearch['hasmaxrent'] == True:
-                                if properTy['rent_details']['rent']<=indSearch['maxrent']:
+                                if properTy['rent_details'][0]['rent']<=indSearch['maxrent']:
                                         shouldNotify = shouldNotify and True
                                 else:
                                         shouldNotify = shouldNotify and False
