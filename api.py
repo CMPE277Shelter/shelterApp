@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, requests
+from flask import Flask, jsonify, request
 from flask import send_file
 from pymongo import MongoClient
 from bson.json_util import dumps
@@ -9,6 +9,7 @@ import re
 import pymongo
 import uuid
 
+from gcm import *
 
 app = Flask(__name__,static_url_path='/static')
 
@@ -20,6 +21,129 @@ def getCollection(collectionName):
         db = client['Shelter']
         collection = db[collectionName]
         return collection
+        
+def notify(tokenId,count,search_name):
+        count =1
+        gcm = GCM("AIzaSyBCVyH_fKL_rXaad0GJ-CfukwbX1X3JQOo")
+        data = {"the_message": "We have "+str(count)+" new results for "+search_name}
+        client = MongoClient('127.0.0.1',27017)
+        db = client['Shelter']
+        collection = db['token']
+        results = collection.find({"key":"token"})
+        for record in results:
+                 tokenId = record['tokenId']
+                 print tokenId
+        #reg_id = 'e6LPXuJb0Fk:APA91bEwguI3nz9G_VVHtp3BlgI8cnl-3wA35VbjirdpGBBbAjUnCiHAD_dhvjTlxxTOREI-wbnjbbI-ZrX1P8CWmg0CaaL4Fk53bgtIeDp7xjG1OwPA894I5BMCjCI7WTIoZKfizBCG'
+        #reg_id = 'tokenfEflMpztF6M:APA91bGXTK409MAf9xbrCuuMON23QyX17zxfnVmsVh_j2zul9_bK2NTpKjSpHK-Suq6QWT8mL0EFeAiFgm4QmF8sImUiDumoBtgqfvisCN0-iDYOleZc6ibuj96KlW6U7JLME__6Sprd'
+        reg_id = tokenId
+        gcm.plaintext_request(registration_id=reg_id, data=data)
+
+def pushNotification(property_id, owner_id):
+	print 'in push notification,'
+        postings = getCollection('postings')
+        searches = getCollection('searches')
+        for prop in postings.find_one({'property_id':property_id,'owner_id':owner_id},{'_id':False}):
+                properTy = prop
+                break
+	print properTy
+        if properTy is not None:
+		print 'property not none'
+                for indSearch in searches.find({'frequency':'Realtime'},{'_id':False}):
+                        search_criteria = {}
+                        shouldNotify = True
+                        if indSearch['haskeyword'] == True:
+                                keyWrd = indSearch['keyword']
+                                pattern = '.*'+keyword+'.*'
+                                regex = re.compile(pattern,re.IGNORECASE)
+                                if(len(re.findall(regex,keyWrd))>=1):
+                                        shouldNotify = shouldNotify and True
+                                else:
+                                     shouldNotify = shouldNotify and False
+
+			print 'after keyword matching'
+			print shouldNotify
+
+                        if indSearch['hascity'] == True:
+                                if properTy['city'] == indSearch['city']:
+                                        shouldNotify = shouldNotify and True
+                                else:
+                                        shouldNotify = shouldNotify and False
+			print 'after city'
+			print shouldNotify
+
+                        if indSearch['haszipcode'] == True:
+                                if properTy['zipcode'] == indSearch['zipcode']:
+                                        shouldNotify = shouldNotify and True
+                                else:
+                                        shouldNotify = shouldNotify and False
+
+                                # search_criteria['address.zipcode']=int(indSearch['zipcode'])
+			print 'after zipcode'
+			print shouldNotify
+			
+			print indSearch['hasminrent']
+
+                        if indSearch['hasminrent'] == True and indSearch['hasmaxrent']:
+                                if properTy['rent_details']['rent']>=indSearch['minrent'] and properTy['rent_details']['rent']>=indSearch['maxrent']:
+                                        shouldNotify = shouldNotify and True
+                                else:
+                                        shouldNotify = shouldNotify and False
+                                # search_criteria['rent_details.rent']={"$gte":int(indSearch['minrent']),"$lte":int(indSearch['maxrent'])}
+                        elif indSearch['hasminrent'] == True:
+                                if properTy['rent_details']['rent']>=indSearch['minrent']:
+                                        shouldNotify = shouldNotify and True
+                                else:
+                                        shouldNotify = shouldNotify and False
+                                # search_criteria['rent_details.rent']={"$gte":int(indSearch['minrent'])}
+                        elif indSearch['hasmaxrent'] == True:
+                                if properTy['rent_details']['rent']<=indSearch['maxrent']:
+                                        shouldNotify = shouldNotify and True
+                                else:
+                                        shouldNotify = shouldNotify and False
+                                # search_criteria['rent_details.rent']={"$lte":int(indSearch['maxrent'])}
+                        if indSearch['haspropertyType'] == True:
+                                if indSearch['propertyType']=='All' or indSearch['propertyType']==properTy['property_type']:
+					shouldNotify = shouldNotify and True
+				else:
+					shouldNotify = shouldNotify and False
+                                # search_criteria['property_type']=indSearch['propertyType']
+                        	# search_criteria['is_rented_or_cancel']=False
+			print shouldNotify
+                        if shouldNotify:
+                                token = getCollection('token')
+				tokenId = ''
+                                for tokenIdStruct in token.find({'user_id':indSearch['user']}):
+                                        tokenId = tokenIdStruct['tokenId']
+				print 'notifying'
+                                notify(tokenId,1,indSearch['name'])
+
+
+
+
+@app.route('/updatetoken',methods=['PUT'])
+def updateToken():
+	print "In update Token"
+	tokenId = request.json['tokenId']
+	user_id = request.json['user_id']
+	print str(tokenId)
+	print str(user_id)
+        client = MongoClient('127.0.0.1',27017)
+        db = client.Shelter
+        if 'token' not in db.collection_names():
+                token = db.token
+		print "in 1st insert"
+                updatedId = token.insert_one({'user_id':user_id,'tokenId':tokenId})
+        else:
+                token = getCollection('token')
+		print "in else"
+		if token.find({"user_id":user_id}):
+                	updatedId = token.update_one({'user_id':user_id},{'$set':{'tokenId':tokenId}},upsert=True)
+		else:
+			updatedId = token.insert_one({"user_id":user_id,"tokenId":tokenId})
+        if updatedId:
+                return dumps([{'Status':'OK'}])
+        else:
+                return dumps([{'Error':'Error Occurred'}])
 
 @app.route('/trendingProperty',methods=['GET'])
 def getTrendingProperty():
@@ -33,14 +157,10 @@ def getTrendingProperty():
 
 @app.route('/image',methods=['POST'])
 def saveImage():
-        if 'owner_id' in request.args:
-                owner=request.args['owner_id']
-        if 'property_id' in request.args:
-                property=request.args['property_id']
-        if 'filename' in request.args:
-                file=request.args['filename']
-        if 'strByte' in request.args:
-                strByte = request.args['strByte']
+	owner = request.json['owner_id']
+	property = request.json['property_id']
+	file = request.json['filename']
+	strByte = request.json['strByte']
         #comment below two lines in prod
         #with open("/Users/Prasanna/Documents/watch1.jpg", "rb") as imageFile:        
         #      strByte = base64.b64encode(imageFile.read())
@@ -141,7 +261,7 @@ def searchPosting():
                 favorites = getCollection('favourites')
                 favProperties = []
                 favOwnerIds = []
-                for fav in favorites.find({'user_id':user_id},{'_id':id}):
+                for fav in favorites.find({'user_id':user_id},{'_id':False}):
                         favDetail = fav['FavDetails']
                         for eachFav in favDetail:
                                 favProperties.append(eachFav['property_id'])
@@ -167,10 +287,72 @@ def searchPosting():
                 
 	return dumps(alongWithImageURLs)
 
+@app.route('/ownerpostings',methods=['GET'])
+def searchownerPosting():
+	postings=getCollection('postings')
+	search_criteria={}
+	if 'owner_id' in request.args:
+                search_criteria['owner_id']=request.args['owner_id']
+        if 'keyword' in request.args:
+                keyword = str(request.args['keyword'])
+                pattern = '.*'+keyword+'.*'
+                regex = re.compile(pattern,re.IGNORECASE)
+                search_criteria['description']={"$regex":regex}
+	if 'city' in request.args:
+		search_criteria['address.city']=request.args['city']
+	if 'zipcode' in request.args:
+		search_criteria['address.zipcode']=int(request.args['zipcode'])
+	if 'min_rent' in request.args and 'max_rent' in request.args:
+		search_criteria['rent_details.rent']={"$gte":int(request.args['min_rent']),"$lte":int(request.args['max_rent'])}
+        elif 'min_rent' in request.args:
+                search_criteria['rent_details.rent']={"$gte":int(request.args['min_rent'])}
+        elif 'max_rent' in request.args:
+                search_criteria['rent_details']={"$lte":int(request.args['max_rent'])}
+	if 'property_type' in request.args:
+		search_criteria['property_type']=request.args['property_type']
+
+	
+	results=postings.find(search_criteria,{'_id':False})
+	
+	finalResults = []
+	if 'owner_id' in request.args:
+                user_id = request.args['owner_id']
+                favorites = getCollection('favourites')
+                favProperties = []
+                favOwnerIds = []
+                for fav in favorites.find({'user_id':user_id},{'_id':False}):
+                        favDetail = fav['FavDetails']
+                        for eachFav in favDetail:
+                                favProperties.append(eachFav['property_id'])
+                                favOwnerIds.append(eachFav['owner_id'])
+                for property in postings.find(search_criteria,{'_id':False}):
+                        if property['property_id'] in favProperties and property['owner_id']==favOwnerIds[favProperties.index(property['property_id'])]:
+                                p = property
+                                p['is_favorite']=True
+                                finalResults.append(p)
+                        else:
+                                finalResults.append(property)
+        
+	alongWithImageURLs = []
+	properties = getCollection('properties')
+	for posting in finalResults:
+                imageURLs = []
+                fileIds = properties.find({'property_id':posting['property_id'],'owner_id':posting['owner_id']},{'fileIdStr':1,'_id':0})
+                for fileId in fileIds:
+                        imageURLs.append('http://ec2-52-36-142-168.us-west-2.compute.amazonaws.com:5000/image?fileId='+fileId['fileIdStr'])
+                p = posting
+                p['images']=imageURLs
+                alongWithImageURLs.append(p)
+                
+	return dumps(alongWithImageURLs)
+
+
+
 @app.route('/postings/',methods=['POST'])
 def createPosting():
+	property_id =  getPropertyId()
 	posting={
-		"property_id":getPropertyId(),
+		"property_id":property_id,
                 "property_name":request.json['property_name'],
 		"owner_id":request.json['owner_id'],
                 "view_count":0,
@@ -217,16 +399,20 @@ def createPosting():
 			}
 		]
 	}
-
+	
 	postings=getCollection('postings')
 	insertedId=postings.insert_one(posting)
 	if insertedId:
+		pushNotification(property_id,request.json['owner_id'])
 		return dumps([posting])
 	else:
 		return dumps([{"error":"Error Occured"}])
 
 def strToBool(val):
-        return val=='true'
+	if val == 'True':
+	        return True
+	else:
+		return False
 
 def toInt(val):
         if val=='':
@@ -235,7 +421,7 @@ def toInt(val):
                 return int(val)
 
 @app.route('/savesearch/',methods=['POST'])
-def createSearch():
+def saveSearch():
 	search={
 		"id":request.json['id'],
                 "user":request.json['user'],
@@ -246,13 +432,14 @@ def createSearch():
                 "zipcode":toInt(request.json['zipcode']),
                 "minrent":toInt(request.json['minrent']),
                 "maxrent":toInt(request.json['maxrent']),
+                "staticmapurl":request.json['staticmapurl'],
                 "propertyType":request.json['propertyType'],
-                "haskeyword":strToBool(request.json['haskeyword']),
-                "hascity":strToBool(request.json['hascity']),
-                "haszipcode":strToBool(request.json['haszipcode']),
-                "hasminrent":strToBool(request.json['hasminrent']),
-                "hasmaxrent":strToBool(request.json['hasmaxrent']),
-                "haspropertyType":strToBool(request.json['haspropertyType'])
+                "haskeyword":strToBool(str(request.json['haskeyword'])),
+                "hascity":strToBool(str(request.json['hascity'])),
+                "haszipcode":strToBool(str(request.json['haszipcode'])),
+                "hasminrent":strToBool(str(request.json['hasminrent'])),
+                "hasmaxrent":strToBool(str(request.json['hasmaxrent'])),
+                "haspropertyType":strToBool(str(request.json['haspropertyType']))
 	}
 
 	searches=getCollection('searches')
@@ -287,6 +474,29 @@ def createUser():
         else:
                 return dumps({"error":"Error Occured"})
 
+@app.route('/favorites',methods=['GET'])
+def getfavorites():
+	search_criteria={}
+	if 'user_id' in request.args:
+		user_id = str(request.args['user_id'])
+		search_criteria['user_id']=user_id
+		favorites = getCollection('favourites')
+		postings = getCollection('postings')
+		userFavList= []
+		favDetails=[]
+		for userFavoriteInfo in favorites.find(search_criteria,{'_id':False}):
+			favDetails =  userFavoriteInfo['FavDetails']
+		for favorite in favDetails:
+			property_id = favorite['property_id']
+			owner_id = favorite['owner_id']
+			for posting in postings.find({'property_id':property_id,'owner_id':owner_id},{'_id':False}):
+				p = posting
+				p['is_favorite']= True
+				userFavList.append(p)
+		return dumps(userFavList)
+	else:
+		return dumps([{'Error':'User not found'}])
+		
 @app.route('/addfavourite/',methods=['POST'])
 def addFavourite():
         user_id = request.json['user_id']
@@ -314,7 +524,7 @@ def addFavourite():
         if updateId:
                 return dumps(user)
         else:
-                return dumps({"error":"Error Occured"})
+                return dumps([{"error":"Error Occured"}])
 
 @app.route('/removefavourite/<user_id>/<property_id>/<owner_id>',methods=['DELETE'])
 def deleteFavourite(user_id,property_id,owner_id=""):
@@ -392,3 +602,4 @@ def getIndex():
 
 if __name__ == '__main__':
         app.run(debug=True, host='0.0.0.0')
+
