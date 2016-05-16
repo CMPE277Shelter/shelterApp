@@ -37,6 +37,8 @@ public class HomeFragment extends Fragment {
     private TextView mRent;
     private Property mProperty;
     private PropertyImage mPropertyImage;
+    private TextView mTrendingTextView;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         Log.d(TAG, "On create called");
@@ -65,37 +67,39 @@ public class HomeFragment extends Fragment {
         mBaths = (TextView) v.findViewById(R.id.trending_baths);
         mBeds =(TextView)v.findViewById(R.id.trending_beds);
         mFloorArea = (TextView)v.findViewById(R.id.trending_floorArea);
+        mTrendingTextView = (TextView) v.findViewById(R.id.trending_textView);
 
-        new TrendingPropertyTask(getContext(), "trendingProperty", v, new FragmentCallback() {
-            @Override
-            public void onTaskDone() {
+        ArrayList<Property> propertyList= PropertyLab.get(getContext()).getProperties();
+        if(propertyList.size() > 0) {
+            new TrendingPropertyTask(getContext(), "trendingProperty", v, new FragmentCallback() {
+                @Override
+                public void onTaskDone() {
+                    Property property = PropertyLab.get(getContext()).getProperties().get(0);
+                    mProperty = property;
+                    mPropertyName.setText(property.getName());
+                    mPropertyType.setText(property.getType());
+                    mPropertyImage = new PropertyImage();
+                    if(mPropertyImage != null){
+                        mPropertyImage = mProperty.getPropertyImages().get(0);
+                        if(mPropertyImage.getImageResourceId() == 0){
+                            Log.d(TAG, "Image path "+ mPropertyImage.getImagePath() + " width "+ mPropertyImageView.getWidth());
 
-                ArrayList<Property> propertyList= PropertyLab.get(getContext()).getProperties();
-                Property property = propertyList.get(0);
-                mProperty = property;
-                mPropertyName.setText(property.getName());
-                mPropertyType.setText(property.getType());
-                mPropertyImage = new PropertyImage();
-                if(mPropertyImage != null){
-                    mPropertyImage = mProperty.getPropertyImages().get(0);
-                    if(mPropertyImage.getImageResourceId() == 0){
-                        Log.d(TAG, "Image path "+ mPropertyImage.getImagePath() + " width "+ mPropertyImageView.getWidth());
-
-                        new DownloadImageTask(mPropertyImageView).
-                                execute(mPropertyImage.getImagePath());
-                    }else {
-                        mPropertyImageView.setBackgroundResource(mPropertyImage.getImageResourceId());
+                            new DownloadImageTask(mPropertyImageView).
+                                    execute(mPropertyImage.getImagePath());
+                        }else {
+                            mPropertyImageView.setBackgroundResource(mPropertyImage.getImageResourceId());
+                        }
                     }
+                    mAddress.setText(property.getAddress());
+                    mRent.setText(property.getDisplayRent());
+                    mBaths.setText(property.getDisplayBath());
+                    mBeds.setText(property.getDisplayRoom());
+                    mFloorArea.setText(property.getDisplayFloorArea());
                 }
-                mAddress.setText(property.getAddress());
-                mRent.setText(property.getDisplayRent());
-                mBaths.setText(property.getDisplayBath());
-                mBeds.setText(property.getDisplayRoom());
-                mFloorArea.setText(property.getDisplayFloorArea());
-            }
-        }).execute();
-
-
+            }).execute();
+        }else{
+            mTrendingTextView.setText("No properties yet");
+        }
 
         ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(R.string.app_name);
 
