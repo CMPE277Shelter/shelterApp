@@ -73,7 +73,6 @@ public class PostPropertyFragment extends Fragment {
     private RadioButton mTownhouseType;
     private RadioButton mApartmentType;
 
-    private EditText mContactName;
     private EditText mContactEmail;
     private EditText mContactPhone;
 
@@ -128,7 +127,6 @@ public class PostPropertyFragment extends Fragment {
         mTownhouseType = (RadioButton) view.findViewById(R.id.townhouse_type);
         mApartmentType = (RadioButton) view.findViewById(R.id.apartment_type);
 
-        mContactName = (EditText) view.findViewById(R.id.person_name);
         mContactEmail = (EditText) view.findViewById(R.id.email);
         mContactPhone = (EditText) view.findViewById(R.id.phone_number);
 
@@ -293,7 +291,6 @@ public class PostPropertyFragment extends Fragment {
         mPropertyToPost.setBath(mBath.getText().toString());
         mPropertyToPost.setFloorArea(mFloorArea.getText().toString());
 
-        mPropertyToPost.setContactName(mContactName.getText().toString());
         mPropertyToPost.setEmail(mContactEmail.getText().toString());
         mPropertyToPost.setPhoneNumber(mContactPhone.getText().toString());
 
@@ -323,7 +320,6 @@ public class PostPropertyFragment extends Fragment {
             mApartmentType.setChecked(true);
         }
 
-        mContactName.setText(mPropertyToPost.getContactName());
         mContactEmail.setText(mPropertyToPost.getEmail());
         mContactPhone.setText(mPropertyToPost.getPhoneNumber());
 
@@ -390,10 +386,6 @@ public class PostPropertyFragment extends Fragment {
             mApartmentType.setError(getString(R.string.type_not_selected_error_msg));
             isValid = false;
         }
-        if(TextUtils.isEmpty(mContactName.getText())){
-            mContactName.setError(getString(R.string.blank_error_msg));
-            isValid = false;
-        }
         if(TextUtils.isEmpty(mContactPhone.getText())){
             mContactPhone.setError(getString(R.string.blank_error_msg));
             isValid = false;
@@ -401,18 +393,6 @@ public class PostPropertyFragment extends Fragment {
         if(TextUtils.isEmpty(mContactEmail.getText())){
             mContactEmail.setError(getString(R.string.blank_error_msg));
             isValid = false;
-        }
-        if(!TextUtils.isEmpty(mContactEmail.getText())){
-            if(Patterns.EMAIL_ADDRESS.matcher(mContactEmail.getText()).matches()){
-                mContactEmail.setError("Invalid email");
-                isValid = false;
-            }
-        }
-        if(!TextUtils.isEmpty(mContactPhone.getText())){
-            if(Patterns.PHONE.matcher(mContactPhone.getText()).matches()){
-                mContactPhone.setError("Invalid phone number");
-                isValid = false;
-            }
         }
 
         if(!isValid){
