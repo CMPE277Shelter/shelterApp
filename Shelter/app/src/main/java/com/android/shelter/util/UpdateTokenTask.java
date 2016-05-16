@@ -21,8 +21,10 @@ import cz.msebera.android.httpclient.protocol.HttpContext;
  * Created by vaishnavigalgali on 5/15/16.
  */
 public class UpdateTokenTask extends AsyncTask<String, String, String> {
-    private static final String TAG = " Update token task";
 
+    private static final String TAG = " Update token task";
+    private JSONObject jsonObject;
+    private static String BASE_URL = "http://ec2-52-36-142-168.us-west-2.compute.amazonaws.com:5000/updatetoken";
     protected String search(HttpEntity entity) throws IllegalStateException, IOException {
         InputStream in = entity.getContent();
         StringBuffer out = new StringBuffer();
@@ -35,14 +37,17 @@ public class UpdateTokenTask extends AsyncTask<String, String, String> {
         return out.toString();
     }
 
+    public UpdateTokenTask(JSONObject jsonObject) {
+        this.jsonObject =  jsonObject;
+    }
+
     @Override
     protected String doInBackground(String... params) {
         HttpClient httpClient = new DefaultHttpClient();
         HttpContext localContext = new BasicHttpContext();
         String text = null;
         try {
-            HttpPut httpPost = new HttpPut(params[0]);
-            JSONObject jsonObject = new JSONObject();
+            HttpPut httpPost = new HttpPut(BASE_URL);
             StringEntity postData = new StringEntity(jsonObject.toString());
             httpPost.addHeader("content-type", "application/json");
             httpPost.setEntity(postData);
