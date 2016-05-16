@@ -78,14 +78,14 @@ public class SavedSearchHolder extends RecyclerView.ViewHolder
         }
 
         if(search.hasZipcode() && isFirstElementSet){
-            searchCriteria.append(", Property Type : "+search.getZipcode());
+            searchCriteria.append(", "+search.getZipcode());
         }else if(search.hasZipcode()){
             searchCriteria.append(search.getZipcode());
             isFirstElementSet=true;
         }
 
         if(search.hasPostingType() && isFirstElementSet){
-            searchCriteria.append(", "+search.getPostingType());
+            searchCriteria.append(", Property Type : "+search.getPostingType());
         }else if(search.hasPostingType()){
             searchCriteria.append("Property Type : "+search.getPostingType());
             isFirstElementSet=true;

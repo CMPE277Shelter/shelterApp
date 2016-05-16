@@ -3,7 +3,9 @@
              android:layout_width="match_parent"
              android:layout_height="wrap_content"
              tools:context=".user.tenant.search.SearchPropertyFilterFragment">
-
+<ScrollView
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
                   xmlns:card_view="http://schemas.android.com/apk/res-auto"
                   android:orientation="vertical"
@@ -131,8 +133,10 @@
                 android:text="Search"
                 android:background="@color/colorPrimary"
                 android:layout_alignParentBottom="true"
-            android:textColor="@color/white"/>
+                android:textColor="@color/white"/>
 
     </LinearLayout>
+</ScrollView>
+
 
 </FrameLayout>
