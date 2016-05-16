@@ -405,11 +405,13 @@ public class PostPropertyFragment extends Fragment {
         if(!TextUtils.isEmpty(mContactEmail.getText())){
             if(Patterns.EMAIL_ADDRESS.matcher(mContactEmail.getText()).matches()){
                 mContactEmail.setError("Invalid email");
+                isValid = false;
             }
         }
         if(!TextUtils.isEmpty(mContactPhone.getText())){
             if(Patterns.PHONE.matcher(mContactPhone.getText()).matches()){
                 mContactPhone.setError("Invalid phone number");
+                isValid = false;
             }
         }
 
