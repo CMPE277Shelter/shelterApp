@@ -36,6 +36,7 @@ public class DownloadImageTask extends AsyncTask<String,Void,Bitmap> {
     protected void onPostExecute(Bitmap result){
         Log.d("setting image"," now");
         if(result != null){
+            Log.d("DOwnloadTask", "Width of image "+ imageView.getId() + "  width "+ imageView.getWidth());
             imageView.setImageBitmap(ImagePicker.scaleToFitWidth(result, imageView.getWidth()));
         }else {
             imageView.setImageResource(R.drawable.place_holder);

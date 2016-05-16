@@ -52,20 +52,24 @@ public class HomeFragment extends Fragment {
         View v = inflater.inflate(R.layout.content_home, container, false);
 
         ImageView header = (ImageView)v.findViewById(R.id.header);
+        Log.d(TAG, "HEader image width "+ header.getWidth());
         new DownloadImageTask(header).execute
                 ("http://ec2-52-36-142-168.us-west-2.compute.amazonaws.com:5000/drawable?filename=header.jpg");
 
-        new TrendingPropertyTask(getContext(), "trendingProperty", v, new FragmentCallbackTrending() {
+
+        mPropertyImageView = (ImageView) v.findViewById(R.id.trending_thumbnail);
+        mPropertyName = (TextView) v.findViewById(R.id.trending_name);
+        mPropertyType = (TextView) v.findViewById(R.id.trending_type);
+        mAddress = (TextView) v.findViewById(R.id.trending_address);
+        mRent = (TextView) v.findViewById(R.id.trending_rent);
+        mBaths = (TextView) v.findViewById(R.id.trending_baths);
+        mBeds =(TextView)v.findViewById(R.id.trending_beds);
+        mFloorArea = (TextView)v.findViewById(R.id.trending_floorArea);
+
+        new TrendingPropertyTask(getContext(), "trendingProperty", v, new FragmentCallback() {
             @Override
-            public void onTaskDone(View v) {
-                mPropertyImageView = (ImageView) v.findViewById(R.id.trending_thumbnail);
-                mPropertyName = (TextView) v.findViewById(R.id.trending_name);
-                mPropertyType = (TextView) v.findViewById(R.id.trending_type);
-                mAddress = (TextView) v.findViewById(R.id.trending_address);
-                mRent = (TextView) v.findViewById(R.id.trending_rent);
-                mBaths = (TextView) v.findViewById(R.id.trending_baths);
-                mBeds =(TextView)v.findViewById(R.id.trending_beds);
-                mFloorArea = (TextView)v.findViewById(R.id.trending_floorArea);
+            public void onTaskDone() {
+
                 ArrayList<Property> propertyList= PropertyLab.get(getContext()).getProperties();
                 Property property = propertyList.get(0);
                 mProperty = property;
@@ -75,6 +79,8 @@ public class HomeFragment extends Fragment {
                 if(mPropertyImage != null){
                     mPropertyImage = mProperty.getPropertyImages().get(0);
                     if(mPropertyImage.getImageResourceId() == 0){
+                        Log.d(TAG, "Image path "+ mPropertyImage.getImagePath() + " width "+ mPropertyImageView.getWidth());
+
                         new DownloadImageTask(mPropertyImageView).
                                 execute(mPropertyImage.getImagePath());
                     }else {

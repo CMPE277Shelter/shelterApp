@@ -37,12 +37,11 @@ public class TrendingPropertyTask extends AsyncTask<Void, Void, String> {
     private String absoluteURL;
     private Context context;
     private String endpoint;
-    private FragmentCallbackTrending mFragmentCallback;
-    private View view;
+    private FragmentCallback mFragmentCallback;
 
-    public TrendingPropertyTask(Context context,String endpoint, View v, FragmentCallbackTrending fragmentCallback){
+
+    public TrendingPropertyTask(Context context,String endpoint, View v, FragmentCallback fragmentCallback){
         this.context=context;
-        this.view = v;
         this.endpoint=endpoint;
         this.mFragmentCallback = fragmentCallback;
     }
@@ -144,7 +143,7 @@ public class TrendingPropertyTask extends AsyncTask<Void, Void, String> {
                     PropertyLab.get(context).addProperty(property);
 //                    Log.d("Object-" + i + ":", jsonObj.toString());
                 }
-                mFragmentCallback.onTaskDone(view);
+                mFragmentCallback.onTaskDone();
             } catch (JSONException e) {
                 e.printStackTrace();
             }
