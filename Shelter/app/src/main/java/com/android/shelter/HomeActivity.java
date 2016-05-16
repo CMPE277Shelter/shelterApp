@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.res.Configuration;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
@@ -93,7 +94,7 @@ public class HomeActivity extends AbstractFragmentActivity
                 .addApi(Auth.GOOGLE_SIGN_IN_API, mGoogleSignInOptions)
                 .build();
 
-        setContentView(R.layout.activity_home);
+        setContentView(getLayoutResId());
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -313,5 +314,30 @@ public class HomeActivity extends AbstractFragmentActivity
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
         Log.d(TAG, "Connection failed");
+    }
+
+    /**
+     * Returns the relevant resource ID for view based on tablet or phone.
+     * @return
+     */
+    private int getLayoutResId(){
+        if(isTabletAndLandscape()){
+            Log.d(TAG, "Tablet layout returned");
+            return R.layout.fragment_tablet_layout;
+        }
+        Log.d(TAG, "Normal layout returned");
+        return R.layout.activity_home;
+    }
+
+    /**
+     * Returns if the device is tablet
+     * @return
+     */
+    private boolean isTabletAndLandscape(){
+        Configuration config = getApplicationContext().getResources().getConfiguration();
+        if(config.smallestScreenWidthDp >= 400){
+            return true;
+        }
+        return false;
     }
 }
