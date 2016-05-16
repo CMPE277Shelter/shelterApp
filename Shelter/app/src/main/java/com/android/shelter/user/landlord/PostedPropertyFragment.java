@@ -86,7 +86,6 @@ public class PostedPropertyFragment extends Fragment {
 
         ((AppCompatActivity)getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         ((AppCompatActivity)getActivity()).getSupportActionBar().setDisplayShowHomeEnabled(true);
-        ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle(mProperty.getName());
 
         mImage = (ImageView) v.findViewById(R.id.posted_property_image);
         if(mPropertyImage.getImageResourceId() == 0){
