@@ -1,10 +1,14 @@
 package com.android.shelter;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -17,6 +21,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.shelter.user.IUserSessionUpdate;
 import com.android.shelter.user.LoginActivity;
@@ -27,6 +32,10 @@ import com.android.shelter.user.tenant.favorite.FavoriteFragment;
 import com.android.shelter.user.tenant.savedsearch.SavedSearchFragment;
 import com.android.shelter.user.tenant.search.SearchPropertyFragment;
 import com.android.shelter.util.DownloadImageTask;
+//import com.android.shelter.util.GCMRegistrationIntentService;
+import com.android.shelter.util.GCMRegistrationIntentService;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesUtil;
 
 /**
  * Landing screen or home activity for the application.
@@ -56,6 +65,7 @@ public class HomeActivity extends AbstractFragmentActivity
     private RelativeLayout mBeforeSignInLayout;
     private RelativeLayout mAfterSignInLayout;
     private UserSessionManager mUserSessionManager;
+    private BroadcastReceiver mBroadCastReceiver;
 
     @Override
     public Fragment createFragment(){
@@ -107,6 +117,34 @@ public class HomeActivity extends AbstractFragmentActivity
 
         toggleUserProfileLayout();
 
+        mBroadCastReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                if(intent.getAction().equals(GCMRegistrationIntentService.REGISTRATION_SUCCESS)){
+                    String token = intent.getStringExtra("token");
+                    Log.e("Token : ",token);
+                    Toast.makeText(HomeActivity.this, "token" + token, Toast.LENGTH_SHORT).show();
+                }else if(intent.getAction().equals(GCMRegistrationIntentService.REGISTRATION_ERROR)){
+                    Toast.makeText(HomeActivity.this, "Error", Toast.LENGTH_SHORT).show();
+                }else{
+
+                }
+            }
+        };
+        int resultCode = GooglePlayServicesUtil.isGooglePlayServicesAvailable(getApplicationContext());
+        if(ConnectionResult.SUCCESS!=resultCode){
+            if(GooglePlayServicesUtil.isUserRecoverableError(resultCode)){
+                Toast.makeText(getApplicationContext(), "play services is not installed", Toast.LENGTH_SHORT).show();
+                GooglePlayServicesUtil.showErrorNotification(resultCode,getApplicationContext());
+            }else{
+                Toast.makeText(getApplicationContext(), "device doest not support", Toast.LENGTH_SHORT).show();
+            }
+        }else{
+            Intent intent = new Intent(this,GCMRegistrationIntentService.class);
+            startService(intent);
+        }
+
+
     }
 
     @Override
@@ -124,6 +162,11 @@ public class HomeActivity extends AbstractFragmentActivity
         Log.d(TAG, "Inside on resume");
         toggleUserProfileLayout();
         mUserSessionManager.getGoogleApiClient().connect();
+        LocalBroadcastManager.getInstance(this).registerReceiver(mBroadCastReceiver,
+                new IntentFilter(GCMRegistrationIntentService.REGISTRATION_SUCCESS));
+        LocalBroadcastManager.getInstance(this).registerReceiver(mBroadCastReceiver,
+                new IntentFilter(GCMRegistrationIntentService.REGISTRATION_ERROR));
+
     }
 
     @SuppressWarnings("StatementWithEmptyBody")
@@ -238,6 +281,12 @@ public class HomeActivity extends AbstractFragmentActivity
             return null;
         }
     }
+    @Override
+    protected void onPause() {
+        super.onPause();
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(mBroadCastReceiver);
+    }
+
 
     public void startLogoutProcess() {
         new AsyncTask<Void, Void, Void>(){
