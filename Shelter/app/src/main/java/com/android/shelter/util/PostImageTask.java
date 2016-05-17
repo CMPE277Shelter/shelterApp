@@ -35,16 +35,12 @@ public class PostImageTask extends AsyncTask<Void, Void, String> {
     private String imageString64;
     private byte[] imageInByte;
     private JSONObject mJSONObject;
-    private FragmentCallback fragmentCallback;
 
-
-
-    public PostImageTask(Context context, String endpoint, boolean hasParams, JSONObject jsonObject, FragmentCallback fragmentCallback){
+    public PostImageTask(Context context, String endpoint, boolean hasParams, JSONObject jsonObject){
         this.context=context;
         this.hasParams=hasParams;
         this.endpoint=endpoint;
         this.mJSONObject = jsonObject;
-        this.fragmentCallback = fragmentCallback;
     }
 
     private String getAbsoluteURL(){
@@ -86,8 +82,5 @@ public class PostImageTask extends AsyncTask<Void, Void, String> {
 
     protected void onPostExecute(String results) {
         Log.d(TAG, "Image posted successfully......." + results);
-        if (results!=null) {
-        }
-        fragmentCallback.onTaskDone();
     }
 }

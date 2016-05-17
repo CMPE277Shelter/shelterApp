@@ -104,8 +104,9 @@ public class PostPropertyTask extends AsyncTask<Void, Void, String> {
                         byte[] imageByte = ImagePicker.get(context).getImageBytes(images);
                         imageData.put(ShelterConstants.STR_BYTE, Base64.encodeToString(imageByte, 0));
 
-                        new PostImageTask(context, "image", true, imageData, fragmentCallback).execute();
+                        new PostImageTask(context, "image", true, imageData).execute();
                     }
+                    fragmentCallback.onTaskDone();
                 }else{
                     fragmentCallback.onTaskDone();
                 }

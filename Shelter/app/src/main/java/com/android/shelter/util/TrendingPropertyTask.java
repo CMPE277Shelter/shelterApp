@@ -6,7 +6,6 @@ import android.util.Log;
 import android.view.View;
 
 import com.android.shelter.FragmentCallback;
-import com.android.shelter.FragmentCallbackTrending;
 import com.android.shelter.R;
 import com.android.shelter.helper.PropertyImage;
 import com.android.shelter.property.Property;

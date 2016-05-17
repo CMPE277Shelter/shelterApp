@@ -3,6 +3,7 @@ package com.android.shelter.user.landlord;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -23,6 +24,7 @@ import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
+import com.android.shelter.DownloadImageCallback;
 import com.android.shelter.FragmentCallback;
 import com.android.shelter.HomeActivity;
 import com.android.shelter.R;
@@ -31,6 +33,7 @@ import com.android.shelter.helper.PropertyImageAdapter;
 import com.android.shelter.property.Property;
 import com.android.shelter.property.PropertyLab;
 import com.android.shelter.user.UserSessionManager;
+import com.android.shelter.util.GetBitmapTask;
 import com.android.shelter.util.ImagePicker;
 import com.android.shelter.util.PostPropertyTask;
 import com.android.shelter.util.SendEmail;
@@ -326,9 +329,17 @@ public class PostPropertyFragment extends Fragment {
         mPropertyDescription.setText(mPropertyToPost.getDescription());
 
         //mImageList = mPropertyToPost.getPropertyImages();
-        for(PropertyImage propertyImage : mPropertyToPost.getPropertyImages()){
+        for(PropertyImage image : mPropertyToPost.getPropertyImages()){
+            final PropertyImage propertyImage = image;
             if(propertyImage.getImageResourceId() == 0){
-                mImageList.add(propertyImage);
+                new GetBitmapTask(new DownloadImageCallback() {
+                    @Override
+                    public void onTaskDone(Bitmap bitmap) {
+                        propertyImage.setImageBitMap(bitmap);
+                        mImageList.add(propertyImage);
+                        setupAdapter();
+                    }
+                }).execute(propertyImage.getImagePath());
             }
         }
         setupAdapter();

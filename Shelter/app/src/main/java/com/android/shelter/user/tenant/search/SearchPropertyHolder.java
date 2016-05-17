@@ -2,7 +2,9 @@ package com.android.shelter.user.tenant.search;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
@@ -16,6 +18,8 @@ import com.android.shelter.helper.PropertyImage;
 import com.android.shelter.property.Property;
 import com.android.shelter.property.PropertyLab;
 import com.android.shelter.user.UserSessionManager;
+import com.android.shelter.user.landlord.PostedPropertyFragment;
+import com.android.shelter.user.landlord.PostedPropertyPagerActivity;
 import com.android.shelter.user.tenant.favorite.FavoriteCriteria;
 import com.android.shelter.util.DownloadImageTask;
 import com.android.shelter.util.ShelterFavoriteTask;
@@ -86,8 +90,20 @@ public class SearchPropertyHolder extends RecyclerView.ViewHolder
     @Override
     public void onClick(View v) {
         Log.d("SearchPropertyHolder", "Pager activity starting");
-        PropertyLab.get(mActivity).updatePropertyFavorite(mProperty.getId(), mProperty.isFavorite());
-        Intent intent = SearchPropertyPagerActivity.newIntent(mActivity, mProperty.getId());
-        mActivity.startActivity(intent);
+        if(mActivity.findViewById(R.id.detail_fragment_container) == null){
+            Intent intent = SearchPropertyPagerActivity.newIntent(mActivity, mProperty.getId());
+            mActivity.startActivity(intent);
+        }else {
+            FragmentTransaction ft = mFragmentManager.beginTransaction();
+
+            Fragment oldDetail = mFragmentManager.findFragmentById(R.id.detail_fragment_container);
+            Fragment newDetail = SearchPropertyDetailFragment.newInstance(mProperty.getId());
+
+            if (oldDetail != null) {
+                ft.remove(oldDetail);
+            }
+            ft.add(R.id.detail_fragment_container, newDetail);
+            ft.commit();
+        }
     }
 }

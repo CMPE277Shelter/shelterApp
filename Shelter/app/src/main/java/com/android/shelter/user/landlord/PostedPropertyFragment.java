@@ -72,17 +72,18 @@ public class PostedPropertyFragment extends Fragment {
         setRetainInstance(true);
         setHasOptionsMenu(true);
 
+        UUID id = (UUID) getArguments().getSerializable(ARG_PROPERTY_ID);
+        mProperty = PropertyLab.get(getContext()).getProperty(id);
+        if(mProperty.getPropertyImages().size() > 0){
+            mPropertyImage = mProperty.getPropertyImages().get(0);
+        }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_posted_property_detail, container, false);
 
-        UUID id = (UUID) getArguments().getSerializable(ARG_PROPERTY_ID);
-        mProperty = PropertyLab.get(getContext()).getProperty(id);
-        if(mProperty.getPropertyImages().size() > 0){
-            mPropertyImage = mProperty.getPropertyImages().get(0);
-        }
+
 
         ((AppCompatActivity)getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         ((AppCompatActivity)getActivity()).getSupportActionBar().setDisplayShowHomeEnabled(true);

@@ -274,10 +274,10 @@ public class SearchPropertyFragment extends Fragment {
                         new FragmentCallback() {
                     @Override
                     public void onTaskDone() {
+                        hideProgressDialog();
                         mPostingAdapter = new SearchPropertyAdapter(PropertyLab.get(getContext()).getProperties(),
                         getActivity(), getActivity().getSupportFragmentManager());
                         mPostingRecyclerView.setAdapter(mPostingAdapter);
-                        hideProgressDialog();
                     }
                 }).execute();
             }
@@ -358,12 +358,10 @@ public class SearchPropertyFragment extends Fragment {
 
 
 //        Log.d(TAG, jsonObject.toString());
-        showProgressDialog("Saving your search...");
         new ShelterSavedSearchTask(getContext(), "savesearch/", "POST", true, jsonObject,
                 searchToBeSaved, new FragmentCallback() {
             @Override
             public void onTaskDone() {
-                hideProgressDialog();
                 Toast.makeText(getActivity() , "Search saved successfully!", Toast.LENGTH_LONG).show();
             }
         }).execute();
