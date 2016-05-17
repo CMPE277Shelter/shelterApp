@@ -9,6 +9,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -326,6 +327,10 @@ public class HomeActivity extends AbstractFragmentActivity
     private int getLayoutResId(){
         if(isTabletAndLandscape()){
             Log.d(TAG, "Tablet layout returned");
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            if(fragmentManager.findFragmentByTag(HOME_FRAGMENT_TAG) != null){
+                return R.layout.activity_home;
+            }
             return R.layout.fragment_tablet_layout;
         }
         Log.d(TAG, "Normal layout returned");

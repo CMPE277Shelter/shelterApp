@@ -42,7 +42,8 @@
         <activity
             android:name=".user.landlord.PostPropertyActivity"
             android:label="@string/title_activity_post_property"
-            android:theme="@style/AppTheme">
+            android:theme="@style/AppTheme"
+            android:configChanges="orientation|screenSize">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".HomeActivity"/>
@@ -50,7 +51,8 @@
         <activity
             android:name=".user.landlord.ImagePagerActivity"
             android:label="@string/title_activity_image_pager"
-            android:theme="@style/AppTheme">
+            android:theme="@style/AppTheme"
+            android:configChanges="orientation|screenSize">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".user.landlord.PostPropertyActivity"/>
@@ -78,18 +80,15 @@
         </activity>
         <activity
             android:name=".user.landlord.PostedPropertyPagerActivity"
-            android:theme="@style/AppTheme">
+            android:theme="@style/AppTheme"
+            android:configChanges="orientation|screenSize">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".HomeActivity"/>
         </activity>
-        <!--<activity-->
-            <!--android:name=".user.tenant.PropertyPagerActivity"-->
-            <!--android:label="@string/title_activity_property_pager"-->
-            <!--android:theme="@style/AppTheme.NoActionBar">-->
-        <!--</activity>-->
         <activity android:name=".user.tenant.search.SearchPropertyPagerActivity"
-                  android:theme="@style/AppTheme">
+                  android:theme="@style/AppTheme"
+                  android:configChanges="orientation|screenSize">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".HomeActivity"/>

@@ -148,38 +148,50 @@ public class ImagePicker {
         return image;
     }
 
+//    public byte[] getImageBytes(PropertyImage propertyImage){
+//        // convert bitmap to byte
+//        imageBitmap = null;
+//        if(propertyImage.getImageBitMap() == null){
+//            new AsyncTask<String, Void, Bitmap>(){
+//                @Override
+//                protected void onPostExecute(Bitmap bitmap) {
+//                    Log.d(TAG, "Image downloaded");
+//                    imageBitmap = bitmap;
+//                }
+//
+//                @Override
+//                protected Bitmap doInBackground(String... params) {
+//                    String urlOfImage = params[0];
+//                    Bitmap logo = null;
+//                    try {
+//                        InputStream is = new URL(urlOfImage).openStream();
+//                        logo = BitmapFactory.decodeStream(is);
+//                    } catch (Exception e) { // Catch the download exception
+//                        e.printStackTrace();
+//                    }
+//                    return logo;
+//                }
+//            }.execute(propertyImage.getImagePath());
+//
+//        }else {
+//            imageBitmap = propertyImage.getImageBitMap();
+//        }
+//        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+//        imageBitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+//        byte[] imageInByte = stream.toByteArray();
+//        return imageInByte;
+//    }
+
     public byte[] getImageBytes(PropertyImage propertyImage){
         // convert bitmap to byte
-        imageBitmap = null;
-        if(propertyImage.getImageBitMap() == null){
-            new AsyncTask<String, Void, Bitmap>(){
-                @Override
-                protected void onPostExecute(Bitmap bitmap) {
-                    Log.d(TAG, "Image downloaded");
-                    imageBitmap = bitmap;
-                }
-
-                @Override
-                protected Bitmap doInBackground(String... params) {
-                    String urlOfImage = params[0];
-                    Bitmap logo = null;
-                    try {
-                        InputStream is = new URL(urlOfImage).openStream();
-                        logo = BitmapFactory.decodeStream(is);
-                    } catch (Exception e) { // Catch the download exception
-                        e.printStackTrace();
-                    }
-                    return logo;
-                }
-            }.execute();
-
-        }else {
-            imageBitmap = propertyImage.getImageBitMap();
+        imageBitmap = propertyImage.getImageBitMap();
+        if(imageBitmap != null) {
+            ByteArrayOutputStream stream = new ByteArrayOutputStream();
+            imageBitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+            byte[] imageInByte = stream.toByteArray();
+            return imageInByte;
         }
-        ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        imageBitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
-        byte[] imageInByte = stream.toByteArray();
-        return imageInByte;
+        return null;
     }
 
     public static Bitmap scaleToFitWidth(Bitmap b, int width)
